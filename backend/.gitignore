@@ -1,0 +1,28 @@
+# Node.js / Express
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# TypeScript
+dist/
+build/
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+pids/
+*.pid
+*.log.*
+
+# dotenv environment variables file
+.env
+
+# IDE / Editor config files
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
