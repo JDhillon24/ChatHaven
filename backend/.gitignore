@@ -17,7 +17,7 @@ pids/
 *.log.*
 
 # dotenv environment variables file
-.env
+*.env
 
 # IDE / Editor config files
 .vscode/
