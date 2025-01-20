@@ -1,11 +1,34 @@
+require("dotenv");
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
+
+const posts = [
+  {
+    name: "dhillonjagdeep13@gmail.com",
+    message: "It works!",
+  },
+  {
+    name: "aklsjdfasdf",
+    message: "sdkjgjkjllasdgag",
+  },
+  {
+    name: "aklsjdfkjljasdf",
+    message: "sdkjgl'lllasdgag",
+  },
+];
 
 //mongodb user model
 const User = require("./../models/User");
 
 //password handler
 const bcrypt = require("bcrypt");
+const { authenticateToken } = require("../middleware/auth");
+
+router.get("/posts", authenticateToken, (req, res) => {
+  // console.log(req.user);
+  res.json(posts.filter((post) => post.name === req.user.email));
+});
 
 router.post("/register", (req, res) => {
   console.log(req.body);
@@ -124,10 +147,16 @@ router.post("/login", (req, res) => {
             .then((result) => {
               if (result) {
                 //password matches
+                const user = { name: data[0].name, email: data[0].email };
+
+                const accessToken = jwt.sign(
+                  user,
+                  process.env.ACCESS_TOKEN_SECRET
+                );
                 res.json({
                   status: "SUCCESS",
                   message: "Login successful!",
-                  data: data,
+                  accessToken,
                 });
               } else {
                 res.json({
