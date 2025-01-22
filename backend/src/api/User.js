@@ -23,13 +23,14 @@ const User = require("./../models/User");
 
 //password handler
 const bcrypt = require("bcrypt");
-const { authenticateToken } = require("../middleware/auth");
+const { authenticateToken, generateAccessToken } = require("../utils/auth");
 
 router.get("/posts", authenticateToken, (req, res) => {
   // console.log(req.user);
   res.json(posts.filter((post) => post.name === req.user.email));
 });
 
+//route for creating a new user
 router.post("/register", (req, res) => {
   console.log(req.body);
   let { name, email, password, dateOfBirth } = req.body;
@@ -125,6 +126,7 @@ router.post("/register", (req, res) => {
   }
 });
 
+//route for logging in as a user
 router.post("/login", (req, res) => {
   let { email, password } = req.body;
   email = email.trim();
@@ -149,10 +151,15 @@ router.post("/login", (req, res) => {
                 //password matches
                 const user = { name: data[0].name, email: data[0].email };
 
-                const accessToken = jwt.sign(
+                const accessToken = generateAccessToken(user);
+                const refreshToken = jwt.sign(
                   user,
-                  process.env.ACCESS_TOKEN_SECRET
+                  process.env.REFRESH_TOKEN_SECRET
                 );
+                res.cookie("refreshToken", refreshToken, {
+                  httpOnly: true,
+                  secure: false,
+                });
                 res.json({
                   status: "SUCCESS",
                   message: "Login successful!",
@@ -186,6 +193,31 @@ router.post("/login", (req, res) => {
         });
       });
   }
+});
+
+//route for creating a new token via refresh
+router.post("/token", (req, res) => {
+  const { refreshToken } = req.cookies;
+  if (!refreshToken) return res.sendStatus(401);
+
+  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+
+    const accessToken = generateAccessToken({
+      name: user.name,
+      email: user.email,
+    });
+    res.json({ accessToken });
+  });
+});
+
+router.delete("/logout", (req, res) => {
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: false,
+  });
+
+  res.sendStatus(204);
 });
 
 module.exports = router;
