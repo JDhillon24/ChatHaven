@@ -72,7 +72,7 @@ router.post("/register", (req, res) => {
     User.find({ email })
       .then((result) => {
         if (result.length) {
-          res.json({
+          res.status(500).json({
             status: "FAILED",
             message: "A user has already been registered with this email!",
           });
@@ -163,10 +163,12 @@ router.post("/login", (req, res) => {
                 res.json({
                   status: "SUCCESS",
                   message: "Login successful!",
+                  name: user.name,
+                  email: user.email,
                   accessToken,
                 });
               } else {
-                res.json({
+                res.status(500).json({
                   status: "FAILED",
                   message: "Invalid email and/or password!",
                 });
@@ -180,14 +182,14 @@ router.post("/login", (req, res) => {
               });
             });
         } else {
-          res.json({
+          res.status(500).json({
             status: "FAILED",
             message: "Invalid email and/or password!",
           });
         }
       })
       .catch((err) => {
-        res.json({
+        res.status(500).json({
           status: "FAILED",
           message: "An error occurred while searching for user!",
         });
