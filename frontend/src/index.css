@@ -8,6 +8,27 @@
   logs: true;
 }
 
+@theme {
+  --color-ChatBlue: #2bb3c0;
+  --color-ChatBlueLight: #55c2cd;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-4px);
+  }
+}
+
 body {
   font-family: "Inter";
 }
