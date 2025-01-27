@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useAuth from "../../hooks/useAuth";
@@ -8,7 +8,7 @@ import axios from "../../api/axios";
 import { AxiosError } from "axios";
 
 const LoginForm = () => {
-  const { auth, setAuth } = useAuth();
+  const { auth, setAuth, persist, setPersist } = useAuth();
   const navigate = useNavigate();
 
   const [passView, setPassView] = useState(false);
@@ -25,6 +25,7 @@ const LoginForm = () => {
     initialValues: {
       email: "",
       password: "",
+      persist: false,
     },
     onSubmit: async (values, { resetForm }) => {
       try {
@@ -64,8 +65,16 @@ const LoginForm = () => {
     }),
   });
 
+  const togglePersist = () => {
+    setPersist((prev) => !prev);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("persist", JSON.stringify(persist));
+  }, [persist]);
+
   return (
-    <div className="flex flex-col">
+    <div className="w-2/3 mx-auto flex flex-col">
       <form onSubmit={formik.handleSubmit} className="space-y-8 pb-10">
         <div className="relative">
           <input
@@ -146,10 +155,27 @@ const LoginForm = () => {
                 : "Password"}
             </label>
           </div>
-          <div className="mt-3 cursor-pointer w-full flex justify-end">
-            <p className="text-xs text-gray-600 hover:underline">
-              Forgot password?
-            </p>
+          <div className="mt-3 w-full flex items-center">
+            <div className="w-full">
+              <div className="form-control flex justify-start items-start">
+                <label htmlFor="persist" className="label cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="persist"
+                    checked={persist}
+                    onChange={togglePersist}
+                    onBlur={formik.handleBlur}
+                    className="w-3 h-3"
+                  />
+                  <span className="label-text text-xs">Trust This Device</span>
+                </label>
+              </div>
+            </div>
+            <div className="w-full cursor-pointer flex justify-end">
+              <p className="text-xs text-gray-600 hover:underline">
+                Forgot password?
+              </p>
+            </div>
           </div>
         </div>
         <div className="flex justify-center">

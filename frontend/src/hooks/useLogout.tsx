@@ -11,9 +11,9 @@ const useLogout = () => {
     } catch (error) {
       console.error(error);
     }
-
-    return logout;
   };
+
+  return logout;
 };
 
 export default useLogout;

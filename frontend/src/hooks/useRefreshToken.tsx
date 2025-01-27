@@ -1,7 +1,5 @@
-import React from "react";
 import axios from "../api/axios";
 import useAuth from "./useAuth";
-import { AuthState, isAuthenticatedState } from "../context/AuthProvider";
 
 const useRefreshToken = () => {
   const { auth, setAuth } = useAuth();
@@ -10,21 +8,16 @@ const useRefreshToken = () => {
       withCredentials: true,
     });
 
-    setAuth((prev: AuthState) => {
-      if (isAuthenticatedState(prev)) {
-        return {
-          ...prev,
-          user: {
-            name: prev.user.name,
-            email: prev.user.email,
-            accessToken: response.data.accessToken,
-          },
-        };
-      } else {
-        return {
-          ...prev,
-        };
-      }
+    setAuth(() => {
+      // console.log(`prev: ${JSON.stringify(prev)}`);
+      return {
+        isAuthenticated: true,
+        user: {
+          name: response.data.name,
+          email: response.data.email,
+          accessToken: response.data.accessToken,
+        },
+      };
     });
     return response.data.accessToken;
   };

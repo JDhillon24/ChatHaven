@@ -209,11 +209,11 @@ router.post("/token", (req, res) => {
       name: user.name,
       email: user.email,
     });
-    res.json({ accessToken });
+    res.json({ accessToken, name: user.name, email: user.email });
   });
 });
 
-router.delete("/logout", (req, res) => {
+router.post("/logout", (req, res) => {
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: false,
