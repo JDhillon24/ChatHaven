@@ -32,3 +32,9 @@
 body {
   font-family: "Inter";
 }
+
+@layer components {
+  .sidebar-icon {
+    @apply relative flex items-center justify-center h-12 w-12 mt-2 mb-2 mx-auto rounded-xl hover:text-white hover:bg-ChatBlueLight cursor-pointer;
+  }
+}

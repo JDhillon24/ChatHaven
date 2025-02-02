@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
 import { io, Socket } from "socket.io-client";
+import Sidebar from "../Components/Sidebar";
 
 const Home = () => {
   const logout = useLogout();
@@ -40,16 +41,8 @@ const Home = () => {
   };
   const { auth } = useAuth();
   return (
-    <div>
-      {JSON.stringify(auth)}
-      <div className="flex justify-center">
-        <button
-          onClick={signOut}
-          className="bg-red-500 rounded-full py-2 px-4 text-white hover:bg-red-400 cursor-pointer"
-        >
-          Log Out
-        </button>
-      </div>
+    <div className="w-full">
+      <Sidebar index={1} />
     </div>
   );
 };
