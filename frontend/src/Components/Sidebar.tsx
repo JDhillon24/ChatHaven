@@ -1,7 +1,7 @@
 import { AiOutlineHome } from "react-icons/ai";
 import { CiSettings } from "react-icons/ci";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import { BiMessage } from "react-icons/bi";
+import { LiaUserFriendsSolid } from "react-icons/lia";
 import { FC, useState } from "react";
 
 interface SidebarProps {
@@ -12,9 +12,9 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
   const [activeNavIndex, setActiveNavIndex] = useState(index);
   return (
     <div className="w-24 fixed top-0 left-0 h-screen bg-white shadow-lg flex flex-col">
-      <div className="h-screen flex flex-col items-center mt-2 gap-4 ">
+      <div className="h-screen flex flex-col items-center mt-2 gap-8 ">
         <div className="flex flex-col items-center">
-          <div className="relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto rounded-xl bg-ChatBlue">
+          <div className="relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto rounded-xl">
             <img
               className="rounded-xl"
               src="/images/pfp/cool-anime-pfp-07.jpg"
@@ -37,7 +37,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
               activeNavIndex === 1 ? "bg-ChatBlue text-white" : ""
             }`}
           >
-            <BiMessage size={24} />
+            <LiaUserFriendsSolid size={24} />
           </div>
           <div
             onClick={() => setActiveNavIndex(2)}

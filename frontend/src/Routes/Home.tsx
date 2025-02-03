@@ -3,6 +3,7 @@ import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
 import { io, Socket } from "socket.io-client";
 import Sidebar from "../Components/Sidebar";
+import Conversations from "../Components/Home/Conversations";
 
 const Home = () => {
   const logout = useLogout();
@@ -41,8 +42,17 @@ const Home = () => {
   };
   const { auth } = useAuth();
   return (
-    <div className="w-full">
-      <Sidebar index={1} />
+    <div className="w-full flex h-screen overflow-hidden">
+      <Sidebar index={0} />
+      <div className="ml-24 flex-1 flex">
+        <div className="grid grid-cols-4 w-full">
+          <div className="flex flex-col h-screen">
+            <Conversations />
+          </div>
+          <div className="flex flex-col col-span-2">Middle</div>
+          <div className="flex flex-col">Right</div>
+        </div>
+      </div>
     </div>
   );
 };
