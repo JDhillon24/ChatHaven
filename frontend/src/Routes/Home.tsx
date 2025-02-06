@@ -4,6 +4,7 @@ import useLogout from "../hooks/useLogout";
 import { io, Socket } from "socket.io-client";
 import Sidebar from "../Components/Sidebar";
 import Conversations from "../Components/Home/Conversations";
+import Chat from "../Components/Home/Chat";
 
 const Home = () => {
   const logout = useLogout();
@@ -49,7 +50,9 @@ const Home = () => {
           <div className="flex flex-col h-screen">
             <Conversations />
           </div>
-          <div className="flex flex-col col-span-2">Middle</div>
+          <div className="flex flex-col col-span-2 h-screen">
+            <Chat />
+          </div>
           <div className="flex flex-col">Right</div>
         </div>
       </div>
