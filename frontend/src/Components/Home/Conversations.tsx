@@ -1,15 +1,19 @@
 import { IoMdAdd } from "react-icons/io";
 
-const Conversations = () => {
+type ConversationProps = {
+  onSelect: () => void;
+};
+
+const Conversations: React.FC<ConversationProps> = ({ onSelect }) => {
   return (
     <div className="h-full w-full border-r-2 border-gray-200">
-      <div className="h-24 flex justify-between items-center border-b-2 border-gray-200">
-        <p className="text-xl font-semibold ml-8">Messages</p>
-        <div className="h-8 w-8 mr-8 rounded-full bg-ChatBlue flex justify-center items-center text-white cursor-pointer hover:bg-ChatBlueLight">
+      <div className="h-24 w-full flex justify-between items-center border-b-2 border-gray-200">
+        <p className="text-xl font-semibold md:ml-8 ml-4">Messages</p>
+        <div className="h-8 w-8 md:mr-8 mr-4 rounded-full bg-ChatBlue flex justify-center items-center text-white cursor-pointer hover:bg-ChatBlueLight">
           <IoMdAdd size={20} />
         </div>
       </div>
-      <div className="mt-3 ml-8 mr-8">
+      <div className="mt-3 md:ml-8 md:mr-8 ml-4 mr-4">
         <input
           type="text"
           placeholder="Search Messages"

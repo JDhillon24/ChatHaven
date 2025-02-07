@@ -2,7 +2,12 @@ import { FaCircle } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import { useEffect, useRef } from "react";
 
-const Chat = () => {
+type ChatProps = {
+  onBack: () => void;
+  onShowInfo: () => void;
+};
+
+const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo }) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -37,13 +42,13 @@ const Chat = () => {
                 src="/images/pfp/cool-anime-pfp-07.jpg"
                 alt="Profile"
               />
-              <div className="bg-gray-200 p-3 rounded-lg text-sm max-w-80 break-words">
+              <div className="bg-gray-200 p-3 rounded-lg text-sm md:max-w-80 max-w-64 break-words">
                 Yea brooo i told
                 usdfsfddsfsdfsdfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfdsasdfdsfasdsadaskjlkjljkljl
               </div>
             </div>
             <div className="flex items-end gap-2 mb-4 justify-end">
-              <div className="bg-ChatBlue p-3 rounded-lg text-white text-sm max-w-80 break-words">
+              <div className="bg-ChatBlue p-3 rounded-lg text-white text-sm md:max-w-80 max-w-64 break-words">
                 Yea brooo i told
                 usdfsfddsfsdfsdfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfdsasdfdsfasdsadaskjlkjljkljl
               </div>
@@ -67,7 +72,7 @@ const Chat = () => {
               target.style.height = "auto";
               target.style.height = `${target.scrollHeight}px`;
             }}
-            className="w-full rounded-lg border-gray-200 placeholder:text-sm pr-10 resize-none max-h-40 p-2"
+            className="w-full rounded-lg border-gray-200 placeholder:text-sm pr-10 resize-none md:max-h-40 max-h-36 p-2"
           />
           <span className="cursor-pointer -translate-x-10 pb-2">
             <div className="transition-all hover:bg-ChatBlue p-1 rounded-full">
