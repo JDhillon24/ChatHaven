@@ -23,6 +23,7 @@ const Conversations: React.FC<ConversationProps> = ({ onSelect }) => {
           {Array.from({ length: 20 }).map((_, index) => (
             <div
               key={index}
+              onClick={onSelect}
               className="flex justify-between hover:bg-gray-100 p-3 rounded-xl cursor-pointer"
             >
               <div className="flex">

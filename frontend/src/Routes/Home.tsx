@@ -7,12 +7,29 @@ import Conversations from "../Components/Home/Conversations";
 import Chat from "../Components/Home/Chat";
 import Info from "../Components/Home/Info";
 
+type Section = "conversations" | "chat" | "info";
+
 const Home = () => {
   const logout = useLogout();
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [activeSection, setActiveSection] = useState<
-    "conversations" | "chat" | "info"
-  >("info");
+  const storageSection =
+    (localStorage.getItem("activeSection") as Section) || "conversations";
+  const [activeSection, setActiveSection] = useState<Section>(storageSection);
+  const [isChatActive, setIsChatActive] = useState(
+    localStorage.getItem("activeSection") === "chat"
+  );
+
+  const handleSectionChange = (section: Section) => {
+    localStorage.setItem("activeSection", section);
+    const activeSection = localStorage.getItem("activeSection") as Section;
+    setActiveSection(activeSection);
+
+    if (section === "chat") {
+      setIsChatActive(true);
+    } else {
+      setIsChatActive(false);
+    }
+  };
 
   useEffect(() => {
     const newSocket = io("http://localhost:5000", {
@@ -51,43 +68,44 @@ const Home = () => {
       <div
         className={`${
           activeSection === "conversations" ? "" : "hidden"
-        } md:flex`}
+        } lg:flex`}
       >
         <Sidebar index={0} />
       </div>
       <div
-        className={`md:ml-24 ${
+        className={`lg:ml-24 ${
           activeSection === "conversations" ? "ml-18" : ""
         } flex-1 flex`}
       >
         <div
-          className={`grid md:grid-cols-4 ${
+          className={`grid lg:grid-cols-4 ${
             activeSection === "chat" ? "grid-cols-2" : "grid-cols-1"
           } w-full`}
         >
           <div
             className={`flex flex-col h-screen ${
               activeSection === "conversations" ? "" : "hidden"
-            } md:flex`}
+            } lg:flex`}
           >
-            <Conversations onSelect={() => setActiveSection("chat")} />
+            <Conversations onSelect={() => handleSectionChange("chat")} />
           </div>
           <div
             className={`flex flex-col col-span-2 h-screen ${
               activeSection === "chat" ? "" : "hidden"
-            } md:flex`}
+            } lg:flex`}
           >
             <Chat
-              onBack={() => setActiveSection("conversations")}
-              onShowInfo={() => setActiveSection("info")}
+              onBack={() => handleSectionChange("conversations")}
+              onShowInfo={() => handleSectionChange("info")}
+              isActive={isChatActive}
             />
           </div>
           <div
             className={`flex flex-col h-screen ${
               activeSection === "info" ? "" : "hidden"
-            } md:flex`}
+            } lg:flex`}
           >
-            <Info onBack={() => setActiveSection("chat")} />
+            <Info onBack={() => handleSectionChange("chat")} />
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { HiDotsVertical } from "react-icons/hi";
 import { useState, useEffect, useRef } from "react";
+import { FaArrowLeft } from "react-icons/fa";
 
 type InfoProps = {
   onBack: () => void;
@@ -20,17 +21,20 @@ const Info: React.FC<InfoProps> = ({ onBack }) => {
   }, []);
   return (
     <div className="relative h-full w-full">
-      <div className="h-20 flex justify-between items-center border-b-2 border-gray-200">
-        <p className="text-xl font-semibold ml-8">Info</p>
+      <div className="h-20 flex w-full justify-between items-center border-b-2 border-gray-200 px-4">
+        <div onClick={onBack} className="lg:hidden">
+          <FaArrowLeft size={24} />
+        </div>
+        <p className="text-xl font-semibold">Info</p>
         <div
           ref={menuRef}
           onClick={() => setIsOpen((prev) => !prev)}
-          className="h-8 w-8 mr-8 rounded-full bg-ChatBlue flex justify-center items-center text-white cursor-pointer hover:bg-ChatBlueLight"
+          className="h-8 w-8 rounded-full bg-ChatBlue flex justify-center items-center text-white cursor-pointer hover:bg-ChatBlueLight"
         >
           <HiDotsVertical size={20} />
         </div>
         {isOpen && (
-          <div className="absolute top-14 right-10 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
+          <div className="absolute top-14 right-8 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
             <ul className="py-1 text-sm text-gray-700">
               <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                 Add Member
