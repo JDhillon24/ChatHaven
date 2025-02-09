@@ -2,7 +2,8 @@ import { AiOutlineHome } from "react-icons/ai";
 import { CiSettings } from "react-icons/ci";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { LiaUserFriendsSolid } from "react-icons/lia";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
+import useAuth from "../hooks/useAuth";
 
 interface SidebarProps {
   index: number;
@@ -10,6 +11,8 @@ interface SidebarProps {
 
 const Sidebar: FC<SidebarProps> = ({ index }) => {
   const [activeNavIndex, setActiveNavIndex] = useState(index);
+  const { auth } = useAuth();
+
   return (
     <div className="md:w-24 w-18 fixed top-0 left-0 h-screen bg-white shadow-lg flex flex-col">
       <div className="h-screen flex flex-col items-center mt-2 gap-8 ">
@@ -17,7 +20,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
           <div className="relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto rounded-xl">
             <img
               className="rounded-xl"
-              src="/images/pfp/cool-anime-pfp-30.jpg"
+              src={auth.user?.profilePicture}
               alt="Profile"
             />
           </div>

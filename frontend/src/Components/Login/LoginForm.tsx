@@ -42,6 +42,7 @@ const LoginForm = () => {
           user: {
             name: response.data.name,
             email: response.data.email,
+            profilePicture: response.data.profilePicture,
             accessToken: response.data.accessToken,
           },
         });

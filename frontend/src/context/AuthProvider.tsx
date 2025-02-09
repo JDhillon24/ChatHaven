@@ -5,6 +5,7 @@ interface AuthStateAuthenticated {
   user: {
     name: string;
     email: string;
+    profilePicture: string;
     accessToken: string;
   };
 }

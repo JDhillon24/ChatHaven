@@ -3,6 +3,7 @@ import { IoSend } from "react-icons/io5";
 import { useEffect, useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { PiListDashesBold } from "react-icons/pi";
+import { useState } from "react";
 
 type ChatProps = {
   onBack: () => void;
@@ -12,6 +13,7 @@ type ChatProps = {
 
 const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive }) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     if (isActive) {

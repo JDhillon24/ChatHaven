@@ -74,46 +74,55 @@ router.post("/register", (req, res) => {
         if (result.length) {
           res.status(500).json({
             status: "FAILED",
-            message: "A user has already been registered with this email!",
+            message: "This email is already in use!",
           });
         } else {
           //Try to create new user
 
-          //password handling
-          const saltRounds = 10;
-          bcrypt
-            .hash(password, saltRounds)
-            .then((hashedPassword) => {
-              const newUser = new User({
-                name,
-                email,
-                password: hashedPassword,
-                dateOfBirth,
+          User.find({ name }).then((result) => {
+            if (result.length) {
+              res.status(500).json({
+                status: "FAILED",
+                message: "This username is already taken!",
               });
-
-              newUser
-                .save()
-                .then((result) => {
-                  res.json({
-                    status: "SUCCESS",
-                    message: "Registration Successful!",
-                    data: result,
+            } else {
+              //password handling
+              const saltRounds = 10;
+              bcrypt
+                .hash(password, saltRounds)
+                .then((hashedPassword) => {
+                  const newUser = new User({
+                    name,
+                    email,
+                    password: hashedPassword,
+                    dateOfBirth,
                   });
+
+                  newUser
+                    .save()
+                    .then((result) => {
+                      res.json({
+                        status: "SUCCESS",
+                        message: "Registration Successful!",
+                        data: result,
+                      });
+                    })
+                    .catch((err) => {
+                      console.err(err);
+                      res.json({
+                        status: "FAILED",
+                        message: "An error occurred while saving the user!",
+                      });
+                    });
                 })
                 .catch((err) => {
-                  console.err(err);
                   res.json({
                     status: "FAILED",
-                    message: "An error occurred while saving the user!",
+                    message: "An error occurred while hashing the password!",
                   });
                 });
-            })
-            .catch((err) => {
-              res.json({
-                status: "FAILED",
-                message: "An error occurred while hashing the password!",
-              });
-            });
+            }
+          });
         }
       })
       .catch((err) => {
@@ -149,7 +158,11 @@ router.post("/login", (req, res) => {
             .then((result) => {
               if (result) {
                 //password matches
-                const user = { name: data[0].name, email: data[0].email };
+                const user = {
+                  name: data[0].name,
+                  email: data[0].email,
+                  profilePicture: data[0].profilePicture,
+                };
 
                 const accessToken = generateAccessToken(user);
                 const refreshToken = jwt.sign(
@@ -165,6 +178,7 @@ router.post("/login", (req, res) => {
                   message: "Login successful!",
                   name: user.name,
                   email: user.email,
+                  profilePicture: user.profilePicture,
                   accessToken,
                 });
               } else {
@@ -208,8 +222,14 @@ router.post("/token", (req, res) => {
     const accessToken = generateAccessToken({
       name: user.name,
       email: user.email,
+      profilePicture: user.profilePicture,
     });
-    res.json({ accessToken, name: user.name, email: user.email });
+    res.json({
+      accessToken,
+      name: user.name,
+      email: user.email,
+      profilePicture: user.profilePicture,
+    });
   });
 });
 
