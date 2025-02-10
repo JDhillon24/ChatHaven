@@ -19,7 +19,7 @@ const Conversations: React.FC<ConversationProps> = ({ onSelect }) => {
           placeholder="Search Messages"
           className="w-full h-10 rounded-lg bg-gray-200 border-none placeholder:text-sm placeholder:text-center"
         />
-        <div className="mt-3 flex-1 max-h-[calc(100vh-160px)] overflow-y-auto ">
+        <div className="mt-3 flex-1 max-h-[calc(100vh-160px)] overflow-y-auto">
           {Array.from({ length: 20 }).map((_, index) => (
             <div
               key={index}

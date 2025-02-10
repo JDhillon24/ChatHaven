@@ -242,4 +242,32 @@ router.post("/logout", (req, res) => {
   res.sendStatus(204);
 });
 
+router.get("/friends", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.user.email }).populate(
+      "friends"
+    );
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    res.json(user.friends);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+});
+
+router.get("/search", authenticateToken, async (req, res) => {
+  try {
+    const users = await User.find({
+      name: { $regex: req.query.name, $options: "i", $ne: req.user.name },
+    }).select("name profilePicture");
+    res.json(users);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+});
+
 module.exports = router;
