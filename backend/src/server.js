@@ -19,6 +19,7 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("express").json;
 const urlEncoded = require("express").urlencoded({ extended: false });
 const UserRouter = require("./api/User");
+const NotificationRouter = require("./api/Notifications");
 // const routes = require("./routes");
 app.use(cookieParser());
 app.use(bodyParser());
@@ -47,6 +48,7 @@ io.on("connection", (socket) => {
 });
 
 app.use("/user", UserRouter);
+app.use("/notifications", NotificationRouter);
 
 // app.use(routes);
 
