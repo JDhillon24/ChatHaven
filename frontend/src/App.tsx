@@ -5,6 +5,7 @@ import "./App.css";
 import ScrollToTop from "./Components/ScrollToTop";
 import Login from "./Routes/Login";
 import Home from "./Routes/Home";
+import Register from "./Routes/Register";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           </Route>
         </Route>
         <Route path="/Login" element={<Login />} />
+        <Route path="/Register" element={<Register />} />
       </Routes>
     </Router>
   );

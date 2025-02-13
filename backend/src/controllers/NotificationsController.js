@@ -1,0 +1,194 @@
+require("dotenv");
+
+const { generateAccessToken } = require("../utils/auth");
+
+const User = require("./../models/User");
+const Chat = require("./../models/Chat");
+
+exports.retrieveNotifications = async (req, res) => {
+  try {
+    //check if user exists based on access token info, return error if not found
+    const user = await User.findOne({ email: req.user.email }).populate(
+      "notifications"
+    );
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    //send list of notifications as response
+    res.status(200).json(user.notifications);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+exports.sendFriendRequest = async (req, res) => {
+  try {
+    //get sender based on access token info, return error if not found
+    const sender = await User.findOne({ email: req.user.email });
+    const { receiverId } = req.body;
+
+    if (!sender)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    //validation checks
+    if (!receiverId)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "Missing receiver Id" });
+
+    if (sender.id === receiverId)
+      return res.status(400).json({
+        status: "FAIlED",
+        message: "You cannot send a friend request to yourself",
+      });
+
+    const receiver = await User.findById(receiverId);
+
+    if (!receiver)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    //check if they're already friends
+    if (receiver.friends.includes(sender.id))
+      return res.status(400).json({
+        status: "FAILED",
+        message: "You are already friends with this user",
+      });
+
+    //add notification to receiving user
+    receiver.notifications.push({
+      type: "friend_request",
+      sender: sender.id,
+    });
+
+    await receiver.save();
+
+    res.status(200).json({ status: "SUCCESS", message: "Friend request sent" });
+
+    //validation checks
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+exports.acceptFriendRequest = async (req, res) => {
+  //get receiving user based on access token info, return error if not found
+  const user = await User.findOne({ email: req.user.email });
+  const { senderId } = req.body;
+
+  if (!user)
+    return res
+      .status(404)
+      .json({ status: "FAILED", message: "User not found" });
+
+  //get sending user based on id, return error if not found
+  const sender = await User.findById(senderId);
+
+  if (!sender)
+    return res
+      .status(404)
+      .json({ status: "FAILED", message: "User not found" });
+
+  //add each other as friends
+  user.friends.push(senderId);
+  sender.friends.push(user.id);
+
+  //remove notification
+  user.notifications = user.notifications.filter(
+    (noti) =>
+      !(noti.type === "friend_request" && noti.sender.toString() === senderId)
+  );
+
+  await user.save();
+  await sender.save();
+
+  res
+    .status(200)
+    .json({ status: "SUCCESS", message: "Friend request accepted" });
+};
+
+exports.declineFriendRequest = async (req, res) => {
+  try {
+    //get receiving user based on access token info, return error if not found
+    const user = await User.findOne({ email: req.user.email });
+    const { senderId } = req.body;
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    //remove notification
+    user.notifications = user.notifications.filter(
+      (noti) =>
+        !(noti.type === "friend_request" && noti.sender.toString() === senderId)
+    );
+
+    await user.save();
+
+    res
+      .status(200)
+      .json({ status: "SUCCESS", message: "Friend request declined" });
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+exports.sendRoomInvite = async (req, res) => {
+  try {
+    //get sending user based on access token info, return error if not found
+    const sender = await User.findOne({ email: req.user.email });
+    const { receiverId, roomId } = req.body;
+
+    if (!sender)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    //get receiving user and room based on id, return error if not found
+    const receiver = await User.findById(receiverId);
+    const room = await Chat.findById(roomId);
+
+    if (!receiver)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    if (!room)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "Room not found" });
+
+    //check if receiving user is already in the room
+    if (room.participants.includes(receiverId))
+      return res.status(400).json({
+        status: "FAILED",
+        message: "This user is already a participant in this room",
+      });
+
+    //sending a notification to the receiving user, and adding them to the room
+    receiver.notifications.push({
+      type: "group_invite",
+      sender: sender.id,
+      room: roomId,
+    });
+
+    room.participants.push(receiverId);
+
+    await receiver.save();
+    await room.save();
+
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "User has been successfully invited into the room",
+    });
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};

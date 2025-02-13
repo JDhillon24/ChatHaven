@@ -10,6 +10,7 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 type Section = "conversations" | "chat" | "info";
 
 const Home = () => {
+  const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   // const [socket, setSocket] = useState<Socket | null>(null);
   const storageSection =
@@ -40,8 +41,9 @@ const Home = () => {
       });
       console.log(response.data);
     };
+    console.log(auth);
 
-    getData();
+    // getData();
   }, []);
 
   // useEffect(() => {

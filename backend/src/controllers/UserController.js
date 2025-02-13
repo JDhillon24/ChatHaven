@@ -7,33 +7,24 @@ const User = require("./../models/User");
 
 exports.registerAccount = async (req, res) => {
   try {
-    let { name, email, password, dateOfBirth } = req.body;
+    let { name, email, password } = req.body;
     name = name.trim();
     email = email.trim();
     password = password.trim();
-    dateOfBirth = dateOfBirth.trim();
 
     // Validation Checks
-    if (!name || !email || !password || !dateOfBirth) {
+    if (!name || !email || !password) {
       return res
         .status(400)
         .json({ status: "FAILED", message: "Empty input field(s)!" });
     }
-    if (!/^[a-zA-Z ]*$/.test(name)) {
-      return res
-        .status(400)
-        .json({ status: "FAILED", message: "Invalid name entered" });
-    }
+
     if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
       return res
         .status(400)
         .json({ status: "FAILED", message: "Invalid email entered" });
     }
-    if (!new Date(dateOfBirth).getTime()) {
-      return res
-        .status(400)
-        .json({ status: "FAILED", message: "Invalid DOB entered" });
-    }
+
     if (
       !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
         password
@@ -72,7 +63,6 @@ exports.registerAccount = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      dateOfBirth,
     });
 
     const savedUser = await newUser.save();
@@ -173,7 +163,7 @@ exports.grantToken = (req, res) => {
       email: user.email,
       profilePicture: user.profilePicture,
     });
-    res.json({
+    res.status(200).json({
       accessToken,
       name: user.name,
       email: user.email,
@@ -204,7 +194,7 @@ exports.retrieveFriends = async (req, res) => {
         .json({ status: "FAILED", message: "User not found" });
 
     //send list of friends as response
-    res.json(user.friends);
+    res.status(200).json(user.friends);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -216,7 +206,7 @@ exports.searchUser = async (req, res) => {
     const users = await User.find({
       name: { $regex: req.query.name, $options: "i", $ne: req.user.name },
     }).select("name profilePicture");
-    res.json(users);
+    res.status(200).json(users);
   } catch (error) {
     res.sendStatus(500);
   }
