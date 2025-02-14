@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import useAuth from "../hooks/useAuth";
+import { useLocation } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import Sidebar from "../Components/Sidebar";
 import Conversations from "../Components/Home/Conversations";
@@ -12,6 +13,13 @@ type Section = "conversations" | "chat" | "info";
 const Home = () => {
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    document.title = "Home | ChatHaven";
+  }, [location.pathname]);
+
   // const [socket, setSocket] = useState<Socket | null>(null);
   const storageSection =
     (localStorage.getItem("activeSection") as Section) || "conversations";

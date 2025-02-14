@@ -1,8 +1,15 @@
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import RegisterForm from "../Components/Register/RegisterForm";
 import Logo from "../Components/UI/Logo";
 import { Link } from "react-router-dom";
 
 const Register = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    document.title = "Register | ChatHaven";
+  }, [location.pathname]);
   return (
     <div className="w-full bg-slate-100">
       <div className="lg:w-1/3 w-full mx-auto flex flex-col justify-center bg-white m-2 rounded-2xl col-span-2">

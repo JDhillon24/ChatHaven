@@ -1,9 +1,15 @@
-import React from "react";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Logo from "../Components/UI/Logo";
 import { Link } from "react-router-dom";
 import LoginForm from "../Components/Login/LoginForm";
 
 const Login = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    document.title = "Login | ChatHaven";
+  }, [location.pathname]);
   return (
     <div className="w-full bg-slate-100">
       <div className="lg:w-1/3 w-full mx-auto flex flex-col justify-center bg-white m-2 rounded-2xl col-span-2">

@@ -5,6 +5,7 @@ import { LiaUserFriendsSolid } from "react-icons/lia";
 import { FC, useEffect, useState, useRef } from "react";
 import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   index: number;
@@ -16,6 +17,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const { auth } = useAuth();
+  const navigate = useNavigate();
 
   const signOut = async (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -47,7 +49,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
         </div>
         <div className="flex flex-col items-center gap-1 flex-1">
           <div
-            onClick={() => setActiveNavIndex(0)}
+            onClick={() => navigate("/Home")}
             className={`sidebar-icon ${
               activeNavIndex === 0 ? "bg-ChatBlue text-white" : ""
             }`}
@@ -55,7 +57,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
             <AiOutlineHome size={24} />
           </div>
           <div
-            onClick={() => setActiveNavIndex(1)}
+            onClick={() => navigate("/Friends")}
             className={`sidebar-icon ${
               activeNavIndex === 1 ? "bg-ChatBlue text-white" : ""
             }`}

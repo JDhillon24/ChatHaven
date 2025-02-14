@@ -50,7 +50,7 @@ const LoginForm = () => {
         navigate("/Home");
       } catch (error) {
         if (error instanceof AxiosError) {
-          if (error.response?.status === 500) {
+          if (error.response?.status === 401) {
             formik.setFieldError("password", "Incorrect password");
           }
         } else {
