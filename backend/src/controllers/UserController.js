@@ -200,6 +200,29 @@ exports.retrieveFriends = async (req, res) => {
   }
 };
 
+exports.searchFriends = async (req, res) => {
+  try {
+    //check if user exists based on access token info, return error if not found
+    const user = await User.findOne({ email: req.user.email }).populate(
+      "friends"
+    );
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    //filter friends list based on search query
+    const friends = user.friends.filter((friend) =>
+      friend.name.includes(req.query.name)
+    );
+
+    res.status(200).json(friends);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
 //searches for users excluding the logged in user and sends response containing results
 exports.searchUser = async (req, res) => {
   try {
