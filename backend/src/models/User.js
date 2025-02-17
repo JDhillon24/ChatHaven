@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema({
     {
       type: {
         type: String,
-        enum: ["friend_request", "group_invite"],
+        enum: ["friend_request", "group_invite", "accept_request"],
         required: true,
       },
       sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

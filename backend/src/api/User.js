@@ -29,10 +29,10 @@ router.post("/token", grantToken);
 router.post("/logout", logoutUser);
 
 //route for getting a list of logged in user's friends
-router.get("/friends", authenticateToken, retrieveFriends);
+// router.get("/friends", authenticateToken, retrieveFriends);
 
 //route for searching list of friends
-router.get("/searchfriends", authenticateToken, searchFriends);
+router.get("/friends", authenticateToken, searchFriends);
 
 //route for searching for users
 router.get("/search", authenticateToken, searchUser);

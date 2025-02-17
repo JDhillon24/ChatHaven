@@ -1,14 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoMdAdd } from "react-icons/io";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { RxCross1 } from "react-icons/rx";
+import SuccessModal from "../UI/SuccessModal";
 
 type FriendProps = {
   setAddFriends: () => void;
+  open: boolean;
+  onOpen: () => void;
 };
-const FriendsAdd: React.FC<FriendProps> = ({ setAddFriends }) => {
+
+type ResponseData = {
+  _id: string;
+  name: string;
+  profilePicture: string;
+};
+const FriendsAdd: React.FC<FriendProps> = ({ setAddFriends, open, onOpen }) => {
   const axiosPrivate = useAxiosPrivate();
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<ResponseData[]>([]);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const searchParam = search.trim();
+        const response = await axiosPrivate.get(
+          `/user/search?name=${searchParam}`
+        );
+        // console.log(response.data);
+        setData(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const delay = setTimeout(() => {
+      getData();
+    }, 200);
+
+    return () => clearTimeout(delay);
+  }, [search, open]);
   return (
     <div className="w-full">
       <div className="h-20 flex border-b-2 border-gray-200">
@@ -26,35 +57,48 @@ const FriendsAdd: React.FC<FriendProps> = ({ setAddFriends }) => {
         <div>
           <input
             type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search Users"
-            className="w-full h-10 rounded-lg bg-gray-200 border-none placeholder:text-sm placeholder:text-center"
+            className="w-full px-2 h-10 rounded-lg bg-gray-200 border-none placeholder:text-sm placeholder:text-center"
           />
         </div>
-        <div className="mt-3 w-full grid lg:grid-cols-3 grid-cols-1 gap-3 max-h-[calc(100vh-146px)] overflow-auto ">
-          {Array.from({ length: 40 }).map((_, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center hover:bg-gray-100 p-3 rounded-xl cursor-pointer shadow-lg"
-            >
-              <div className="flex items-center">
-                <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
-                  <img
-                    className="rounded-xl"
-                    src="/images/pfp/cool-anime-pfp-07.jpg"
-                    alt="Profile"
-                  />
-                </div>
-                <p className="ml-4 lg:text-lg text-md font-semibold">
-                  Roronoa Zoro
-                </p>
-              </div>
-              <div className="flex ">
-                <div className="h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-ChatBlue cursor-pointer hover:bg-gray-300">
-                  <IoMdAdd size={20} />
-                </div>
-              </div>
+        <div className="mt-3 w-full grid lg:grid-cols-3 grid-cols-1 gap-3 max-h-[calc(100vh-146px)] overflow-auto pb-3">
+          {data.length === 0 ? (
+            <div className="w-full lg:col-span-3 flex justify-center items-center">
+              <p className="text-lg text-gray-400 text-center">
+                Find and connect with friends to make chatting even better!
+              </p>
             </div>
-          ))}
+          ) : (
+            data.map((item) => (
+              <div
+                key={item._id}
+                className="flex justify-between items-center hover:bg-gray-100 p-3 rounded-xl cursor-pointer shadow-lg"
+              >
+                <div className="flex items-center">
+                  <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
+                    <img
+                      className="rounded-xl"
+                      src={item.profilePicture}
+                      alt="Profile"
+                    />
+                  </div>
+                  <p className="ml-4 lg:text-lg text-md font-semibold">
+                    {item.name}
+                  </p>
+                </div>
+                <div className="flex">
+                  <div
+                    onClick={onOpen}
+                    className="h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-ChatBlue cursor-pointer hover:bg-gray-300"
+                  >
+                    <IoMdAdd size={20} />
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

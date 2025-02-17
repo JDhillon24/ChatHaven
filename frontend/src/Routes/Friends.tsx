@@ -3,9 +3,11 @@ import { useLocation } from "react-router-dom";
 import Sidebar from "../Components/Sidebar";
 import FriendsMain from "../Components/Friends/FriendsMain";
 import FriendsAdd from "../Components/Friends/FriendsAdd";
-
+import SuccessModal from "../Components/UI/SuccessModal";
 const Friends = () => {
   const [addFriends, setAddFriends] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
+
   const location = useLocation();
   useEffect(() => {
     document.title = "Friends | ChatHaven";
@@ -15,12 +17,23 @@ const Friends = () => {
       <div className="flex z-10">
         <Sidebar index={1} />
       </div>
-      <div className="lg:ml-24 ml-18 flex-1 flex z-0">
+      <div className="md:ml-24 ml-18 flex-1 flex z-0">
         {addFriends ? (
-          <FriendsAdd setAddFriends={() => setAddFriends(false)} />
+          <FriendsAdd
+            open={openSuccess}
+            onOpen={() => setOpenSuccess(true)}
+            setAddFriends={() => setAddFriends(false)}
+          />
         ) : (
           <FriendsMain setAddFriends={() => setAddFriends(true)} />
         )}
+      </div>
+      <div className="z-20">
+        <SuccessModal
+          open={openSuccess}
+          onClose={() => setOpenSuccess(false)}
+          text="You have successfully sent a friend request!"
+        />
       </div>
     </div>
   );

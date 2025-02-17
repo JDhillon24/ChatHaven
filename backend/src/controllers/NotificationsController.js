@@ -99,6 +99,12 @@ exports.acceptFriendRequest = async (req, res) => {
   user.friends.push(senderId);
   sender.friends.push(user.id);
 
+  //send other user a notification that receiving user has accepted the request
+  sender.notifications.push({
+    type: "accept_request",
+    sender: user.id,
+  });
+
   //remove notification
   user.notifications = user.notifications.filter(
     (noti) =>

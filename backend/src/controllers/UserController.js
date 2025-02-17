@@ -181,24 +181,24 @@ exports.logoutUser = (req, res) => {
   res.sendStatus(204);
 };
 
-exports.retrieveFriends = async (req, res) => {
-  try {
-    //check if user exists based on access token info, return error if not found
-    const user = await User.findOne({ email: req.user.email }).populate(
-      "friends"
-    );
+// exports.retrieveFriends = async (req, res) => {
+//   try {
+//     //check if user exists based on access token info, return error if not found
+//     const user = await User.findOne({ email: req.user.email }).populate(
+//       "friends"
+//     );
 
-    if (!user)
-      return res
-        .status(404)
-        .json({ status: "FAILED", message: "User not found" });
+//     if (!user)
+//       return res
+//         .status(404)
+//         .json({ status: "FAILED", message: "User not found" });
 
-    //send list of friends as response
-    res.status(200).json(user.friends);
-  } catch (error) {
-    res.sendStatus(500);
-  }
-};
+//     //send list of friends as response
+//     res.status(200).json(user.friends);
+//   } catch (error) {
+//     res.sendStatus(500);
+//   }
+// };
 
 exports.searchFriends = async (req, res) => {
   try {
@@ -212,24 +212,52 @@ exports.searchFriends = async (req, res) => {
         .status(404)
         .json({ status: "FAILED", message: "User not found" });
 
-    //filter friends list based on search query
-    const friends = user.friends.filter((friend) =>
-      friend.name.includes(req.query.name)
-    );
+    //filter friends list based on search query if not empty
+    if (req.query.name !== "") {
+      const friends = user.friends.filter((friend) =>
+        friend.name.includes(req.query.name)
+      );
 
-    res.status(200).json(friends);
+      res.status(200).json(friends);
+    } else {
+      res.status(200).json(user.friends);
+    }
   } catch (error) {
     res.sendStatus(500);
   }
 };
 
-//searches for users excluding the logged in user and sends response containing results
+//searches for users excluding the logged in user and users who have been sent a request and/or are already friends, sends response containing results
 exports.searchUser = async (req, res) => {
   try {
+    //check if user exists based on access token info, return error if not found
+    const user = await User.findOne({ email: req.user.email });
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    if (req.query.name === "") {
+      return res.status(200).json([]);
+    }
+
     const users = await User.find({
       name: { $regex: req.query.name, $options: "i", $ne: req.user.name },
     }).select("name profilePicture");
-    res.status(200).json(users);
+
+    //filter out users that are in the logged in users friends list or users that have already received a friend request and return filtered list
+    const filteredUsers = users.filter(
+      (x) =>
+        !user.friends.includes(x.id) &&
+        !(
+          x.notifications &&
+          x.notifications.some(
+            (noti) => noti.type === "friend_request" && noti.sender === user.id
+          )
+        )
+    );
+    res.status(200).json(filteredUsers);
   } catch (error) {
     res.sendStatus(500);
   }
