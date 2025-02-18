@@ -65,7 +65,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
             <LiaUserFriendsSolid size={24} />
           </div>
           <div
-            onClick={() => setActiveNavIndex(2)}
+            onClick={() => navigate("/Notifications")}
             className={`sidebar-icon ${
               activeNavIndex === 2 ? "bg-ChatBlue text-white" : ""
             }`}

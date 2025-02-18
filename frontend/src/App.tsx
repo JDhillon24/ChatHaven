@@ -7,6 +7,7 @@ import Login from "./Routes/Login";
 import Home from "./Routes/Home";
 import Register from "./Routes/Register";
 import Friends from "./Routes/Friends";
+import Notifications from "./Routes/Notifications";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route element={<RequireAuth />}>
             <Route path="/Home" element={<Home />} />
             <Route path="/Friends" element={<Friends />} />
+            <Route path="/Notifications" element={<Notifications />} />
           </Route>
         </Route>
         <Route path="/Login" element={<Login />} />

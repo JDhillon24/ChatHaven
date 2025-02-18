@@ -40,6 +40,16 @@ const FriendsAdd: React.FC<FriendProps> = ({ setAddFriends, open, onOpen }) => {
 
     return () => clearTimeout(delay);
   }, [search, open]);
+
+  const handleAcceptRequest = async (friend_id: string): Promise<void> => {
+    try {
+      const response = await axiosPrivate.post(
+        "/notifications/acceptfriendrequest"
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div className="w-full">
       <div className="h-20 flex border-b-2 border-gray-200">
@@ -63,9 +73,9 @@ const FriendsAdd: React.FC<FriendProps> = ({ setAddFriends, open, onOpen }) => {
             className="w-full px-2 h-10 rounded-lg bg-gray-200 border-none placeholder:text-sm placeholder:text-center"
           />
         </div>
-        <div className="mt-3 w-full grid lg:grid-cols-3 grid-cols-1 gap-3 max-h-[calc(100vh-146px)] overflow-auto pb-3">
+        <div className="mt-3 w-full grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3 max-h-[calc(100vh-146px)] overflow-auto pb-3">
           {data.length === 0 ? (
-            <div className="w-full lg:col-span-3 flex justify-center items-center">
+            <div className="w-full lg:col-span-3 md:col-span-2 flex justify-center items-center">
               <p className="text-lg text-gray-400 text-center">
                 Find and connect with friends to make chatting even better!
               </p>

@@ -8,9 +8,9 @@ const Chat = require("./../models/Chat");
 exports.retrieveNotifications = async (req, res) => {
   try {
     //check if user exists based on access token info, return error if not found
-    const user = await User.findOne({ email: req.user.email }).populate(
-      "notifications"
-    );
+    const user = await User.findOne({ email: req.user.email })
+      .populate("notifications.sender", "name profilePicture")
+      .populate("notifications.room", "name");
 
     if (!user)
       return res
