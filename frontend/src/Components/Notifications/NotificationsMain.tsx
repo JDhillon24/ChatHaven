@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { RxCross1 } from "react-icons/rx";
 import { FaCheck } from "react-icons/fa";
@@ -25,6 +25,20 @@ function isResponseDataGroup(
 const NotificationsMain = () => {
   const axiosPrivate = useAxiosPrivate();
   const [data, setData] = useState<(ResponseData | ResponseDataGroup)[]>([]);
+
+  useEffect(() => {
+    try {
+      const getData = async () => {
+        const response = await axiosPrivate.get("/notifications/getall");
+        // console.log(response.data);
+        setData(response.data);
+      };
+
+      getData();
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
   return (
     <div className="w-full">
       <div className="h-20 flex border-b-2 border-gray-200">

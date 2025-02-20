@@ -41,11 +41,12 @@ const FriendsAdd: React.FC<FriendProps> = ({ setAddFriends, open, onOpen }) => {
     return () => clearTimeout(delay);
   }, [search, open]);
 
-  const handleAcceptRequest = async (friend_id: string): Promise<void> => {
+  const handleSendRequest = async (friend_id: string): Promise<void> => {
     try {
       const response = await axiosPrivate.post(
-        "/notifications/acceptfriendrequest"
+        "/notifications/sendfriendrequest"
       );
+      onOpen();
     } catch (error) {
       console.error(error);
     }

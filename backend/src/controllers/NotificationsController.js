@@ -1,6 +1,7 @@
 require("dotenv");
 
 const { generateAccessToken } = require("../utils/auth");
+const { sendNotification } = require("../server");
 
 const User = require("./../models/User");
 const Chat = require("./../models/Chat");
@@ -62,12 +63,17 @@ exports.sendFriendRequest = async (req, res) => {
       });
 
     //add notification to receiving user
-    receiver.notifications.push({
+
+    const notification = {
       type: "friend_request",
       sender: sender.id,
-    });
+    };
+    receiver.notifications.push(notification);
 
     await receiver.save();
+
+    //notify the user in real time
+    sendNotification(receiver.email, notification);
 
     res.status(200).json({ status: "SUCCESS", message: "Friend request sent" });
 
@@ -100,10 +106,11 @@ exports.acceptFriendRequest = async (req, res) => {
   sender.friends.push(user.id);
 
   //send other user a notification that receiving user has accepted the request
-  sender.notifications.push({
+  const notification = {
     type: "accept_request",
     sender: user.id,
-  });
+  };
+  sender.notifications.push(notification);
 
   //remove notification
   user.notifications = user.notifications.filter(
@@ -113,6 +120,8 @@ exports.acceptFriendRequest = async (req, res) => {
 
   await user.save();
   await sender.save();
+
+  sendNotification(sender.email, notification);
 
   res
     .status(200)

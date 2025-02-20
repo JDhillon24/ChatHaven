@@ -8,6 +8,7 @@ import Home from "./Routes/Home";
 import Register from "./Routes/Register";
 import Friends from "./Routes/Friends";
 import Notifications from "./Routes/Notifications";
+import SocketWrapper from "./Components/SocketWrapper";
 
 function App() {
   return (
@@ -16,9 +17,11 @@ function App() {
       <Routes>
         <Route element={<PersistLogin />}>
           <Route element={<RequireAuth />}>
-            <Route path="/Home" element={<Home />} />
-            <Route path="/Friends" element={<Friends />} />
-            <Route path="/Notifications" element={<Notifications />} />
+            <Route element={<SocketWrapper />}>
+              <Route path="/Home" element={<Home />} />
+              <Route path="/Friends" element={<Friends />} />
+              <Route path="/Notifications" element={<Notifications />} />
+            </Route>
           </Route>
         </Route>
         <Route path="/Login" element={<Login />} />
