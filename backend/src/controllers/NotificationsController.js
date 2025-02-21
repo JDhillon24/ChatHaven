@@ -1,7 +1,7 @@
 require("dotenv");
 
 const { generateAccessToken } = require("../utils/auth");
-const { sendNotification } = require("../server");
+const { sendNotification } = require("../utils/notificationUtils");
 
 const User = require("./../models/User");
 const Chat = require("./../models/Chat");
@@ -28,7 +28,9 @@ exports.retrieveNotifications = async (req, res) => {
 exports.sendFriendRequest = async (req, res) => {
   try {
     //get sender based on access token info, return error if not found
-    const sender = await User.findOne({ email: req.user.email });
+    const sender = await User.findOne({ email: req.user.email }).select(
+      "name profilePicture"
+    );
     const { receiverId } = req.body;
 
     if (!sender)
@@ -72,13 +74,22 @@ exports.sendFriendRequest = async (req, res) => {
 
     await receiver.save();
 
+    //prepare notification for sending through socket
+    const socketNotification = {
+      type: "friend_request",
+      sender: sender,
+      room: null,
+      createdAt: new Date(Date.now()).toISOString(),
+    };
+
     //notify the user in real time
-    sendNotification(receiver.email, notification);
+    sendNotification(receiver.email, socketNotification);
 
     res.status(200).json({ status: "SUCCESS", message: "Friend request sent" });
 
     //validation checks
   } catch (error) {
+    console.log(error);
     res.sendStatus(500);
   }
 };

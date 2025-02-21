@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { RxCross1 } from "react-icons/rx";
 import { FaCheck } from "react-icons/fa";
+import useSocket from "../../hooks/useSocket";
 
 type ResponseData = {
   type: "friend_request" | "accept_request";
@@ -19,18 +20,19 @@ type ResponseDataGroup = {
 function isResponseDataGroup(
   data: ResponseData | ResponseDataGroup
 ): data is ResponseDataGroup {
-  return (data as ResponseDataGroup).room !== undefined;
+  return (data as ResponseDataGroup).room !== null;
 }
 
 const NotificationsMain = () => {
   const axiosPrivate = useAxiosPrivate();
   const [data, setData] = useState<(ResponseData | ResponseDataGroup)[]>([]);
+  const { socket, isConnected } = useSocket();
 
   useEffect(() => {
     try {
       const getData = async () => {
         const response = await axiosPrivate.get("/notifications/getall");
-        // console.log(response.data);
+        console.log(response.data);
         setData(response.data);
       };
 
@@ -39,6 +41,39 @@ const NotificationsMain = () => {
       console.error(error);
     }
   }, []);
+
+  useEffect(() => {
+    if (!socket || isConnected === false) return;
+
+    socket.on("notification", (notification) => {
+      setData((prev) => [notification, ...prev]);
+      console.log(notification);
+    });
+
+    return () => {
+      socket.off("notification");
+    };
+  }, [socket]);
+
+  const handleDeclineRequest = async (friend_id: string): Promise<void> => {
+    try {
+      const response = await axiosPrivate.post(
+        "/notifications/declinefriendrequest",
+        JSON.stringify({
+          senderId: friend_id,
+        })
+      );
+
+      setData((prev) =>
+        prev.filter(
+          (noti) =>
+            !(noti.type === "friend_request" && noti.sender._id === friend_id)
+        )
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div className="w-full">
       <div className="h-20 flex border-b-2 border-gray-200">
@@ -58,6 +93,7 @@ const NotificationsMain = () => {
               </p>
             </div>
           ) : (
+            data &&
             data.map((item, index) =>
               isResponseDataGroup(item) ? (
                 <div
@@ -74,7 +110,7 @@ const NotificationsMain = () => {
                     </div>
                     <p className="ml-4 lg:text-lg text-xs font-semibold">
                       {item.sender.name} has added you to{" "}
-                      <b>{item.room.name}</b>
+                      <b>{item.room?.name}</b>
                     </p>
                   </div>
                 </div>
@@ -99,7 +135,10 @@ const NotificationsMain = () => {
                     <div className="h-8 w-8 rounded-full bg-green-500 flex justify-center items-center text-white cursor-pointer hover:bg-green-400">
                       <FaCheck size={16} />
                     </div>
-                    <div className="h-8 w-8 rounded-full bg-red-500 flex justify-center items-center text-white cursor-pointer hover:bg-red-400">
+                    <div
+                      onClick={() => handleDeclineRequest(item.sender._id)}
+                      className="h-8 w-8 rounded-full bg-red-500 flex justify-center items-center text-white cursor-pointer hover:bg-red-400"
+                    >
                       <RxCross1 size={20} />
                     </div>
                   </div>

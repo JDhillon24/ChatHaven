@@ -44,7 +44,10 @@ const FriendsAdd: React.FC<FriendProps> = ({ setAddFriends, open, onOpen }) => {
   const handleSendRequest = async (friend_id: string): Promise<void> => {
     try {
       const response = await axiosPrivate.post(
-        "/notifications/sendfriendrequest"
+        "/notifications/sendfriendrequest",
+        JSON.stringify({
+          receiverId: friend_id,
+        })
       );
       onOpen();
     } catch (error) {
@@ -101,7 +104,7 @@ const FriendsAdd: React.FC<FriendProps> = ({ setAddFriends, open, onOpen }) => {
                 </div>
                 <div className="flex">
                   <div
-                    onClick={onOpen}
+                    onClick={() => handleSendRequest(item._id)}
                     className="h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-ChatBlue cursor-pointer hover:bg-gray-300"
                   >
                     <IoMdAdd size={20} />
