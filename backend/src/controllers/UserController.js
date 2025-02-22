@@ -246,17 +246,8 @@ exports.searchUser = async (req, res) => {
       name: { $regex: req.query.name, $options: "i", $ne: req.user.name },
     }).select("name profilePicture");
 
-    //filter out users that are in the logged in users friends list or users that have already received a friend request and return filtered list
-    const filteredUsers = users.filter(
-      (x) =>
-        !user.friends.includes(x.id) &&
-        !(
-          x.notifications &&
-          x.notifications.some(
-            (noti) => noti.type === "friend_request" && noti.sender === user.id
-          )
-        )
-    );
+    //filter out users that are in the logged in users friends list and return filtered list
+    const filteredUsers = users.filter((x) => !user.friends.includes(x.id));
     res.status(200).json(filteredUsers);
   } catch (error) {
     res.sendStatus(500);

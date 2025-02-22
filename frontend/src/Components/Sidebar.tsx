@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { SocketContext } from "../context/SocketProvider";
 import { AiOutlineHome } from "react-icons/ai";
 import { CiSettings } from "react-icons/ci";
 import { IoMdNotificationsOutline } from "react-icons/io";
@@ -6,6 +8,8 @@ import { FC, useEffect, useState, useRef } from "react";
 import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
 import { useNavigate } from "react-router-dom";
+import { FaCircle } from "react-icons/fa";
+import useSocket from "../hooks/useSocket";
 
 interface SidebarProps {
   index: number;
@@ -14,10 +18,18 @@ interface SidebarProps {
 const Sidebar: FC<SidebarProps> = ({ index }) => {
   const logout = useLogout();
   const [activeNavIndex, setActiveNavIndex] = useState(index);
+
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const { auth } = useAuth();
   const navigate = useNavigate();
+  const socketContext = useContext(SocketContext);
+
+  if (!socketContext) {
+    throw new Error("SocketContext must be used within a provider!");
+  }
+
+  const { hasNewNotification, setHasNewNotification } = socketContext;
 
   const signOut = async (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -35,6 +47,13 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (activeNavIndex === 2) {
+      setHasNewNotification(false);
+      localStorage.setItem("newNotification", "false");
+    }
+  }, [activeNavIndex]);
+
   return (
     <div className="md:w-24 w-18 fixed top-0 left-0 h-screen bg-white shadow-lg flex flex-col">
       <div className="h-screen flex flex-col items-center mt-2 gap-8 ">
@@ -50,27 +69,36 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
         <div className="flex flex-col items-center gap-1 flex-1">
           <div
             onClick={() => navigate("/Home")}
-            className={`sidebar-icon ${
-              activeNavIndex === 0 ? "bg-ChatBlue text-white" : ""
+            className={`sidebar-icon hover:bg-ChatBlueLight ${
+              activeNavIndex === 0 ? "bg-ChatBlue text-white" : "bg-gray-200"
             }`}
           >
             <AiOutlineHome size={24} />
           </div>
           <div
             onClick={() => navigate("/Friends")}
-            className={`sidebar-icon ${
-              activeNavIndex === 1 ? "bg-ChatBlue text-white" : ""
+            className={`sidebar-icon hover:bg-ChatBlueLight ${
+              activeNavIndex === 1 ? "bg-ChatBlue text-white" : "bg-gray-200"
             }`}
           >
             <LiaUserFriendsSolid size={24} />
           </div>
-          <div
-            onClick={() => navigate("/Notifications")}
-            className={`sidebar-icon ${
-              activeNavIndex === 2 ? "bg-ChatBlue text-white" : ""
-            }`}
-          >
-            <IoMdNotificationsOutline size={24} />
+          <div className="relative">
+            <div
+              className={`absolute top-1 right-0 z-10 text-red-500 ${
+                hasNewNotification ? "" : "hidden"
+              }`}
+            >
+              <FaCircle />
+            </div>
+            <div
+              onClick={() => navigate("/Notifications")}
+              className={`sidebar-icon z-0 hover:bg-ChatBlueLight  ${
+                activeNavIndex === 2 ? "bg-ChatBlue text-white" : "bg-gray-200"
+              }`}
+            >
+              <IoMdNotificationsOutline size={24} />
+            </div>
           </div>
         </div>
         <div className="relative">

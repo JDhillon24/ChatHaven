@@ -64,6 +64,27 @@ exports.sendFriendRequest = async (req, res) => {
         message: "You are already friends with this user",
       });
 
+    if (
+      receiver.notifications.some(
+        (noti) =>
+          noti.type === "friend_request" && noti.sender.toString() === sender.id
+      )
+    ) {
+      return res.status(400).json({
+        status: "FAILED",
+        message: "You have already sent a request to this user",
+      });
+    }
+
+    // console.log(
+    //   `is this true?: ${receiver.notifications.some(
+    //     (noti) =>
+    //       noti.type === "friend_request" && noti.sender.toString() === sender.id
+    //   )}`
+    // );
+
+    // console.log(receiver.notifications);
+
     //add notification to receiving user
 
     const notification = {
@@ -105,7 +126,7 @@ exports.acceptFriendRequest = async (req, res) => {
       .json({ status: "FAILED", message: "User not found" });
 
   //get sending user based on id, return error if not found
-  const sender = await User.findById(senderId);
+  const sender = await User.findById(senderId).select("name profilePicture");
 
   if (!sender)
     return res
@@ -132,7 +153,14 @@ exports.acceptFriendRequest = async (req, res) => {
   await user.save();
   await sender.save();
 
-  sendNotification(sender.email, notification);
+  const socketNotification = {
+    type: "accept_request",
+    sender: sender,
+    room: null,
+    createdAt: new Date(Date.now()).toISOString(),
+  };
+
+  sendNotification(sender.email, socketNotification);
 
   res
     .status(200)

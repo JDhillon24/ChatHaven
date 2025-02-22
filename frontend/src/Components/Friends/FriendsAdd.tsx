@@ -1,13 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { IoMdAdd } from "react-icons/io";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { RxCross1 } from "react-icons/rx";
 import SuccessModal from "../UI/SuccessModal";
+import { AxiosError } from "axios";
 
 type FriendProps = {
   setAddFriends: () => void;
   open: boolean;
   onOpen: () => void;
+  onErrorOpen: () => void;
+  setErrorText: Dispatch<SetStateAction<string>>;
 };
 
 type ResponseData = {
@@ -15,7 +18,13 @@ type ResponseData = {
   name: string;
   profilePicture: string;
 };
-const FriendsAdd: React.FC<FriendProps> = ({ setAddFriends, open, onOpen }) => {
+const FriendsAdd: React.FC<FriendProps> = ({
+  setAddFriends,
+  open,
+  onOpen,
+  onErrorOpen,
+  setErrorText,
+}) => {
   const axiosPrivate = useAxiosPrivate();
   const [data, setData] = useState<ResponseData[]>([]);
   const [search, setSearch] = useState("");
@@ -52,6 +61,11 @@ const FriendsAdd: React.FC<FriendProps> = ({ setAddFriends, open, onOpen }) => {
       onOpen();
     } catch (error) {
       console.error(error);
+
+      if (error instanceof AxiosError) {
+        setErrorText(error.response?.data.message);
+        onErrorOpen();
+      }
     }
   };
   return (

@@ -4,9 +4,12 @@ import Sidebar from "../Components/Sidebar";
 import FriendsMain from "../Components/Friends/FriendsMain";
 import FriendsAdd from "../Components/Friends/FriendsAdd";
 import SuccessModal from "../Components/UI/SuccessModal";
+import ErrorModal from "../Components/UI/ErrorModal";
 const Friends = () => {
   const [addFriends, setAddFriends] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const [errorText, setErrorText] = useState("");
 
   const location = useLocation();
   useEffect(() => {
@@ -23,6 +26,8 @@ const Friends = () => {
             open={openSuccess}
             onOpen={() => setOpenSuccess(true)}
             setAddFriends={() => setAddFriends(false)}
+            onErrorOpen={() => setOpenError(true)}
+            setErrorText={setErrorText}
           />
         ) : (
           <FriendsMain setAddFriends={() => setAddFriends(true)} />
@@ -33,6 +38,13 @@ const Friends = () => {
           open={openSuccess}
           onClose={() => setOpenSuccess(false)}
           text="You have successfully sent a friend request!"
+        />
+      </div>
+      <div className="z-20">
+        <ErrorModal
+          open={openError}
+          onClose={() => setOpenError(false)}
+          text={errorText}
         />
       </div>
     </div>

@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { RxCross1 } from "react-icons/rx";
 import { FaCheck } from "react-icons/fa";
 import useSocket from "../../hooks/useSocket";
+import { SocketContext } from "../../context/SocketProvider";
 
 type ResponseData = {
   type: "friend_request" | "accept_request";
@@ -26,14 +27,20 @@ function isResponseDataGroup(
 const NotificationsMain = () => {
   const axiosPrivate = useAxiosPrivate();
   const [data, setData] = useState<(ResponseData | ResponseDataGroup)[]>([]);
-  const { socket, isConnected } = useSocket();
+  const socketContext = useContext(SocketContext);
+
+  if (!socketContext) {
+    throw new Error("SocketContext must be used within a provider!");
+  }
+
+  const { notifications, setNotifications } = socketContext;
 
   useEffect(() => {
     try {
       const getData = async () => {
         const response = await axiosPrivate.get("/notifications/getall");
         console.log(response.data);
-        setData(response.data);
+        setNotifications(response.data);
       };
 
       getData();
@@ -41,19 +48,6 @@ const NotificationsMain = () => {
       console.error(error);
     }
   }, []);
-
-  useEffect(() => {
-    if (!socket || isConnected === false) return;
-
-    socket.on("notification", (notification) => {
-      setData((prev) => [notification, ...prev]);
-      console.log(notification);
-    });
-
-    return () => {
-      socket.off("notification");
-    };
-  }, [socket]);
 
   const handleDeclineRequest = async (friend_id: string): Promise<void> => {
     try {
@@ -64,7 +58,27 @@ const NotificationsMain = () => {
         })
       );
 
-      setData((prev) =>
+      setNotifications((prev) =>
+        prev.filter(
+          (noti) =>
+            !(noti.type === "friend_request" && noti.sender._id === friend_id)
+        )
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleAcceptRequest = async (friend_id: string): Promise<void> => {
+    try {
+      const response = await axiosPrivate.post(
+        "/notifications/acceptfriendrequest",
+        JSON.stringify({
+          senderId: friend_id,
+        })
+      );
+
+      setNotifications((prev) =>
         prev.filter(
           (noti) =>
             !(noti.type === "friend_request" && noti.sender._id === friend_id)
@@ -86,7 +100,7 @@ const NotificationsMain = () => {
       </div>
       <div className="mt-3 px-4 lg:w-2/3 w-full mx-auto">
         <div className="mt-3 w-full max-h-[calc(100vh-146px)] overflow-auto pb-3">
-          {data.length === 0 ? (
+          {notifications.length === 0 ? (
             <div className="w-full flex justify-center items-center">
               <p className="text-lg text-gray-400 text-center">
                 No Notifications
@@ -94,7 +108,7 @@ const NotificationsMain = () => {
             </div>
           ) : (
             data &&
-            data.map((item, index) =>
+            notifications.map((item, index) =>
               isResponseDataGroup(item) ? (
                 <div
                   key={index}
@@ -132,7 +146,10 @@ const NotificationsMain = () => {
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    <div className="h-8 w-8 rounded-full bg-green-500 flex justify-center items-center text-white cursor-pointer hover:bg-green-400">
+                    <div
+                      onClick={() => handleAcceptRequest(item.sender._id)}
+                      className="h-8 w-8 rounded-full bg-green-500 flex justify-center items-center text-white cursor-pointer hover:bg-green-400"
+                    >
                       <FaCheck size={16} />
                     </div>
                     <div
