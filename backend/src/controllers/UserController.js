@@ -254,6 +254,51 @@ exports.searchUser = async (req, res) => {
   }
 };
 
+//function to remove friend from list
+exports.removeFriend = async (req, res) => {
+  try {
+    //check if user exists based on access token info, return error if not found
+    const user = await User.findOne({ email: req.user.email });
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    const { friendId } = req.query;
+
+    //find former friend by id and check if exists
+    const friend = await User.findById(friendId);
+
+    if (!friend)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "Friend not found" });
+
+    if (!user.friends.includes(friend.id))
+      return res.status(404).json({
+        status: "FAILED",
+        message: "You are not friends with this user",
+      });
+
+    //filter out each other from friends lists
+    user.friends = user.friends.filter((fr) => fr.toString() !== friend.id);
+    friend.friends = friend.friends.filter((fr) => fr.toString() !== user.id);
+    // console.log(user.friends[0].toString());
+    // console.log(friend.id);
+
+    await user.save();
+    await friend.save();
+
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "You have successfully removed this friend!",
+    });
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
 exports.changeProfilePicture = async (req, res) => {
   try {
     //finding user based on access token info and updating profile picture

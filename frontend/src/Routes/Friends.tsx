@@ -5,11 +5,38 @@ import FriendsMain from "../Components/Friends/FriendsMain";
 import FriendsAdd from "../Components/Friends/FriendsAdd";
 import SuccessModal from "../Components/UI/SuccessModal";
 import ErrorModal from "../Components/UI/ErrorModal";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import ConfirmationModal from "../Components/UI/ConfirmationModal";
+
 const Friends = () => {
   const [addFriends, setAddFriends] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openError, setOpenError] = useState(false);
   const [errorText, setErrorText] = useState("");
+  const [successText, setSuccessText] = useState("");
+  const axiosPrivate = useAxiosPrivate();
+
+  const [openConfirmation, setOpenConfirmation] = useState(false);
+  const [toRemove, setToRemove] = useState("");
+
+  const handleRemoveClick = (friend: string) => {
+    setToRemove(friend);
+    setOpenConfirmation(true);
+  };
+
+  const handleRemove = async (friend: string) => {
+    try {
+      const response = await axiosPrivate.delete(
+        `/user/removefriend?friendId=${friend}`
+      );
+
+      setOpenConfirmation(false);
+      setSuccessText(response.data.message);
+      setOpenSuccess(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const location = useLocation();
   useEffect(() => {
@@ -28,16 +55,21 @@ const Friends = () => {
             setAddFriends={() => setAddFriends(false)}
             onErrorOpen={() => setOpenError(true)}
             setErrorText={setErrorText}
+            setSuccessText={setSuccessText}
           />
         ) : (
-          <FriendsMain setAddFriends={() => setAddFriends(true)} />
+          <FriendsMain
+            open={openSuccess}
+            setAddFriends={() => setAddFriends(true)}
+            handleRemoveClick={handleRemoveClick}
+          />
         )}
       </div>
       <div className="z-20">
         <SuccessModal
           open={openSuccess}
           onClose={() => setOpenSuccess(false)}
-          text="You have successfully sent a friend request!"
+          text={successText}
         />
       </div>
       <div className="z-20">
@@ -45,6 +77,14 @@ const Friends = () => {
           open={openError}
           onClose={() => setOpenError(false)}
           text={errorText}
+        />
+      </div>
+      <div className="z-20">
+        <ConfirmationModal
+          open={openConfirmation}
+          onClose={() => setOpenConfirmation(false)}
+          onChange={() => handleRemove(toRemove)}
+          text="Are you sure you want to remove this user as a friend?"
         />
       </div>
     </div>

@@ -18,8 +18,14 @@ exports.retrieveNotifications = async (req, res) => {
         .status(404)
         .json({ status: "FAILED", message: "User not found" });
 
-    //send list of notifications as response
-    res.status(200).json(user.notifications);
+    //send list of notifications as response newest first
+    res
+      .status(200)
+      .json(
+        user.notifications.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        )
+      );
   } catch (error) {
     res.sendStatus(500);
   }
@@ -85,6 +91,9 @@ exports.sendFriendRequest = async (req, res) => {
 
     // console.log(receiver.notifications);
 
+    //check if notifications array is undefined, if so initialize empty array
+    if (!receiver.notifications) receiver.notifications = [];
+
     //add notification to receiving user
 
     const notification = {
@@ -126,16 +135,25 @@ exports.acceptFriendRequest = async (req, res) => {
       .json({ status: "FAILED", message: "User not found" });
 
   //get sending user based on id, return error if not found
-  const sender = await User.findById(senderId).select("name profilePicture");
+  const sender = await User.findById(senderId).select(
+    "name email notifications profilePicture"
+  );
 
   if (!sender)
     return res
       .status(404)
       .json({ status: "FAILED", message: "User not found" });
 
+  //initialize friend arrays for users if they're undefined
+  if (!user.friends) user.friends = [];
+  if (!sender.friends) sender.friends = [];
+
   //add each other as friends
-  user.friends.push(senderId);
-  sender.friends.push(user.id);
+  user.friends.push(sender._id);
+  sender.friends.push(user._id);
+
+  //check if notifications array is undefined, if so initialize empty array
+  if (!sender.notifications) sender.notifications = [];
 
   //send other user a notification that receiving user has accepted the request
   const notification = {
@@ -225,6 +243,9 @@ exports.sendRoomInvite = async (req, res) => {
         status: "FAILED",
         message: "This user is already a participant in this room",
       });
+
+    //check if notifications array is undefined, if so initialize empty array
+    if (!receiver.notifications) receiver.notifications = [];
 
     //sending a notification to the receiving user, and adding them to the room
     receiver.notifications.push({

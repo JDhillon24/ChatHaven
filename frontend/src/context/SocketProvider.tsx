@@ -45,6 +45,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!socket || isConnected === false) return;
 
     socket.on("notification", (notification) => {
+      console.log(notification);
       if (location.pathname !== "/Notifications") {
         setHasNewNotification(true);
         localStorage.setItem("newNotification", "true");

@@ -11,6 +11,7 @@ type FriendProps = {
   onOpen: () => void;
   onErrorOpen: () => void;
   setErrorText: Dispatch<SetStateAction<string>>;
+  setSuccessText: Dispatch<SetStateAction<string>>;
 };
 
 type ResponseData = {
@@ -24,6 +25,7 @@ const FriendsAdd: React.FC<FriendProps> = ({
   onOpen,
   onErrorOpen,
   setErrorText,
+  setSuccessText,
 }) => {
   const axiosPrivate = useAxiosPrivate();
   const [data, setData] = useState<ResponseData[]>([]);
@@ -58,6 +60,7 @@ const FriendsAdd: React.FC<FriendProps> = ({
           receiverId: friend_id,
         })
       );
+      setSuccessText("You have successfully sent a friend request!");
       onOpen();
     } catch (error) {
       console.error(error);

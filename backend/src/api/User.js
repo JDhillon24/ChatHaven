@@ -14,6 +14,7 @@ const {
   searchFriends,
   searchUser,
   changeProfilePicture,
+  removeFriend,
 } = require("../controllers/UserController");
 
 //route for creating a new user
@@ -38,6 +39,9 @@ router.get("/friends", authenticateToken, searchFriends);
 router.get("/search", authenticateToken, searchUser);
 
 //route for changing profile picture
-router.post("/profilepicture", authenticateToken, changeProfilePicture);
+router.put("/profilepicture", authenticateToken, changeProfilePicture);
+
+//route for removing a friend
+router.delete("/removefriend", authenticateToken, removeFriend);
 
 module.exports = router;

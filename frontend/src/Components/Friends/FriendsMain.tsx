@@ -6,6 +6,8 @@ import { RxCross1 } from "react-icons/rx";
 
 type MainProps = {
   setAddFriends: () => void;
+  handleRemoveClick: (friend: string) => void;
+  open: boolean;
 };
 
 type ResponseData = {
@@ -14,7 +16,11 @@ type ResponseData = {
   profilePicture: string;
 };
 
-const FriendsMain: React.FC<MainProps> = ({ setAddFriends }) => {
+const FriendsMain: React.FC<MainProps> = ({
+  setAddFriends,
+  handleRemoveClick,
+  open,
+}) => {
   const axiosPrivate = useAxiosPrivate();
   const [data, setData] = useState<ResponseData[]>([]);
   const [search, setSearch] = useState("");
@@ -38,7 +44,7 @@ const FriendsMain: React.FC<MainProps> = ({ setAddFriends }) => {
     }, 200);
 
     return () => clearTimeout(delay);
-  }, [search]);
+  }, [search, open]);
 
   return (
     <div className="w-full">
@@ -92,7 +98,10 @@ const FriendsMain: React.FC<MainProps> = ({ setAddFriends }) => {
                   <div className="h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-ChatBlue cursor-pointer hover:bg-gray-300">
                     <FaMessage size={16} />
                   </div>
-                  <div className="h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-red-500 cursor-pointer hover:bg-gray-300">
+                  <div
+                    onClick={() => handleRemoveClick(item._id)}
+                    className="h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-red-500 cursor-pointer hover:bg-gray-300"
+                  >
                     <RxCross1 size={20} />
                   </div>
                 </div>
