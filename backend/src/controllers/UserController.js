@@ -149,6 +149,94 @@ exports.loginUser = async (req, res) => {
   }
 };
 
+exports.updatePassword = async (req, res) => {
+  try {
+    //get user based on access token info, return error if not found
+    const user = await User.findOne({ email: req.user.email });
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    //check if inputted password matches with db
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res
+        .status(400)
+        .json({ status: "FAILED", message: "Current password is incorrect" });
+    }
+
+    //check if new password is "strong"
+    if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+        newPassword
+      )
+    ) {
+      return res.status(400).json({
+        status: "FAILED",
+        message:
+          "Invalid password! Must include uppercase, lowercase, number, and symbol.",
+      });
+    }
+
+    //check if new password and confirmation match
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        status: "FAILED",
+        message: "Password do not match",
+      });
+    }
+
+    //hash new password and save to db
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    user.password = hashedPassword;
+
+    return res.status(200).json({
+      status: "SUCCESS",
+      message: "Password has been successfully updated!",
+    });
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+exports.changeUserName = async (req, res) => {
+  try {
+    //get user based on access token info, return error if not found
+    const user = await User.findOne({ email: req.user.email });
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    const { newName } = req.body;
+
+    //check if username is taken
+    const existingUsername = await User.findOne({ name: newName });
+    if (existingUsername) {
+      return res.status(409).json({
+        status: "FAILED",
+        message: "This username is already taken!",
+      });
+    }
+
+    //set user's name to new name and save to db
+    user.name = newName;
+    await user.save();
+
+    return res.status(200).json({
+      status: "SUCCESS",
+      message: "Username has been successfully changed",
+    });
+  } catch (error) {}
+};
+
 exports.grantToken = (req, res) => {
   // get refresh token from cookies, return if not found
   const { refreshToken } = req.cookies;

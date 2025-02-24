@@ -10,6 +10,7 @@ const {
   acceptFriendRequest,
   declineFriendRequest,
   sendRoomInvite,
+  clearNotifications,
 } = require("../controllers/NotificationsController");
 
 //route for retrieving logged in user notifications
@@ -25,6 +26,9 @@ router.post("/acceptfriendrequest", authenticateToken, acceptFriendRequest);
 router.post("/declinefriendrequest", authenticateToken, declineFriendRequest);
 
 //route for sending a room invite
-router.post("roominvite", authenticateToken, sendRoomInvite);
+router.post("/roominvite", authenticateToken, sendRoomInvite);
+
+//route for clearing all notifications
+router.delete("/clearnotifications", authenticateToken, clearNotifications);
 
 module.exports = router;

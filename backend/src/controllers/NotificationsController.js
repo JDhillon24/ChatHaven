@@ -267,3 +267,28 @@ exports.sendRoomInvite = async (req, res) => {
     res.sendStatus(500);
   }
 };
+
+exports.clearNotifications = async (req, res) => {
+  try {
+    //get user based on access token info, return error if not found
+    const user = await User.findOne({ email: req.user.email });
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    //set users notifications to empty array and save to db
+    user.notifications = [];
+    await user.save();
+
+    res
+      .status(200)
+      .json({
+        status: "SUCCESS",
+        message: "Notifications have been successfully cleared",
+      });
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};

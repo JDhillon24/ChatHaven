@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { RxCross1 } from "react-icons/rx";
 import { FaCheck } from "react-icons/fa";
-import useSocket from "../../hooks/useSocket";
 import { SocketContext } from "../../context/SocketProvider";
 
 type ResponseData = {
@@ -24,9 +23,13 @@ function isResponseDataGroup(
   return (data as ResponseDataGroup).room !== null;
 }
 
-const NotificationsMain = () => {
+type NotificationProps = {
+  open: boolean;
+  onOpen: () => void;
+};
+
+const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
   const axiosPrivate = useAxiosPrivate();
-  const [data, setData] = useState<(ResponseData | ResponseDataGroup)[]>([]);
   const socketContext = useContext(SocketContext);
 
   if (!socketContext) {
@@ -47,7 +50,7 @@ const NotificationsMain = () => {
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [open]);
 
   const handleDeclineRequest = async (friend_id: string): Promise<void> => {
     try {
@@ -93,7 +96,10 @@ const NotificationsMain = () => {
       <div className="h-20 flex border-b-2 border-gray-200">
         <div className="lg:w-2/3 w-11/12 mx-auto flex justify-between items-center">
           <p className="text-xl font-semibold">Notifications</p>
-          <div className="rounded-full bg-ChatBlue flex justify-center items-center px-4 py-2 text-white cursor-pointer transition-all duration-200 active:scale-90 active:bg-ChatBlueLight">
+          <div
+            onClick={onOpen}
+            className="rounded-full bg-ChatBlue flex justify-center items-center px-4 py-2 text-white cursor-pointer transition-all duration-200 active:scale-90 active:bg-ChatBlueLight"
+          >
             Clear
           </div>
         </div>
@@ -108,7 +114,7 @@ const NotificationsMain = () => {
                 </p>
               </div>
             ) : (
-              data &&
+              notifications &&
               notifications.map((item, index) =>
                 isResponseDataGroup(item) ? (
                   <div

@@ -24,7 +24,7 @@ const ErrorModal: React.FC<ModalProps> = ({ open, onClose, text }) => {
       >
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 p-1 rounded-lg text-gray-400 bg-white hover:bg-gray-50 hover:text-gray-600"
+          className="absolute top-2 right-2 p-1 rounded-lg text-gray-400 bg-white hover:bg-gray-50 hover:text-gray-600 cursor-pointer"
         >
           <IoMdClose />
         </button>
@@ -36,7 +36,7 @@ const ErrorModal: React.FC<ModalProps> = ({ open, onClose, text }) => {
           </div>
           <div className="flex justify-center">
             <button
-              className="bg-gray-300 hover:bg-gray-200 text-black font-bold py-2 px-6 rounded-full"
+              className="bg-gray-300 hover:bg-gray-200 text-black font-bold py-2 px-6 rounded-full cursor-pointer"
               onClick={onClose}
             >
               Ok
