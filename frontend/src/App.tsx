@@ -9,24 +9,29 @@ import Register from "./Routes/Register";
 import Friends from "./Routes/Friends";
 import Notifications from "./Routes/Notifications";
 import SocketWrapper from "./Components/SocketWrapper";
+import { NavigationTracker } from "./hooks/useNavigationTracker";
+import EditProfile from "./Routes/EditProfile";
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
-      <Routes>
-        <Route element={<PersistLogin />}>
-          <Route element={<RequireAuth />}>
-            <Route element={<SocketWrapper />}>
-              <Route path="/Home" element={<Home />} />
-              <Route path="/Friends" element={<Friends />} />
-              <Route path="/Notifications" element={<Notifications />} />
+      <NavigationTracker>
+        <Routes>
+          <Route element={<PersistLogin />}>
+            <Route element={<RequireAuth />}>
+              <Route element={<SocketWrapper />}>
+                <Route path="/Home" element={<Home />} />
+                <Route path="/Friends" element={<Friends />} />
+                <Route path="/Notifications" element={<Notifications />} />
+                <Route path="/EditProfile" element={<EditProfile />} />
+              </Route>
             </Route>
           </Route>
-        </Route>
-        <Route path="/Login" element={<Login />} />
-        <Route path="/Register" element={<Register />} />
-      </Routes>
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Register" element={<Register />} />
+        </Routes>
+      </NavigationTracker>
     </Router>
   );
 }

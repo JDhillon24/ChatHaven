@@ -58,12 +58,13 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
     <div className="md:w-24 w-18 fixed top-0 left-0 h-screen bg-white shadow-lg flex flex-col">
       <div className="h-screen flex flex-col items-center mt-2 gap-8 ">
         <div className="flex flex-col items-center">
-          <div className="relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto rounded-xl">
+          <div className="relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto rounded-xl group">
             <img
-              className="rounded-xl"
+              className="rounded-xl object-cover"
               src={auth.user?.profilePicture}
               alt="Profile"
             />
+            <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 opacity-0 group-hover:opacity-100"></div>
           </div>
         </div>
         <div className="flex flex-col items-center gap-1 flex-1">
@@ -114,7 +115,10 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
           {isOpen && (
             <div className="absolute bottom-15 left-5 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
               <ul className="py-1 text-sm text-gray-700">
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                <li
+                  onClick={() => navigate("/EditProfile")}
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                >
                   Edit Profile
                 </li>
                 <li
