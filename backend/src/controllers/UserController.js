@@ -114,9 +114,9 @@ exports.loginUser = async (req, res) => {
 
     // Generate access & refresh tokens
     const userPayload = {
-      name: user.name,
+      // name: user.name,
       email: user.email,
-      profilePicture: user.profilePicture,
+      // profilePicture: user.profilePicture,
     };
     const accessToken = generateAccessToken(userPayload);
     const refreshToken = jwt.sign(
@@ -243,21 +243,32 @@ exports.grantToken = (req, res) => {
   if (!refreshToken) return res.sendStatus(401);
 
   //verify refresh token and grant new access token if successful
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
+  jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET,
+    async (err, user) => {
+      if (err) return res.sendStatus(403);
 
-    const accessToken = generateAccessToken({
-      name: user.name,
-      email: user.email,
-      profilePicture: user.profilePicture,
-    });
-    res.status(200).json({
-      accessToken,
-      name: user.name,
-      email: user.email,
-      profilePicture: user.profilePicture,
-    });
-  });
+      const loggedInUser = await User.findOne({ email: user.email });
+
+      if (!loggedInUser)
+        return res
+          .status(404)
+          .json({ status: "FAILED", message: "User not found" });
+
+      const accessToken = generateAccessToken({
+        name: loggedInUser.name,
+        email: user.email,
+        profilePicture: loggedInUser.profilePicture,
+      });
+      res.status(200).json({
+        accessToken,
+        name: loggedInUser.name,
+        email: user.email,
+        profilePicture: loggedInUser.profilePicture,
+      });
+    }
+  );
 };
 
 exports.logoutUser = (req, res) => {
@@ -389,18 +400,29 @@ exports.removeFriend = async (req, res) => {
 
 exports.changeProfilePicture = async (req, res) => {
   try {
-    //finding user based on access token info and updating profile picture
-    const result = await User.updateOne(
-      { email: req.user.email },
-      { profilePicture: req.profilePicture }
-    );
+    //check if user exists based on access token info, return error if not found
+    const user = await User.findOne({ email: req.user.email });
 
-    //return error if cant find user or fail to update picture
-    if (result.modifiedCount === 0)
+    if (!user)
       return res
         .status(404)
         .json({ status: "FAILED", message: "User not found" });
+
+    //finding user based on access token info and updating profile picture
+    const result = await User.updateOne(
+      { _id: user.id },
+      { $set: { profilePicture: req.body.profilePicture } }
+    );
+
+    //return error if cant find user or fail to update picture
+    if (result.modifiedCount === 0 || result.acknowledged === false)
+      return res
+        .status(400)
+        .json({ status: "FAILED", message: "Failed to update profile" });
+
+    res.status(200).json({ result });
   } catch (error) {
+    console.error(error);
     res.sendStatus(500);
   }
 };
