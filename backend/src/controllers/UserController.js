@@ -46,7 +46,9 @@ exports.registerAccount = async (req, res) => {
     }
 
     // Check if Username is Taken
-    const existingUsername = await User.findOne({ name });
+    const existingUsername = await User.findOne({
+      name: { $regex: new RegExp(`^${name}$`, "i") },
+    });
     if (existingUsername) {
       return res.status(409).json({
         status: "FAILED",
@@ -196,6 +198,8 @@ exports.updatePassword = async (req, res) => {
 
     user.password = hashedPassword;
 
+    await user.save();
+
     return res.status(200).json({
       status: "SUCCESS",
       message: "Password has been successfully updated!",
@@ -218,16 +222,18 @@ exports.changeUserName = async (req, res) => {
     const { newName } = req.body;
 
     //check if username is taken
-    const existingUsername = await User.findOne({ name: newName });
+    const existingUsername = await User.findOne({
+      name: { $regex: new RegExp(`^${newName.trim()}$`, "i") },
+    });
     if (existingUsername) {
       return res.status(409).json({
         status: "FAILED",
-        message: "This username is already taken!",
+        message: "Username is already taken",
       });
     }
 
     //set user's name to new name and save to db
-    user.name = newName;
+    user.name = newName.trim();
     await user.save();
 
     return res.status(200).json({

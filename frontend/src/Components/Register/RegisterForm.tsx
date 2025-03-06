@@ -12,22 +12,6 @@ const RegisterForm = () => {
   const [passView, setPassView] = useState(false);
   const [confirmPassView, setConfirmPassView] = useState(false);
 
-  const handleClick = () => {
-    if (passView) {
-      setPassView(false);
-    } else {
-      setPassView(true);
-    }
-  };
-
-  const handleConfirmClick = () => {
-    if (confirmPassView) {
-      setConfirmPassView(false);
-    } else {
-      setConfirmPassView(true);
-    }
-  };
-
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -79,7 +63,7 @@ const RegisterForm = () => {
           "Please choose a stronger password"
         ),
       confirm_password: Yup.string()
-        .required("Confirm Password is required")
+        .required("Confirm password is required")
         .oneOf([Yup.ref("password")], "Passwords must match"),
     }),
   });
@@ -169,7 +153,7 @@ const RegisterForm = () => {
               placeholder="Password"
             />
             <span
-              onClick={handleClick}
+              onClick={() => setPassView((prev) => !prev)}
               className="cursor-pointer translate-y-1/4"
             >
               {!passView ? <FaEye size={24} /> : <FaEyeSlash size={24} />}
@@ -210,7 +194,7 @@ const RegisterForm = () => {
               placeholder="Confirm Password"
             />
             <span
-              onClick={handleConfirmClick}
+              onClick={() => setConfirmPassView((prev) => !prev)}
               className="cursor-pointer translate-y-1/4"
             >
               {!confirmPassView ? (

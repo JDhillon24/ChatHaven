@@ -13,14 +13,6 @@ const LoginForm = () => {
 
   const [passView, setPassView] = useState(false);
 
-  const handleClick = () => {
-    if (passView) {
-      setPassView(false);
-    } else {
-      setPassView(true);
-    }
-  };
-
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -132,7 +124,7 @@ const LoginForm = () => {
               placeholder="Password"
             />
             <span
-              onClick={handleClick}
+              onClick={() => setPassView((prev) => !prev)}
               className="cursor-pointer translate-y-1/4"
             >
               {!passView ? <FaEye size={24} /> : <FaEyeSlash size={24} />}
