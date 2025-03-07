@@ -7,6 +7,8 @@ import ProfilePictureModal from "../Components/EditProfile/ProfilePictureModal";
 import useAuth from "../hooks/useAuth";
 import SuccessModal from "../Components/UI/SuccessModal";
 import RightSection from "../Components/EditProfile/RightSection";
+import ChangeUsername from "../Components/EditProfile/ChangeUsername";
+import ResetPassword from "../Components/EditProfile/ResetPassword";
 const EditProfile = () => {
   const { historyStack } = useNavigationTracker();
   const location = useLocation();
@@ -22,6 +24,8 @@ const EditProfile = () => {
   const [openProfile, setOpenProfile] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [successText, setSuccessText] = useState("");
+  const [openUsername, setOpenUsername] = useState(false);
+  const [openPassword, setOpenPassword] = useState(false);
 
   const openSuccessModal = (text: string) => {
     setSuccessText(text);
@@ -31,6 +35,7 @@ const EditProfile = () => {
   const handleSuccessClose = () => {
     setOpenSuccess(false);
     navigate(location.pathname, { replace: true, state: {} });
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -64,8 +69,11 @@ const EditProfile = () => {
           <div className="flex flex-col">
             <LeftSection openProfile={() => setOpenProfile(true)} />
           </div>
-          <div className="h-full flex flex-col border border-red-500">
-            <RightSection />
+          <div className="h-full flex flex-col">
+            <RightSection
+              openUsername={() => setOpenUsername(true)}
+              openPassword={() => setOpenPassword(true)}
+            />
           </div>
         </div>
       </div>
@@ -77,6 +85,14 @@ const EditProfile = () => {
         open={openSuccess}
         onClose={handleSuccessClose}
         text={successText}
+      />
+      <ChangeUsername
+        open={openUsername}
+        onClose={() => setOpenUsername(false)}
+      />
+      <ResetPassword
+        open={openPassword}
+        onClose={() => setOpenPassword(false)}
       />
     </div>
   );

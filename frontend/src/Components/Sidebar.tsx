@@ -40,7 +40,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setTimeout(() => setIsOpen(false), 100);
+        setTimeout(() => setIsOpen(false), 200);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);

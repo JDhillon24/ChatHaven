@@ -1,24 +1,30 @@
 import React from "react";
-import ChangeUsername from "./ChangeUsername";
-import ResetPassword from "./ResetPassword";
 
-const RightSection = () => {
+type SectionProps = {
+  openUsername: () => void;
+  openPassword: () => void;
+};
+
+const RightSection: React.FC<SectionProps> = ({
+  openUsername,
+  openPassword,
+}) => {
   return (
     <div className="mt-1 flex flex-col justify-center items-center gap-3">
       <div>
-        <div className="flex justify-center">
-          <p className="text-xl font-medium text-center">Change Username</p>
-        </div>
-        <div className="mt-5">
-          <ChangeUsername />
-        </div>
-      </div>
-      <div>
-        <div className="flex justify-center">
-          <p className="text-xl font-medium text-center">Reset Password</p>
-        </div>
-        <div className="mt-5">
-          <ResetPassword />
+        <div className="flex flex-col justify-center items-center gap-5">
+          <button
+            onClick={openUsername}
+            className="bg-ChatBlue rounded-full px-8 py-2 text-white transition-all duration-200 active:scale-90 active:bg-ChatBlueLight cursor-pointer"
+          >
+            Change Username
+          </button>
+          <button
+            onClick={openPassword}
+            className="bg-ChatBlue rounded-full px-8 py-2 text-white transition-all duration-200 active:scale-90 active:bg-ChatBlueLight cursor-pointer"
+          >
+            Reset Password
+          </button>
         </div>
       </div>
     </div>

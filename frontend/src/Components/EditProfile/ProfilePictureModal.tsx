@@ -47,7 +47,6 @@ const ProfilePictureModal: React.FC<ModalProps> = ({ open, onClose }) => {
       );
       onClose();
       navigate("/EditProfile", { state: { profileSuccess: true } });
-      window.location.reload();
     } catch (error) {
       console.error(error);
     }

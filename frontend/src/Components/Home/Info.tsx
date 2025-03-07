@@ -13,7 +13,7 @@ const Info: React.FC<InfoProps> = ({ onBack }) => {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        setTimeout(() => setIsOpen(false), 200);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
