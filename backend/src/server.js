@@ -21,6 +21,7 @@ const bodyParser = require("express").json;
 const urlEncoded = require("express").urlencoded({ extended: false });
 const UserRouter = require("./api/User");
 const NotificationRouter = require("./api/Notifications");
+const ChatRouter = require("./api/Chat");
 // const routes = require("./routes");
 app.use(cookieParser());
 app.use(bodyParser());
@@ -30,6 +31,7 @@ const io = initializeSocket(server);
 
 app.use("/user", UserRouter);
 app.use("/notifications", NotificationRouter);
+app.use("/chat", ChatRouter);
 
 // app.use(routes);
 
