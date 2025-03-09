@@ -7,6 +7,7 @@ import Conversations from "../Components/Home/Conversations";
 import Chat from "../Components/Home/Chat";
 import Info from "../Components/Home/Info";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import CreateRoomModal from "../Components/Home/CreateRoomModal";
 
 type Section = "conversations" | "chat" | "info";
 
@@ -15,6 +16,8 @@ const Home = () => {
   const axiosPrivate = useAxiosPrivate();
 
   const location = useLocation();
+
+  const [openCreateRoom, setOpenCreateRoom] = useState(false);
 
   useEffect(() => {
     document.title = "Home | ChatHaven";
@@ -105,7 +108,10 @@ const Home = () => {
               activeSection === "conversations" ? "" : "hidden"
             } lg:flex`}
           >
-            <Conversations onSelect={() => handleSectionChange("chat")} />
+            <Conversations
+              onSelect={() => handleSectionChange("chat")}
+              onOpen={() => setOpenCreateRoom(true)}
+            />
           </div>
           <div
             className={`flex flex-col col-span-2 h-screen ${
@@ -126,6 +132,12 @@ const Home = () => {
             <Info onBack={() => handleSectionChange("chat")} />
           </div>
         </div>
+      </div>
+      <div className="z-20">
+        <CreateRoomModal
+          open={openCreateRoom}
+          onClose={() => setOpenCreateRoom(false)}
+        />
       </div>
     </div>
   );

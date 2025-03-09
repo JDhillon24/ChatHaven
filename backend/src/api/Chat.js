@@ -9,6 +9,7 @@ const {
   getAllRooms,
   leaveRoom,
   messageFriend,
+  getRoom,
 } = require("../controllers/ChatController");
 
 //route for creating a room
@@ -22,5 +23,8 @@ router.delete("/leaveroom/:id", authenticateToken, leaveRoom);
 
 //route for getting room id of private conversation with friend
 router.get("/messagefriend/:friendId", authenticateToken, messageFriend);
+
+//route for getting room by id
+router.get("/:id", authenticateToken, getRoom);
 
 module.exports = router;
