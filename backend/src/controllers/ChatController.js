@@ -4,6 +4,7 @@ const { sendNotification } = require("../utils/notificationUtils");
 
 const User = require("./../models/User");
 const Chat = require("./../models/Chat");
+const { default: mongoose } = require("mongoose");
 
 exports.createRoom = async (req, res) => {
   try {
@@ -30,7 +31,7 @@ exports.createRoom = async (req, res) => {
       });
 
     //check if each participant is a user
-    participants.foreach(async (participant) => {
+    participants.forEach(async (participant) => {
       const participantUser = await User.findById(participant);
       if (!participantUser)
         return res.status(404).json({
@@ -38,6 +39,8 @@ exports.createRoom = async (req, res) => {
           message: "One or more participants is not an existing user",
         });
     });
+
+    // console.log(user.id);
 
     //create a new room
 
@@ -48,11 +51,13 @@ exports.createRoom = async (req, res) => {
       messages: [],
     });
 
+    newRoom.participants.push(user._id);
+
     //save to db
     const savedRoom = await newRoom.save();
 
     //send out a notification to each participant except for user who created the room
-    participants.foreach(async (participant) => {
+    participants.forEach(async (participant) => {
       const participantUser = await User.findById(participant);
 
       if (participantUser.id !== user.id) {
@@ -80,6 +85,7 @@ exports.createRoom = async (req, res) => {
       message: "Room has been successfully created",
     });
   } catch (error) {
+    console.log(error);
     res.sendStatus(500);
   }
 };

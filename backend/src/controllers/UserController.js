@@ -309,7 +309,8 @@ exports.searchFriends = async (req, res) => {
   try {
     //check if user exists based on access token info, return error if not found
     const user = await User.findOne({ email: req.user.email }).populate(
-      "friends"
+      "friends",
+      "name profilePicture"
     );
 
     if (!user)
@@ -318,7 +319,7 @@ exports.searchFriends = async (req, res) => {
         .json({ status: "FAILED", message: "User not found" });
 
     //filter friends list based on search query if not empty
-    if (req.query.name !== "") {
+    if (req.query.name !== "" && req.query.name) {
       const friends = user.friends.filter((friend) =>
         friend.name.includes(req.query.name)
       );

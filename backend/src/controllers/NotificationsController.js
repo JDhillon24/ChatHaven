@@ -136,7 +136,7 @@ exports.acceptFriendRequest = async (req, res) => {
 
   //get sending user based on id, return error if not found
   const sender = await User.findById(senderId).select(
-    "name email notifications profilePicture"
+    "name email notifications friends profilePicture"
   );
 
   if (!sender)
@@ -144,16 +144,9 @@ exports.acceptFriendRequest = async (req, res) => {
       .status(404)
       .json({ status: "FAILED", message: "User not found" });
 
-  //initialize friend arrays for users if they're undefined
-  if (!user.friends) user.friends = [];
-  if (!sender.friends) sender.friends = [];
-
   //add each other as friends
   user.friends.push(sender._id);
   sender.friends.push(user._id);
-
-  //check if notifications array is undefined, if so initialize empty array
-  if (!sender.notifications) sender.notifications = [];
 
   //send other user a notification that receiving user has accepted the request
   const notification = {
@@ -282,12 +275,10 @@ exports.clearNotifications = async (req, res) => {
     user.notifications = [];
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        status: "SUCCESS",
-        message: "Notifications have been successfully cleared",
-      });
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "Notifications have been successfully cleared",
+    });
   } catch (error) {
     res.sendStatus(500);
   }

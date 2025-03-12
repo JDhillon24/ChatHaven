@@ -98,7 +98,7 @@ const ProfilePictureModal: React.FC<ModalProps> = ({ open, onClose }) => {
           <div className="mt-2 w-full flex justify-center">
             <div
               onClick={handleProfileChange}
-              className="mt-2 rounded-full bg-ChatBlue flex justify-center items-center px-8 py-2 text-white cursor-pointer transition-all duration-200 active:scale-90 active:bg-ChatBlueLight"
+              className="font-semibold mt-2 rounded-full bg-ChatBlue flex justify-center items-center px-8 py-2 text-white cursor-pointer transition-all duration-200 active:scale-90 active:bg-ChatBlueLight"
             >
               Confirm
             </div>

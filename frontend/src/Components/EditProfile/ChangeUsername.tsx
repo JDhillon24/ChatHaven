@@ -88,7 +88,7 @@ const ChangeUsername: React.FC<ModalProps> = ({ open, onClose }) => {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="bg-ChatBlue rounded-full px-8 py-1 text-white transition-all duration-200 active:scale-90 active:bg-ChatBlueLight cursor-pointer"
+              className="font-semibold bg-ChatBlue rounded-full px-8 py-1 text-white transition-all duration-200 active:scale-90 active:bg-ChatBlueLight cursor-pointer"
             >
               Save
             </button>

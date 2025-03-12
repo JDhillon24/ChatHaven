@@ -8,6 +8,7 @@ import Chat from "../Components/Home/Chat";
 import Info from "../Components/Home/Info";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import CreateRoomModal from "../Components/Home/CreateRoomModal";
+import SuccessModal from "../Components/UI/SuccessModal";
 
 type Section = "conversations" | "chat" | "info";
 
@@ -18,6 +19,7 @@ const Home = () => {
   const location = useLocation();
 
   const [openCreateRoom, setOpenCreateRoom] = useState(false);
+  const [openSuccess, setOpenSuccess] = useState(false);
 
   useEffect(() => {
     document.title = "Home | ChatHaven";
@@ -137,6 +139,14 @@ const Home = () => {
         <CreateRoomModal
           open={openCreateRoom}
           onClose={() => setOpenCreateRoom(false)}
+          onOpenSuccess={() => setOpenSuccess(true)}
+        />
+      </div>
+      <div className="z-20">
+        <SuccessModal
+          open={openSuccess}
+          onClose={() => setOpenSuccess(false)}
+          text="You have successfully created a room!"
         />
       </div>
     </div>
