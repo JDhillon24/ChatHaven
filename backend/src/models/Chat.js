@@ -13,10 +13,12 @@ const ChatSchema = new mongoose.Schema(
         sender: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
-          required: true,
+          default: null,
         },
+        sender_type: { type: String, required: true },
         text: { type: String, required: true },
         timestamp: { type: Date, default: Date.now },
+        read: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
       },
     ],
   },

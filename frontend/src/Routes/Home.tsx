@@ -113,6 +113,7 @@ const Home = () => {
             <Conversations
               onSelect={() => handleSectionChange("chat")}
               onOpen={() => setOpenCreateRoom(true)}
+              openSuccess={openSuccess}
             />
           </div>
           <div

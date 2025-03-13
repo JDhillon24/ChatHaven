@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { PiListDashesBold } from "react-icons/pi";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type ChatProps = {
   onBack: () => void;
@@ -14,6 +15,7 @@ type ChatProps = {
 const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive }) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isActive) {
@@ -24,7 +26,13 @@ const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive }) => {
     <div className="relative h-full w-full border-r-2 border-gray-200">
       <div className="h-20 flex border-b-2 border-gray-200">
         <div className="w-full flex justify-between items-center px-4">
-          <div onClick={onBack} className="lg:hidden">
+          <div
+            onClick={() => {
+              onBack();
+              navigate("/Home", { replace: true, state: {} });
+            }}
+            className="lg:hidden"
+          >
             <FaArrowLeft size={24} />
           </div>
           <div className="flex gap-3">
