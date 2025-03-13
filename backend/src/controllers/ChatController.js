@@ -95,17 +95,45 @@ exports.getAllRooms = async (req, res) => {
     //get user based on access token info, return error if not found
     const user = await User.findOne({ email: req.user.email });
 
+    let { search } = req.query;
+
     if (!user)
       return res
         .status(404)
         .json({ status: "FAILED", message: "User not found" });
 
     //find all rooms where user is a participant and return a response
-    const rooms = await Chat.find({ participants: { $in: [user.id] } })
-      .populate("participants", "name profilePicture")
-      .select("name participants isGroup");
+    if (search && search !== "") {
+      const rooms = await Chat.find(
+        {
+          $or: [
+            { isGroup: true, name: { $regex: search, $options: "i" } },
+            { isGroup: false },
+          ],
+          participants: { $in: [user.id] },
+        },
+        { name: 1, participants: 1, isGroup: 1, messages: { $slice: -1 } }
+      ).populate("participants", "name profilePicture");
 
-    res.status(200).json(rooms);
+      const filteredRooms = rooms.filter(
+        (room) =>
+          room.isGroup ||
+          room.participants.some((p) =>
+            p.name.toLowerCase().includes(search.toLowerCase())
+          )
+      );
+
+      res.status(200).json(filteredRooms);
+    } else {
+      const rooms = await Chat.find(
+        {
+          participants: { $in: [user.id] },
+        },
+        { name: 1, participants: 1, isGroup: 1, messages: { $slice: -1 } }
+      ).populate("participants", "name profilePicture");
+
+      res.status(200).json(rooms);
+    }
   } catch (error) {
     res.sendStatus(500);
   }
