@@ -46,6 +46,15 @@ const FriendsMain: React.FC<MainProps> = ({
     return () => clearTimeout(delay);
   }, [search, open]);
 
+  const handleMessageClick = async (id: string) => {
+    try {
+      const response = await axiosPrivate.get(`/chat/messagefriend/${id}`);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="h-20 flex border-b-2 border-gray-200">
@@ -95,7 +104,10 @@ const FriendsMain: React.FC<MainProps> = ({
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <div className="h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-ChatBlue cursor-pointer hover:bg-gray-300">
+                  <div
+                    onClick={() => handleMessageClick(item._id)}
+                    className="h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-ChatBlue cursor-pointer hover:bg-gray-300"
+                  >
                     <FaMessage size={16} />
                   </div>
                   <div

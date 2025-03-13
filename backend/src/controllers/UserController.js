@@ -321,7 +321,7 @@ exports.searchFriends = async (req, res) => {
     //filter friends list based on search query if not empty
     if (req.query.name !== "" && req.query.name) {
       const friends = user.friends.filter((friend) =>
-        friend.name.includes(req.query.name)
+        friend.name.toLowerCase().includes(req.query.name.toLowerCase())
       );
 
       res.status(200).json(friends);
