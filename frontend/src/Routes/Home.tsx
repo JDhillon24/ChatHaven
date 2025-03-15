@@ -9,17 +9,46 @@ import Info from "../Components/Home/Info";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import CreateRoomModal from "../Components/Home/CreateRoomModal";
 import SuccessModal from "../Components/UI/SuccessModal";
+import NoConvoSelected from "../Components/Home/NoConvoSelected";
+import LeaveRoomModal from "../Components/Home/LeaveRoomModal";
+import { useNavigate } from "react-router-dom";
 
 type Section = "conversations" | "chat" | "info";
+
+type UserType = {
+  _id: string;
+  name: string;
+  profilePicture: string;
+};
+
+type MessageType = {
+  sender: UserType | null;
+  sender_type: string;
+  text: string;
+  timestamp: string;
+  read: UserType[];
+};
+
+type RoomType = {
+  _id: string;
+  isGroup: boolean;
+  name: string | null;
+  participants: UserType[];
+  messages: MessageType[];
+};
 
 const Home = () => {
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
 
   const location = useLocation();
 
   const [openCreateRoom, setOpenCreateRoom] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
+  const [openLeaveRoom, setOpenLeaveRoom] = useState(false);
+  const [successText, setSuccessText] = useState("");
+  const [rooms, setRooms] = useState<RoomType | undefined>(undefined);
 
   useEffect(() => {
     document.title = "Home | ChatHaven";
@@ -86,6 +115,38 @@ const Home = () => {
   //   };
   // }, []);
 
+  const { roomId } = location.state || {};
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await axiosPrivate.get(`/chat/${roomId}`);
+        setRooms(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (roomId) {
+      getData();
+    }
+  }, [roomId]);
+
+  const handleCreateRoomSuccess = () => {
+    setSuccessText("You have successfully created a room!");
+    setOpenSuccess(true);
+  };
+
+  const handleLeaveRoomSuccess = () => {
+    setSuccessText("You have successfully left this room!");
+    setOpenSuccess(true);
+  };
+
+  const handleSuccessClose = () => {
+    setOpenSuccess(false);
+    navigate(location.pathname, { replace: true, state: {} });
+  };
+
   return (
     <div className="w-full flex h-screen overflow-hidden">
       <div
@@ -116,38 +177,55 @@ const Home = () => {
               openSuccess={openSuccess}
             />
           </div>
-          <div
-            className={`flex flex-col col-span-2 h-screen ${
-              activeSection === "chat" ? "" : "hidden"
-            } lg:flex`}
-          >
-            <Chat
-              onBack={() => handleSectionChange("conversations")}
-              onShowInfo={() => handleSectionChange("info")}
-              isActive={isChatActive}
-            />
-          </div>
-          <div
-            className={`flex flex-col h-screen ${
-              activeSection === "info" ? "" : "hidden"
-            } lg:flex`}
-          >
-            <Info onBack={() => handleSectionChange("chat")} />
-          </div>
+          {roomId ? (
+            <>
+              <div
+                className={`flex flex-col col-span-2 h-screen ${
+                  activeSection === "chat" ? "" : "hidden"
+                } lg:flex`}
+              >
+                <Chat
+                  onBack={() => handleSectionChange("conversations")}
+                  onShowInfo={() => handleSectionChange("info")}
+                  isActive={isChatActive}
+                />
+              </div>
+              <div
+                className={`flex flex-col h-screen ${
+                  activeSection === "info" ? "" : "hidden"
+                } lg:flex`}
+              >
+                <Info
+                  onBack={() => handleSectionChange("chat")}
+                  onOpenLeave={() => setOpenLeaveRoom(true)}
+                  participants={rooms?.participants}
+                />
+              </div>
+            </>
+          ) : (
+            <NoConvoSelected />
+          )}
         </div>
       </div>
       <div className="z-20">
         <CreateRoomModal
           open={openCreateRoom}
           onClose={() => setOpenCreateRoom(false)}
-          onOpenSuccess={() => setOpenSuccess(true)}
+          onOpenSuccess={handleCreateRoomSuccess}
         />
       </div>
       <div className="z-20">
         <SuccessModal
           open={openSuccess}
-          onClose={() => setOpenSuccess(false)}
+          onClose={handleSuccessClose}
           text="You have successfully created a room!"
+        />
+      </div>
+      <div className="z-20">
+        <LeaveRoomModal
+          open={openLeaveRoom}
+          onClose={() => setOpenLeaveRoom(false)}
+          onOpenSuccess={handleLeaveRoomSuccess}
         />
       </div>
     </div>

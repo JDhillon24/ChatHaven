@@ -1,14 +1,26 @@
 import { HiDotsVertical } from "react-icons/hi";
 import { useState, useEffect, useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+
+type UserType = {
+  _id: string;
+  name: string;
+  profilePicture: string;
+};
 
 type InfoProps = {
   onBack: () => void;
+  participants: UserType[] | undefined;
+  onOpenLeave: () => void;
 };
 
-const Info: React.FC<InfoProps> = ({ onBack }) => {
+const Info: React.FC<InfoProps> = ({ onBack, participants, onOpenLeave }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const location = useLocation();
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -19,6 +31,9 @@ const Info: React.FC<InfoProps> = ({ onBack }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const { roomId } = location.state || {};
+
   return (
     <div className="relative h-full w-full">
       <div className="h-20 flex w-full justify-between items-center border-b-2 border-gray-200 px-4">
@@ -39,7 +54,10 @@ const Info: React.FC<InfoProps> = ({ onBack }) => {
               <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                 Add Member
               </li>
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+              <li
+                onClick={onOpenLeave}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              >
                 Leave Room
               </li>
             </ul>
@@ -51,30 +69,25 @@ const Info: React.FC<InfoProps> = ({ onBack }) => {
           <div className="flex items-center gap-2 ml-4">
             <p className="text-sm font-semibold">Room Members</p>
             <p className="text-sm font-semibold py-1 px-2 rounded-xl bg-gray-200">
-              2
+              {participants && participants.length}
             </p>
           </div>
           <div className="mt-3 ml-5 mr-5 flex flex-col">
-            <div className="flex gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-100">
-              <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
-                <img
-                  className="rounded-xl"
-                  src="/images/pfp/cool-anime-pfp-07.jpg"
-                  alt="Profile"
-                />
+            {participants?.map((item) => (
+              <div
+                key={item._id}
+                className="flex gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-100"
+              >
+                <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
+                  <img
+                    className="rounded-xl"
+                    src={item.profilePicture}
+                    alt="Profile"
+                  />
+                </div>
+                <p className="text-md font-semibold">{item.name}</p>
               </div>
-              <p className="text-md font-semibold">Roronoa Zoro</p>
-            </div>
-            <div className="flex gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-100">
-              <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
-                <img
-                  className="rounded-xl"
-                  src="/images/pfp/cool-anime-pfp-30.jpg"
-                  alt="Profile"
-                />
-              </div>
-              <p className="text-md font-semibold">Jotaro Kujo</p>
-            </div>
+            ))}
           </div>
         </div>
       </div>
