@@ -12,6 +12,7 @@ import SuccessModal from "../Components/UI/SuccessModal";
 import NoConvoSelected from "../Components/Home/NoConvoSelected";
 import LeaveRoomModal from "../Components/Home/LeaveRoomModal";
 import { useNavigate } from "react-router-dom";
+import EditRoomModal from "../Components/Home/EditRoomModal";
 
 type Section = "conversations" | "chat" | "info";
 
@@ -47,6 +48,7 @@ const Home = () => {
   const [openCreateRoom, setOpenCreateRoom] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openLeaveRoom, setOpenLeaveRoom] = useState(false);
+  const [openEditRoom, setOpenEditRoom] = useState(false);
   const [successText, setSuccessText] = useState("");
   const [rooms, setRooms] = useState<RoomType | undefined>(undefined);
 
@@ -130,7 +132,7 @@ const Home = () => {
     if (roomId) {
       getData();
     }
-  }, [roomId]);
+  }, [roomId, openSuccess]);
 
   const handleCreateRoomSuccess = () => {
     setSuccessText("You have successfully created a room!");
@@ -139,6 +141,18 @@ const Home = () => {
 
   const handleLeaveRoomSuccess = () => {
     setSuccessText("You have successfully left this room!");
+    setOpenSuccess(true);
+  };
+
+  const handleEditNameSuccess = () => {
+    setSuccessText("You have successfully changed the room name!");
+    setOpenSuccess(true);
+  };
+
+  const handleInviteMembersSuccess = () => {
+    setSuccessText(
+      "The selected users have been successfully added to the room!"
+    );
     setOpenSuccess(true);
   };
 
@@ -198,6 +212,7 @@ const Home = () => {
                 <Info
                   onBack={() => handleSectionChange("chat")}
                   onOpenLeave={() => setOpenLeaveRoom(true)}
+                  onOpenEdit={() => setOpenEditRoom(true)}
                   participants={rooms?.participants}
                 />
               </div>
@@ -218,7 +233,7 @@ const Home = () => {
         <SuccessModal
           open={openSuccess}
           onClose={handleSuccessClose}
-          text="You have successfully created a room!"
+          text={successText}
         />
       </div>
       <div className="z-20">
@@ -226,6 +241,16 @@ const Home = () => {
           open={openLeaveRoom}
           onClose={() => setOpenLeaveRoom(false)}
           onOpenSuccess={handleLeaveRoomSuccess}
+        />
+      </div>
+      <div className="z-20">
+        <EditRoomModal
+          open={openEditRoom}
+          onClose={() => setOpenEditRoom(false)}
+          handleEditNameSuccess={handleEditNameSuccess}
+          handleInviteMembersSuccess={handleInviteMembersSuccess}
+          roomName={rooms?.name}
+          participants={rooms?.participants}
         />
       </div>
     </div>

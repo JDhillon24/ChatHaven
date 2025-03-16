@@ -14,9 +14,15 @@ type InfoProps = {
   onBack: () => void;
   participants: UserType[] | undefined;
   onOpenLeave: () => void;
+  onOpenEdit: () => void;
 };
 
-const Info: React.FC<InfoProps> = ({ onBack, participants, onOpenLeave }) => {
+const Info: React.FC<InfoProps> = ({
+  onBack,
+  participants,
+  onOpenLeave,
+  onOpenEdit,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
@@ -51,8 +57,11 @@ const Info: React.FC<InfoProps> = ({ onBack, participants, onOpenLeave }) => {
         {isOpen && (
           <div className="absolute top-14 right-8 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
             <ul className="py-1 text-sm text-gray-700">
-              <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                Add Member
+              <li
+                onClick={onOpenEdit}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              >
+                Edit Room
               </li>
               <li
                 onClick={onOpenLeave}

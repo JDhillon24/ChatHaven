@@ -10,6 +10,8 @@ const {
   leaveRoom,
   messageFriend,
   getRoom,
+  changeRoomName,
+  inviteNewMembers,
 } = require("../controllers/ChatController");
 
 //route for creating a room
@@ -26,5 +28,11 @@ router.get("/messagefriend/:friendId", authenticateToken, messageFriend);
 
 //route for getting room by id
 router.get("/:id", authenticateToken, getRoom);
+
+//route for changing room name
+router.put("/changename/:id", authenticateToken, changeRoomName);
+
+//route for inviting new members
+router.post("/newinvites/:id", authenticateToken, inviteNewMembers);
 
 module.exports = router;
