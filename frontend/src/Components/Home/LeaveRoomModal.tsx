@@ -17,7 +17,9 @@ const LeaveRoomModal: React.FC<ModalProps> = ({
 }) => {
   const location = useLocation();
   const axiosPrivate = useAxiosPrivate();
-  const { roomId } = location.state || {};
+  const { roomId } = location.state || {
+    roomId: localStorage.getItem("roomId"),
+  };
   const handleConfirm = async () => {
     try {
       if (roomId) {

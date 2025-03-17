@@ -13,7 +13,7 @@ type ModalProps = {
   onClose: () => void;
   handleEditNameSuccess: () => void;
   handleInviteMembersSuccess: () => void;
-  roomName: string | null | undefined;
+  roomName: string | undefined;
   participants: UserType[] | undefined;
 };
 

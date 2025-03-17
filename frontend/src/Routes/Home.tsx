@@ -33,7 +33,7 @@ type MessageType = {
 type RoomType = {
   _id: string;
   isGroup: boolean;
-  name: string | null;
+  name: string | undefined;
   participants: UserType[];
   messages: MessageType[];
 };
@@ -117,7 +117,9 @@ const Home = () => {
   //   };
   // }, []);
 
-  const { roomId } = location.state || {};
+  const { roomId } = location.state || {
+    roomId: localStorage.getItem("roomId"),
+  };
 
   useEffect(() => {
     const getData = async () => {
@@ -158,7 +160,11 @@ const Home = () => {
 
   const handleSuccessClose = () => {
     setOpenSuccess(false);
-    navigate(location.pathname, { replace: true, state: {} });
+    // handleSectionChange("conversations");
+    // navigate(location.pathname, {
+    //   replace: true,
+    //   // state: { roomId: localStorage.getItem("roomId") },
+    // });
   };
 
   return (

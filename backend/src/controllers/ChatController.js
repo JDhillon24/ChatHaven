@@ -31,14 +31,14 @@ exports.createRoom = async (req, res) => {
       });
 
     //check if each participant is a user
-    participants.forEach(async (participant) => {
+    for (const participant of participants) {
       const participantUser = await User.findById(participant);
       if (!participantUser)
         return res.status(404).json({
           status: "FAILED",
           message: "One or more participants is not an existing user",
         });
-    });
+    }
 
     // console.log(user.id);
 
@@ -57,7 +57,7 @@ exports.createRoom = async (req, res) => {
     const savedRoom = await newRoom.save();
 
     //send out a notification to each participant except for user who created the room
-    participants.forEach(async (participant) => {
+    for (const participant of participants) {
       const participantUser = await User.findById(participant);
 
       if (participantUser.id !== user.id) {
@@ -79,7 +79,7 @@ exports.createRoom = async (req, res) => {
         sendNotification(participantUser.email, socketNotification);
         await participantUser.save();
       }
-    });
+    }
 
     res.status(200).json({
       status: "SUCCESS",
@@ -348,7 +348,7 @@ exports.inviteNewMembers = async (req, res) => {
       .json({ status: "FAILED", message: "Room not found" });
 
   //validate participants
-  participants.forEach(async (participant) => {
+  for (const participant of participants) {
     const participantUser = await User.findById(participant);
     if (!participantUser)
       return res.status(404).json({
@@ -361,10 +361,18 @@ exports.inviteNewMembers = async (req, res) => {
         status: "FAILED",
         message: "One or more participants are already in this room",
       });
-  });
+  }
+
+  room.participants.push(...participants);
+
+  //if room isnt a group, update it and set room name to combination of participant names
+  if (!room.isGroup) {
+    room.isGroup = true;
+    room.name = room.participants.map((p) => p.name).join(", ");
+  }
 
   //send out a notification to each participant except for user who created the room
-  participants.forEach(async (participant) => {
+  for (const participant of participants) {
     const participantUser = await User.findById(participant);
 
     if (participantUser.id !== user.id) {
@@ -386,15 +394,8 @@ exports.inviteNewMembers = async (req, res) => {
       sendNotification(participantUser.email, socketNotification);
       await participantUser.save();
     }
-  });
-
-  room.participants.push(participants);
-
-  //if room isnt a group, update it and set room name to combination of participant names
-  if (!room.isGroup) {
-    room.isGroup = true;
-    room.name = room.participants.map((p) => p.name).join(", ");
   }
+
   await room.save();
 
   res.status(200).json({

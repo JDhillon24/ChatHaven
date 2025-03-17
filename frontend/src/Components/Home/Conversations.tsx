@@ -34,7 +34,11 @@ type RoomType = {
   messages: MessageType[];
 };
 
-const Conversations: React.FC<ConversationProps> = ({ onSelect, onOpen }) => {
+const Conversations: React.FC<ConversationProps> = ({
+  onSelect,
+  onOpen,
+  openSuccess,
+}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
@@ -42,7 +46,10 @@ const Conversations: React.FC<ConversationProps> = ({ onSelect, onOpen }) => {
   const [search, setSearch] = useState("");
   const { auth } = useAuth();
 
-  const { roomId } = location.state || {};
+  const { roomId } = location.state || {
+    roomId: localStorage.getItem("roomId"),
+  };
+
   const checkIfRead = (message: MessageType): boolean => {
     return message.read.some((m) => m.name === auth.user?.name);
   };
@@ -87,7 +94,12 @@ const Conversations: React.FC<ConversationProps> = ({ onSelect, onOpen }) => {
     };
 
     getData();
-  }, [search]);
+  }, [search, openSuccess]);
+
+  const handleConvoSelect = (roomId: string) => {
+    localStorage.setItem("roomId", roomId);
+    navigate("/Home", { state: { roomId } });
+  };
   return (
     <div className="h-full w-full border-r-2 border-gray-200">
       <div className="h-24 w-full flex justify-between items-center border-b-2 border-gray-200">
@@ -113,7 +125,7 @@ const Conversations: React.FC<ConversationProps> = ({ onSelect, onOpen }) => {
               key={item._id}
               onClick={() => {
                 onSelect();
-                navigate("/Home", { state: { roomId: item._id } });
+                handleConvoSelect(item._id);
               }}
               className={`flex justify-between hover:bg-gray-100 ${
                 roomId && roomId === item._id ? "bg-gray-100" : ""

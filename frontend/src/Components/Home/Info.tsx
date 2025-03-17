@@ -1,8 +1,6 @@
 import { HiDotsVertical } from "react-icons/hi";
 import { useState, useEffect, useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 type UserType = {
   _id: string;
@@ -25,8 +23,6 @@ const Info: React.FC<InfoProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const location = useLocation();
-  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -37,8 +33,6 @@ const Info: React.FC<InfoProps> = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const { roomId } = location.state || {};
 
   return (
     <div className="relative h-full w-full">

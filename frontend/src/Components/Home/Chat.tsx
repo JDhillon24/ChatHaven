@@ -98,7 +98,7 @@ const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive }) => {
               target.style.height = "auto";
               target.style.height = `${target.scrollHeight}px`;
             }}
-            className="w-full rounded-lg border-gray-200 placeholder:text-sm pr-10 resize-none md:max-h-40 max-h-36 p-2"
+            className="w-full rounded-lg border-gray-200 border-2 placeholder:text-sm pr-10 resize-none md:max-h-40 max-h-32 p-2"
           />
           <span className="cursor-pointer -translate-x-10 pb-2">
             <div className="transition-all hover:bg-ChatBlue p-1 rounded-full">
