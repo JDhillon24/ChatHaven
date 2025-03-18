@@ -160,7 +160,9 @@ const LoginForm = () => {
                     onBlur={formik.handleBlur}
                     className="w-3 h-3"
                   />
-                  <span className="label-text text-xs">Trust This Device</span>
+                  <span className="label-text text-xs ml-1">
+                    Trust This Device
+                  </span>
                 </label>
               </div>
             </div>

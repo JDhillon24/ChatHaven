@@ -3,6 +3,7 @@ import { IoMdAdd } from "react-icons/io";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { FaMessage } from "react-icons/fa6";
 import { RxCross1 } from "react-icons/rx";
+import { useNavigate } from "react-router-dom";
 
 type MainProps = {
   setAddFriends: () => void;
@@ -24,6 +25,7 @@ const FriendsMain: React.FC<MainProps> = ({
   const axiosPrivate = useAxiosPrivate();
   const [data, setData] = useState<ResponseData[]>([]);
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getData = async () => {
@@ -49,7 +51,10 @@ const FriendsMain: React.FC<MainProps> = ({
   const handleMessageClick = async (id: string) => {
     try {
       const response = await axiosPrivate.get(`/chat/messagefriend/${id}`);
-      console.log(response.data);
+      // console.log(response.data);
+      navigate("/Home", {
+        state: { roomId: response.data.id, privateChat: true },
+      });
     } catch (error) {
       console.error(error);
     }

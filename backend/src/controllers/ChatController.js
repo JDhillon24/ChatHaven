@@ -114,7 +114,9 @@ exports.getAllRooms = async (req, res) => {
           participants: { $in: [user.id] },
         },
         { name: 1, participants: 1, isGroup: 1, messages: { $slice: -1 } }
-      ).populate("participants", "name profilePicture");
+      )
+        .sort({ updatedAt: -1 })
+        .populate("participants", "name profilePicture");
 
       const filteredRooms = rooms.filter(
         (room) =>
@@ -131,7 +133,9 @@ exports.getAllRooms = async (req, res) => {
           participants: { $in: [user.id] },
         },
         { name: 1, participants: 1, isGroup: 1, messages: { $slice: -1 } }
-      ).populate("participants", "name profilePicture");
+      )
+        .sort({ updatedAt: -1 })
+        .populate("participants", "name profilePicture");
 
       res.status(200).json(rooms);
     }
@@ -233,6 +237,8 @@ exports.messageFriend = async (req, res) => {
 
   let { friendId } = req.params;
 
+  // console.log(`friend id: ${friendId}`);
+
   //check if friend is an existing user
   const friend = await User.findById(friendId);
 
@@ -241,11 +247,16 @@ exports.messageFriend = async (req, res) => {
       .status(404)
       .json({ status: "FAILED", message: "User not found" });
 
+  // console.log(user.name);
+  // console.log(friend.name);
+
   //find room where both users are a participant and isGroup is equal to false and return the id
   const room = await Chat.findOne({
     isGroup: false,
-    participants: { $in: [user.id, friend.id] },
+    participants: { $all: [user.id, friend.id] },
   });
+
+  // console.log(room);
 
   if (room) {
     res.status(200).json({ id: room.id });

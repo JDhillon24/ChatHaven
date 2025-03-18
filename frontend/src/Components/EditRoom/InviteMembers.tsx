@@ -28,9 +28,7 @@ const InviteMembers: React.FC<Props> = ({
     UserType[]
   >([]);
   const location = useLocation();
-  const { roomId } = location.state || {
-    roomId: localStorage.getItem("roomId"),
-  };
+  const { roomId = localStorage.getItem("roomId") } = location.state || {};
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {

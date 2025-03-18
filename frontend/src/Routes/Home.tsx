@@ -117,9 +117,8 @@ const Home = () => {
   //   };
   // }, []);
 
-  const { roomId } = location.state || {
-    roomId: localStorage.getItem("roomId"),
-  };
+  const { roomId = localStorage.getItem("roomId"), privateChat } =
+    location.state || {};
 
   useEffect(() => {
     const getData = async () => {
@@ -135,6 +134,13 @@ const Home = () => {
       getData();
     }
   }, [roomId, openSuccess]);
+
+  useEffect(() => {
+    if (privateChat) {
+      handleSectionChange("chat");
+      navigate(location.pathname, { replace: true, state: { roomId: roomId } });
+    }
+  }, [location.pathname]);
 
   const handleCreateRoomSuccess = () => {
     setSuccessText("You have successfully created a room!");
@@ -160,11 +166,19 @@ const Home = () => {
 
   const handleSuccessClose = () => {
     setOpenSuccess(false);
-    // handleSectionChange("conversations");
-    // navigate(location.pathname, {
-    //   replace: true,
-    //   // state: { roomId: localStorage.getItem("roomId") },
-    // });
+
+    if (localStorage.getItem("roomId")) {
+      navigate(location.pathname, {
+        replace: true,
+        state: { roomId: roomId },
+      });
+    } else {
+      handleSectionChange("conversations");
+      navigate(location.pathname, {
+        replace: true,
+        state: {},
+      });
+    }
   };
 
   return (
@@ -197,7 +211,7 @@ const Home = () => {
               openSuccess={openSuccess}
             />
           </div>
-          {roomId ? (
+          {roomId || localStorage.getItem("roomId") ? (
             <>
               <div
                 className={`flex flex-col col-span-2 h-screen ${
@@ -208,6 +222,7 @@ const Home = () => {
                   onBack={() => handleSectionChange("conversations")}
                   onShowInfo={() => handleSectionChange("info")}
                   isActive={isChatActive}
+                  room={rooms}
                 />
               </div>
               <div

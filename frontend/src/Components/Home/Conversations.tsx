@@ -2,7 +2,7 @@ import { IoMdAdd } from "react-icons/io";
 import { useState, useEffect } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import useAuth from "../../hooks/useAuth";
-import { FaUserGroup } from "react-icons/fa6";
+
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -46,9 +46,7 @@ const Conversations: React.FC<ConversationProps> = ({
   const [search, setSearch] = useState("");
   const { auth } = useAuth();
 
-  const { roomId } = location.state || {
-    roomId: localStorage.getItem("roomId"),
-  };
+  const { roomId = localStorage.getItem("roomId") } = location.state || {};
 
   const checkIfRead = (message: MessageType): boolean => {
     return message.read.some((m) => m.name === auth.user?.name);

@@ -14,13 +14,11 @@ const EditName: React.FC<Props> = ({ onClose, handleSuccess, roomName }) => {
   const location = useLocation();
   const axiosPrivate = useAxiosPrivate();
 
-  const { roomId } = location.state || {
-    roomId: localStorage.getItem("roomId"),
-  };
+  const { roomId = localStorage.getItem("roomId") } = location.state || {};
 
   const formik = useFormik({
     initialValues: {
-      name: roomName,
+      name: roomName ?? "",
     },
     enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {

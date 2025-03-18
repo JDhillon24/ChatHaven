@@ -17,13 +17,12 @@ const LeaveRoomModal: React.FC<ModalProps> = ({
 }) => {
   const location = useLocation();
   const axiosPrivate = useAxiosPrivate();
-  const { roomId } = location.state || {
-    roomId: localStorage.getItem("roomId"),
-  };
+  const { roomId = localStorage.getItem("roomId") } = location.state || {};
   const handleConfirm = async () => {
     try {
       if (roomId) {
         const response = await axiosPrivate.delete(`/chat/leaveroom/${roomId}`);
+        localStorage.setItem("roomId", "");
         onClose();
         onOpenSuccess();
       }
