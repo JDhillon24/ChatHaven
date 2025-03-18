@@ -121,9 +121,9 @@ exports.getAllRooms = async (req, res) => {
       const filteredRooms = rooms.filter(
         (room) =>
           room.isGroup ||
-          room.participants.some((p) =>
-            p.name.toLowerCase().includes(search.toLowerCase())
-          )
+          room.participants
+            .filter((p) => p._id.toString() !== user.id)
+            .some((p) => p.name.toLowerCase().includes(search.toLowerCase()))
       );
 
       res.status(200).json(filteredRooms);
