@@ -114,7 +114,21 @@ const CreateRoomModal: React.FC<ModalProps> = ({
                 </label>
               </div>
               <div>
-                <div className="flex flex-col justify-center">
+                <div
+                  className={`flex flex-col items-center justify-center ${
+                    friends.length === 0 ? "" : "hidden"
+                  }`}
+                >
+                  <p className="text-md font-light text-gray-400 text-center">
+                    Add some friends first so you can start creating rooms and
+                    chatting together!{" "}
+                  </p>
+                </div>
+                <div
+                  className={`flex flex-col justify-center ${
+                    friends.length === 0 ? "hidden" : ""
+                  }`}
+                >
                   <p className="text-md font-black text-gray-800 text-center">
                     Add Friends
                   </p>

@@ -38,7 +38,7 @@ type ChatProps = {
 
 const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive, room }) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(room?.messages);
   const navigate = useNavigate();
   const { auth } = useAuth();
 
@@ -126,30 +126,57 @@ const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive, room }) => {
         <div className="mt-5">
           {Array.from({ length: 8 }).map((_, index) => (
             <div key={index}>
-              <div className="flex items-end gap-2 mb-4">
-                <img
-                  className="h-10 w-10 rounded-xl"
-                  src="/images/pfp/cool-anime-pfp-07.jpg"
-                  alt="Profile"
-                />
-                <div className="bg-gray-200 p-3 rounded-lg text-sm md:max-w-80 max-w-64 break-words">
-                  Yea brooo i told
-                  usdfsfddsfsdfsdfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfdsasdfdsfasdsadaskjlkjljkljl
+              <div className="flex flex-col">
+                <div className="flex">
+                  <p className="text-sm font-light text-gray-400 ml-12">
+                    zoro123
+                  </p>
+                </div>
+                <div className="flex items-end gap-2 mb-4">
+                  <img
+                    className="h-10 w-10 rounded-xl"
+                    src="/images/pfp/cool-anime-pfp-07.jpg"
+                    alt="Profile"
+                  />
+                  <div className="bg-gray-200 p-3 rounded-lg text-sm md:max-w-80 max-w-64 break-words">
+                    Yea brooo i told
+                    usdfsfddsfsdfsdfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfdsasdfdsfasdsadaskjlkjljkljl
+                  </div>
                 </div>
               </div>
-              <div className="flex items-end gap-2 mb-4 justify-end">
+              <div className="flex flex-col">
+                <div className="flex justify-end">
+                  <p className="text-sm font-light text-gray-400 mr-12">
+                    zoro123
+                  </p>
+                </div>
+                <div className="flex items-end gap-2 mb-4 justify-end">
+                  <div className="bg-ChatBlue p-3 rounded-lg text-white text-sm md:max-w-80 max-w-64 break-words">
+                    Yea brooo i told
+                    usdfsfddsfsdfsdfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfdsasdfdsfasdsadaskjlkjljkljl
+                  </div>
+                  <img
+                    className="h-10 w-10 rounded-xl"
+                    src="/images/pfp/cool-anime-pfp-07.jpg"
+                    alt="Profile"
+                  />
+                </div>
+              </div>
+              <div className="flex items-end gap-2 mb-4 justify-end mr-12">
                 <div className="bg-ChatBlue p-3 rounded-lg text-white text-sm md:max-w-80 max-w-64 break-words">
                   Yea brooo i told
                   usdfsfddsfsdfsdfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfdsasdfdsfasdsadaskjlkjljkljl
                 </div>
-                <img
-                  className="h-10 w-10 rounded-xl"
-                  src="/images/pfp/cool-anime-pfp-07.jpg"
-                  alt="Profile"
-                />
               </div>
             </div>
           ))}
+          <div className="relative flex justify-center items-center mb-4 mx-2">
+            <span className="flex-grow border-t border-gray-200 mr-2"></span>
+            <p className="text-sm font-light text-gray-400">
+              zoro123 has left the room
+            </p>
+            <span className="flex-grow border-t border-gray-200 ml-2"></span>
+          </div>
         </div>
         <div ref={messagesEndRef}></div>
       </div>

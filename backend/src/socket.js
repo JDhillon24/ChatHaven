@@ -1,4 +1,6 @@
 const { Server } = require("socket.io");
+const Chat = require("./models/Chat");
+const User = require("./models/User");
 
 let io;
 const users = new Map();
@@ -21,9 +23,40 @@ const initializeSocket = (server) => {
       console.log(`User ${email} connected with socket ${socket.id}`);
     });
 
-    socket.on("sendMessage", (message) => {
-      console.log("Received:", message);
-      io.emit("receiveMessage", message);
+    socket.on("joinRoom", async ({ email, roomId }) => {
+      socket.join(roomId);
+      console.log(`User ${email} joined room ${roomId}`);
+    });
+
+    socket.on("sendMessage", async ({ roomId, email, text }) => {
+      if (!roomId || !email || !text) return;
+
+      const room = await Chat.findById(roomId);
+
+      const user = await User.findOne({ email: email });
+
+      if (!room || !user) return;
+
+      const message = {
+        sender: user.id,
+        sender_type: "User",
+        text: text,
+        read: [],
+      };
+
+      const socketMessage = {
+        sender: user,
+        sender_type: "User",
+        text: text,
+        timestamp: new Date(Date.now()).toISOString(),
+        read: [],
+      };
+
+      room.messages.push(message);
+
+      await room.save();
+
+      io.to(roomId).emit("newMessage", socketMessage);
     });
 
     socket.on("disconnect", () => {

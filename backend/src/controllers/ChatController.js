@@ -2,6 +2,8 @@ require("dotenv");
 
 const { sendNotification } = require("../utils/notificationUtils");
 
+const { sendSystemMessage } = require("../utils/chatUtils");
+
 const User = require("./../models/User");
 const Chat = require("./../models/Chat");
 const { default: mongoose } = require("mongoose");
@@ -207,6 +209,24 @@ exports.leaveRoom = async (req, res) => {
       (participant) => participant.toString() !== user.id
     );
 
+    //send message to group
+    const systemMessage = {
+      sender_type: "System",
+      text: `${user.name} has left the room`,
+      read: [],
+    };
+
+    const systemMessageSocket = {
+      sender_type: "System",
+      text: `${user.name} has left the room`,
+      timestamp: new Date(Date.now()).toISOString(),
+      read: [],
+    };
+
+    room.messages.push(systemMessage);
+
+    sendSystemMessage(room.id, systemMessageSocket);
+
     await room.save();
 
     if (room.participants.length === 0) {
@@ -319,6 +339,24 @@ exports.changeRoomName = async (req, res) => {
 
   //if room isnt a group set it to one
   if (!room.isGroup) room.isGroup = true;
+
+  //send message to group
+  const systemMessage = {
+    sender_type: "System",
+    text: `The room name has been changed to ${newName}`,
+    read: [],
+  };
+
+  const systemMessageSocket = {
+    sender_type: "System",
+    text: `The room name has been changed to ${newName}`,
+    timestamp: new Date(Date.now()).toISOString(),
+    read: [],
+  };
+
+  room.messages.push(systemMessage);
+
+  sendSystemMessage(room.id, systemMessageSocket);
   await room.save();
 
   res.status(200).json({
@@ -382,6 +420,8 @@ exports.inviteNewMembers = async (req, res) => {
     room.name = room.participants.map((p) => p.name).join(", ");
   }
 
+  const participantNames = [];
+
   //send out a notification to each participant except for user who created the room
   for (const participant of participants) {
     const participantUser = await User.findById(participant);
@@ -395,6 +435,8 @@ exports.inviteNewMembers = async (req, res) => {
 
       participantUser.notifications.push(notification);
 
+      participantNames.push(participantUser.name);
+
       const socketNotification = {
         type: "group_invite",
         sender: user,
@@ -406,6 +448,28 @@ exports.inviteNewMembers = async (req, res) => {
       await participantUser.save();
     }
   }
+
+  //send message to group
+  const systemMessage = {
+    sender_type: "System",
+    text: `${participantNames.map((item) => item.join(", "))} ${
+      participantNames.length === 1 ? "has" : "have"
+    } joined the room`,
+    read: [],
+  };
+
+  const systemMessageSocket = {
+    sender_type: "System",
+    text: `${participantNames.map((item) => item.join(", "))} ${
+      participantNames.length === 1 ? "has" : "have"
+    } joined the room`,
+    timestamp: new Date(Date.now()).toISOString(),
+    read: [],
+  };
+
+  room.messages.push(systemMessage);
+
+  sendSystemMessage(room.id, systemMessageSocket);
 
   await room.save();
 

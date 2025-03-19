@@ -166,7 +166,7 @@ exports.acceptFriendRequest = async (req, res) => {
 
   const socketNotification = {
     type: "accept_request",
-    sender: sender,
+    sender: user,
     room: null,
     createdAt: new Date(Date.now()).toISOString(),
   };
@@ -218,7 +218,7 @@ exports.sendRoomInvite = async (req, res) => {
 
     //get receiving user and room based on id, return error if not found
     const receiver = await User.findById(receiverId);
-    const room = await Chat.findById(roomId);
+    const room = await Chat.findById(roomId).select("-messages");
 
     if (!receiver)
       return res
