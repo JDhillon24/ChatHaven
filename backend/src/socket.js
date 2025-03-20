@@ -16,7 +16,7 @@ const initializeSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
+    // console.log("User connected:", socket.id);
 
     socket.on("join", (email) => {
       users.set(socket.id, email);
@@ -25,13 +25,17 @@ const initializeSocket = (server) => {
 
     socket.on("joinRoom", async ({ email, roomId }) => {
       socket.join(roomId);
-      console.log(`User ${email} joined room ${roomId}`);
+      // console.log(`User ${email} joined room ${roomId}`);
     });
 
     socket.on("sendMessage", async ({ roomId, email, text }) => {
+      console.log(users);
       if (!roomId || !email || !text) return;
 
-      const room = await Chat.findById(roomId);
+      const room = await Chat.findById(roomId).populate(
+        "participants",
+        "email"
+      );
 
       const user = await User.findOne({ email: email });
 
@@ -41,7 +45,7 @@ const initializeSocket = (server) => {
         sender: user.id,
         sender_type: "User",
         text: text,
-        read: [],
+        read: [user.id],
       };
 
       const socketMessage = {
@@ -49,7 +53,7 @@ const initializeSocket = (server) => {
         sender_type: "User",
         text: text,
         timestamp: new Date(Date.now()).toISOString(),
-        read: [],
+        read: [user.id],
       };
 
       room.messages.push(message);
@@ -57,6 +61,16 @@ const initializeSocket = (server) => {
       await room.save();
 
       io.to(roomId).emit("newMessage", socketMessage);
+
+      for (const participant of room.participants) {
+        const socketId = [...users.entries()].find(
+          ([_, id]) => id === participant.email
+        )?.[0];
+
+        if (socketId) {
+          io.to(socketId).emit("newMessageNotification", message);
+        }
+      }
     });
 
     socket.on("disconnect", () => {

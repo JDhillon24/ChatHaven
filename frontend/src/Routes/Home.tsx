@@ -51,6 +51,7 @@ const Home = () => {
   const [openEditRoom, setOpenEditRoom] = useState(false);
   const [successText, setSuccessText] = useState("");
   const [rooms, setRooms] = useState<RoomType | undefined>(undefined);
+  const [messageReceived, setMessageReceived] = useState(false);
 
   useEffect(() => {
     document.title = "Home | ChatHaven";
@@ -209,6 +210,7 @@ const Home = () => {
               onSelect={() => handleSectionChange("chat")}
               onOpen={() => setOpenCreateRoom(true)}
               openSuccess={openSuccess}
+              messageReceived={messageReceived}
             />
           </div>
           {roomId || localStorage.getItem("roomId") ? (
@@ -223,6 +225,7 @@ const Home = () => {
                   onShowInfo={() => handleSectionChange("info")}
                   isActive={isChatActive}
                   room={rooms}
+                  setMessageReceived={setMessageReceived}
                 />
               </div>
               <div

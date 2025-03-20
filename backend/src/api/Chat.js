@@ -12,6 +12,7 @@ const {
   getRoom,
   changeRoomName,
   inviteNewMembers,
+  readAllMessages,
 } = require("../controllers/ChatController");
 
 //route for creating a room
@@ -34,5 +35,8 @@ router.put("/changename/:id", authenticateToken, changeRoomName);
 
 //route for inviting new members
 router.post("/newinvites/:id", authenticateToken, inviteNewMembers);
+
+//route for reading all messages in a room
+router.put("/readall/:id", authenticateToken, readAllMessages);
 
 module.exports = router;

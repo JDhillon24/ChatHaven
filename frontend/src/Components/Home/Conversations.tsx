@@ -1,15 +1,18 @@
 import { IoMdAdd } from "react-icons/io";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import useAuth from "../../hooks/useAuth";
 
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { FaCircle } from "react-icons/fa";
+import { SocketContext } from "../../context/SocketProvider";
 
 type ConversationProps = {
   onSelect: () => void;
   onOpen: () => void;
   openSuccess: boolean;
+  messageReceived: boolean;
 };
 
 type UserType = {
@@ -38,6 +41,7 @@ const Conversations: React.FC<ConversationProps> = ({
   onSelect,
   onOpen,
   openSuccess,
+  messageReceived,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -45,12 +49,15 @@ const Conversations: React.FC<ConversationProps> = ({
   const [data, setData] = useState<RoomType[]>([]);
   const [search, setSearch] = useState("");
   const { auth } = useAuth();
+  const socketContext = useContext(SocketContext);
+
+  if (!socketContext) {
+    throw new Error("SocketContext must be used within a provider!");
+  }
+
+  const { socket } = socketContext;
 
   const { roomId = localStorage.getItem("roomId") } = location.state || {};
-
-  const checkIfRead = (message: MessageType): boolean => {
-    return message.read.some((m) => m.name === auth.user?.name);
-  };
 
   const privateChatName = (participants: UserType[]): UserType => {
     const filteredParticipant = participants.filter(
@@ -78,21 +85,40 @@ const Conversations: React.FC<ConversationProps> = ({
       return `${days}d`;
     }
   };
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const searchParam = search.trim();
-        const response = await axiosPrivate.get(
-          `/chat/getallrooms?search=${searchParam}`
-        );
-        setData(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
 
+  const getData = async () => {
+    try {
+      const searchParam = search.trim();
+      const response = await axiosPrivate.get(
+        `/chat/getallrooms?search=${searchParam}`
+      );
+      console.log(response.data);
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
     getData();
-  }, [search, openSuccess]);
+  }, [search, openSuccess, messageReceived]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("newMessageNotification", (message) => {
+      console.log(message);
+      getData();
+    });
+
+    return () => {
+      socket.off("newMessageNotification");
+    };
+  }, [socket]);
+
+  const isMessageRead = (message: MessageType): boolean => {
+    return message.read.some((user) => user.name === auth.user?.name);
+  };
 
   const handleConvoSelect = (roomId: string) => {
     localStorage.setItem("roomId", roomId);
@@ -130,7 +156,7 @@ const Conversations: React.FC<ConversationProps> = ({
               } p-3 rounded-xl cursor-pointer`}
             >
               {item.isGroup ? (
-                <div className="flex">
+                <div className="w-full flex justify-between">
                   <div className="flex">
                     <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
                       <img
@@ -141,23 +167,53 @@ const Conversations: React.FC<ConversationProps> = ({
                     </div>
                     <div className="ml-4 flex flex-col">
                       <p className="text-sm font-semibold">{item.name}</p>
-                      <p className={`text-xs font-light text-gray-400`}>
+                      <p
+                        className={`text-xs ${
+                          item.messages.length > 0 &&
+                          !isMessageRead(item.messages[0])
+                            ? "font-semibold text-gray-black"
+                            : "font-light text-gray-400"
+                        }`}
+                      >
                         {item.messages.length === 0
                           ? "Start chatting now!"
-                          : item.messages[0].text}
+                          : item.messages[0].sender
+                          ? `${item.messages[0].sender?.name}: ${item.messages[0].text}`
+                          : `${item.messages[0].text}`}
                       </p>
                     </div>
                   </div>
                   <div
-                    className={`flex ${
+                    className={`flex items-start ${
                       item.messages.length === 0 ? "hidden" : ""
                     }`}
                   >
-                    <p className="text-sm text-gray-400">
-                      {item.messages.length !== 0
-                        ? timeSince(item.messages[0].timestamp)
-                        : ""}
-                    </p>
+                    <div className="flex items-center gap-1">
+                      <div>
+                        <p
+                          className={`text-sm ${
+                            item.messages.length > 0 &&
+                            !isMessageRead(item.messages[0])
+                              ? "font-semibold text-gray-black"
+                              : "font-light text-gray-400"
+                          }`}
+                        >
+                          {item.messages.length !== 0
+                            ? timeSince(item.messages[0].timestamp)
+                            : ""}
+                        </p>
+                      </div>
+                      <div
+                        className={`text-red-500 ${
+                          item.messages.length > 0 &&
+                          isMessageRead(item.messages[0])
+                            ? "hidden"
+                            : ""
+                        }`}
+                      >
+                        <FaCircle />
+                      </div>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -174,7 +230,14 @@ const Conversations: React.FC<ConversationProps> = ({
                       <p className="text-sm font-semibold">
                         {privateChatName(item.participants).name}
                       </p>
-                      <p className="text-xs font-light text-gray-400">
+                      <p
+                        className={`text-xs ${
+                          item.messages.length > 0 &&
+                          !isMessageRead(item.messages[0])
+                            ? "font-semibold text-gray-black"
+                            : "font-light text-gray-400"
+                        }`}
+                      >
                         {item.messages.length === 0
                           ? "Start chatting now!"
                           : item.messages[0].text}
@@ -182,15 +245,36 @@ const Conversations: React.FC<ConversationProps> = ({
                     </div>
                   </div>
                   <div
-                    className={`flex ${
+                    className={`flex items-start ${
                       item.messages.length === 0 ? "hidden" : ""
                     }`}
                   >
-                    <p className="text-sm text-gray-400">
-                      {item.messages.length !== 0
-                        ? timeSince(item.messages[0].timestamp)
-                        : ""}
-                    </p>
+                    <div className="flex items-center gap-1">
+                      <div>
+                        <p
+                          className={`text-sm ${
+                            item.messages.length > 0 &&
+                            !isMessageRead(item.messages[0])
+                              ? "font-semibold text-gray-black"
+                              : "font-light text-gray-400"
+                          }`}
+                        >
+                          {item.messages.length !== 0
+                            ? timeSince(item.messages[0].timestamp)
+                            : ""}
+                        </p>
+                      </div>
+                      <div
+                        className={`text-red-500 ${
+                          item.messages.length > 0 &&
+                          isMessageRead(item.messages[0])
+                            ? "hidden"
+                            : ""
+                        }`}
+                      >
+                        <FaCircle />
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}

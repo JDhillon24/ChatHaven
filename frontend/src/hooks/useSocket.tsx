@@ -35,6 +35,8 @@ const useSocket = () => {
         console.log(`Reconnecting... Attempt ${attempt}`);
       });
 
+      socket.on("reconnect", () => setIsConnected(true));
+
       socket.on("connect_error", (err) => {
         console.error(err.message);
       });

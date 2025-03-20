@@ -117,8 +117,10 @@ exports.getAllRooms = async (req, res) => {
         },
         { name: 1, participants: 1, isGroup: 1, messages: { $slice: -1 } }
       )
-        .sort({ updatedAt: -1 })
-        .populate("participants", "name profilePicture");
+        .sort({ messages: -1 })
+        .populate("participants", "name profilePicture")
+        .populate("messages.sender", "name profilePicture")
+        .populate("messages.read", "name");
 
       const filteredRooms = rooms.filter(
         (room) =>
@@ -136,8 +138,10 @@ exports.getAllRooms = async (req, res) => {
         },
         { name: 1, participants: 1, isGroup: 1, messages: { $slice: -1 } }
       )
-        .sort({ updatedAt: -1 })
-        .populate("participants", "name profilePicture");
+        .sort({ "messages.timestamp": -1 })
+        .populate("participants", "name profilePicture")
+        .populate("messages.sender", "name profilePicture")
+        .populate("messages.read", "name");
 
       res.status(200).json(rooms);
     }
@@ -159,10 +163,9 @@ exports.getRoom = async (req, res) => {
 
       let { id } = req.params;
 
-      const room = await Chat.findById(id).populate(
-        "participants",
-        "name profilePicture"
-      );
+      const room = await Chat.findById(id)
+        .populate("participants", "name profilePicture")
+        .populate("messages.sender", "name profilePicture");
 
       if (
         !room.participants.some(
@@ -225,7 +228,7 @@ exports.leaveRoom = async (req, res) => {
 
     room.messages.push(systemMessage);
 
-    sendSystemMessage(room.id, systemMessageSocket);
+    sendSystemMessage(room.id, room.participants, systemMessageSocket);
 
     await room.save();
 
@@ -356,7 +359,7 @@ exports.changeRoomName = async (req, res) => {
 
   room.messages.push(systemMessage);
 
-  sendSystemMessage(room.id, systemMessageSocket);
+  sendSystemMessage(room.id, room.participants, systemMessageSocket);
   await room.save();
 
   res.status(200).json({
@@ -388,9 +391,10 @@ exports.inviteNewMembers = async (req, res) => {
       .status(400)
       .json({ status: "FAILED", message: "A room Id is required" });
 
-  const room = await Chat.findById(id)
-    .select("-messages")
-    .populate("participants", "name profilePicture");
+  const room = await Chat.findById(id).populate(
+    "participants",
+    "name profilePicture"
+  );
   if (!room)
     return res
       .status(404)
@@ -452,7 +456,7 @@ exports.inviteNewMembers = async (req, res) => {
   //send message to group
   const systemMessage = {
     sender_type: "System",
-    text: `${participantNames.map((item) => item.join(", "))} ${
+    text: `${participantNames.join(", ")} ${
       participantNames.length === 1 ? "has" : "have"
     } joined the room`,
     read: [],
@@ -460,7 +464,7 @@ exports.inviteNewMembers = async (req, res) => {
 
   const systemMessageSocket = {
     sender_type: "System",
-    text: `${participantNames.map((item) => item.join(", "))} ${
+    text: `${participantNames.join(", ")} ${
       participantNames.length === 1 ? "has" : "have"
     } joined the room`,
     timestamp: new Date(Date.now()).toISOString(),
@@ -469,7 +473,7 @@ exports.inviteNewMembers = async (req, res) => {
 
   room.messages.push(systemMessage);
 
-  sendSystemMessage(room.id, systemMessageSocket);
+  sendSystemMessage(room.id, room.participants, systemMessageSocket);
 
   await room.save();
 
@@ -477,4 +481,36 @@ exports.inviteNewMembers = async (req, res) => {
     status: "SUCCESS",
     message: "The selected members have been added to the room",
   });
+};
+
+exports.readAllMessages = async (req, res) => {
+  try {
+    //get user based on access token info, return error if not found
+    const user = await User.findOne({ email: req.user.email });
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    let { id } = req.params;
+
+    if (!id)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "A room ID is required" });
+
+    //add user id to all read arrays in messages
+    await Chat.updateOne(
+      { _id: id },
+      { $addToSet: { "messages.$[].read": user.id } }
+    );
+
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "All messages have been successfully read!",
+    });
+  } catch (error) {
+    res.sendStatus(500);
+  }
 };

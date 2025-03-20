@@ -1,11 +1,13 @@
 import { FaCircle } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useContext, SetStateAction } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { PiListDashesBold } from "react-icons/pi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { SocketContext } from "../../context/SocketProvider";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 type UserType = {
   _id: string;
@@ -34,13 +36,29 @@ type ChatProps = {
   onShowInfo: () => void;
   isActive: boolean;
   room: RoomType | undefined;
+  setMessageReceived: React.Dispatch<SetStateAction<boolean>>;
 };
 
-const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive, room }) => {
+const Chat: React.FC<ChatProps> = ({
+  onBack,
+  onShowInfo,
+  isActive,
+  room,
+  setMessageReceived,
+}) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState(room?.messages);
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
+  const socketContext = useContext(SocketContext);
+
+  if (!socketContext) {
+    throw new Error("SocketContext must be used within a provider!");
+  }
+
+  const { socket } = socketContext;
 
   const privateChatName = (participants: UserType[] | undefined): UserType => {
     if (participants) {
@@ -55,11 +73,51 @@ const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive, room }) => {
     }
   };
 
+  const readAllMessages = async (id: string) => {
+    const response = await axiosPrivate.put(`/chat/readall/${id}`);
+    console.log(response.data);
+    // setMessageReceived((prev) => !prev);
+  };
+
   useEffect(() => {
     if (isActive) {
       messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
     }
-  }, [isActive, room]);
+
+    if (room) {
+      readAllMessages(room._id);
+      setMessageReceived((prev) => !prev);
+    }
+  }, [isActive, room, messages]);
+
+  useEffect(() => {
+    if (!room || !socket) return;
+    socket.emit("joinRoom", { email: auth.user?.email, roomId: room._id });
+
+    setMessages(room.messages);
+
+    socket.on("newMessage", (msg) => {
+      console.log(msg);
+      readAllMessages(room._id);
+      setMessages((prev) => [...(prev || []), msg]);
+    });
+
+    return () => {
+      socket.off("newMessage");
+    };
+  }, [room]);
+
+  const sendMessage = () => {
+    if (!message.trim() || !socket || !room) return;
+
+    socket.emit("sendMessage", {
+      roomId: room._id,
+      email: auth.user?.email,
+      text: message,
+    });
+    setMessage("");
+  };
+
   return (
     <div className="relative h-full w-full border-r-2 border-gray-200">
       <div className="h-20 flex border-b-2 border-gray-200">
@@ -124,7 +182,97 @@ const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive, room }) => {
           </div>
         </div>
         <div className="mt-5">
-          {Array.from({ length: 8 }).map((_, index) => (
+          {messages &&
+            messages.map((item, index, arr) => {
+              if (item.sender_type === "System") {
+                return (
+                  <div
+                    key={index}
+                    className="relative flex justify-center items-center mb-4 mx-2"
+                  >
+                    <span className="flex-grow border-t border-gray-200 mr-2 min-w-[20%]"></span>
+                    <p className="text-sm font-light text-gray-400 text-center">
+                      {item.text}
+                    </p>
+                    <span className="flex-grow border-t border-gray-200 ml-2 min-w-[20%]"></span>
+                  </div>
+                );
+              } else {
+                const prev = index > 0 ? arr[index - 1] : null;
+                const isUserMessage = item.sender?.name === auth.user?.name;
+                const sameUserMessage =
+                  item.sender?.name === prev?.sender?.name;
+
+                if (isUserMessage) {
+                  if (sameUserMessage) {
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-end gap-2 mb-4 justify-end mr-12"
+                      >
+                        <div className="bg-ChatBlue p-3 rounded-lg text-white text-sm md:max-w-80 max-w-64 break-words">
+                          {item.text}
+                        </div>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div key={index} className="flex flex-col">
+                        <div className="flex justify-end">
+                          <p className="text-sm font-light text-gray-400 mr-12">
+                            {item.sender?.name}
+                          </p>
+                        </div>
+                        <div className="flex items-end gap-2 mb-4 justify-end">
+                          <div className="bg-ChatBlue p-3 rounded-lg text-white text-sm md:max-w-80 max-w-64 break-words">
+                            {item.text}
+                          </div>
+                          <img
+                            className="h-10 w-10 rounded-xl"
+                            src={item.sender?.profilePicture}
+                            alt="Profile"
+                          />
+                        </div>
+                      </div>
+                    );
+                  }
+                } else {
+                  if (sameUserMessage) {
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-end gap-2 mb-4 ml-12"
+                      >
+                        <div className="bg-gray-200 p-3 rounded-lg text-sm md:max-w-80 max-w-64 break-words">
+                          {item.text}
+                        </div>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div key={index} className="flex flex-col">
+                        <div className="flex">
+                          <p className="text-sm font-light text-gray-400 ml-12">
+                            {item.sender?.name}
+                          </p>
+                        </div>
+                        <div className="flex items-end gap-2 mb-4">
+                          <img
+                            className="h-10 w-10 rounded-xl"
+                            src={item.sender?.profilePicture}
+                            alt="Profile"
+                          />
+                          <div className="bg-gray-200 p-3 rounded-lg text-sm md:max-w-80 max-w-64 break-words">
+                            {item.text}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                }
+              }
+            })}
+          {/* {Array.from({ length: 8 }).map((_, index) => (
             <div key={index}>
               <div className="flex flex-col">
                 <div className="flex">
@@ -176,7 +324,7 @@ const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive, room }) => {
               zoro123 has left the room
             </p>
             <span className="flex-grow border-t border-gray-200 ml-2"></span>
-          </div>
+          </div> */}
         </div>
         <div ref={messagesEndRef}></div>
       </div>
@@ -185,6 +333,8 @@ const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive, room }) => {
           <textarea
             placeholder="Send a message"
             rows={2}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             onInput={(e) => {
               const target = e.target as HTMLTextAreaElement;
               target.style.height = "auto";
@@ -193,7 +343,10 @@ const Chat: React.FC<ChatProps> = ({ onBack, onShowInfo, isActive, room }) => {
             className="w-full rounded-lg border-gray-200 border-2 placeholder:text-sm pr-10 resize-none md:max-h-40 max-h-32 p-2"
           />
           <span className="cursor-pointer -translate-x-10 pb-2">
-            <div className="transition-all hover:bg-ChatBlue p-1 rounded-full">
+            <div
+              onClick={sendMessage}
+              className="transition-all hover:bg-ChatBlue p-1 rounded-full"
+            >
               <IoSend
                 size={20}
                 className="text-ChatBlue hover:text-white transition-all"
