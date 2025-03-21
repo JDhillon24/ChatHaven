@@ -92,7 +92,7 @@ const Conversations: React.FC<ConversationProps> = ({
       const response = await axiosPrivate.get(
         `/chat/getallrooms?search=${searchParam}`
       );
-      console.log(response.data);
+      // console.log(response.data);
       setData(response.data);
     } catch (error) {
       console.error(error);

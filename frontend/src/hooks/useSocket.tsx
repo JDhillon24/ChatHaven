@@ -28,14 +28,21 @@ const useSocket = () => {
 
       socket.emit("join", auth.user.email);
 
-      socket.on("connect", () => setIsConnected(true));
-      socket.on("disconnect", () => setIsConnected(false));
+      socket.on("connect", () => {
+        setIsConnected(true);
+      });
+      socket.on("disconnect", () => {
+        setIsConnected(false);
+      });
 
       socket.on("reconnect_attempt", (attempt) => {
         console.log(`Reconnecting... Attempt ${attempt}`);
       });
 
-      socket.on("reconnect", () => setIsConnected(true));
+      socket.on("reconnect", () => {
+        console.log("socket reconnected");
+        setIsConnected(true);
+      });
 
       socket.on("connect_error", (err) => {
         console.error(err.message);

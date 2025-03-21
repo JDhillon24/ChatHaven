@@ -6,12 +6,10 @@ const sendSystemMessage = (roomId, participants, message) => {
   io.to(roomId).emit("newMessage", message);
 
   for (const participant of participants) {
-    const socketId = [...users.entries()].find(
-      ([_, id]) => id === participant.email
-    )?.[0];
+    const user = users.get(participant.email);
 
-    if (socketId) {
-      io.to(socketId).emit("newMessageNotification", message);
+    if (user?.socketId) {
+      io.to(user.socketId).emit("newMessageNotification", message);
     }
   }
 };

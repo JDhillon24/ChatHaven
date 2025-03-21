@@ -1,3 +1,5 @@
+require("dotenv");
+const jwt = require("jsonwebtoken");
 const { Server } = require("socket.io");
 const Chat = require("./models/Chat");
 const User = require("./models/User");
@@ -15,22 +17,68 @@ const initializeSocket = (server) => {
     },
   });
 
+  io.use((socket, next) => {
+    const token = socket.handshake.auth.token;
+
+    if (!token) {
+      return next(new Error("Authentication error: No token provided"));
+    }
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        return next(
+          new Error("Authentication error: invalid or expired token")
+        );
+      }
+
+      socket.user = decoded;
+      next();
+    });
+  });
+
   io.on("connection", (socket) => {
     // console.log("User connected:", socket.id);
 
     socket.on("join", (email) => {
-      users.set(socket.id, email);
-      console.log(`User ${email} connected with socket ${socket.id}`);
+      if (users.has(email)) {
+        users.get(email).socketId = socket.id;
+      } else {
+        users.set(email, { socketId: socket.id, lastRoom: null });
+      }
+
+      const lastRoom = users.get(email).lastRoom;
+      console.log(lastRoom);
+      if (lastRoom) {
+        socket.join(lastRoom);
+        console.log(`${email} just rejoined ${lastRoom}`);
+      }
+
+      // console.log(users);
     });
 
     socket.on("joinRoom", async ({ email, roomId }) => {
-      socket.join(roomId);
+      const user = users.get(
+        [...users.entries()].find(([_, u]) => u.socketId === socket.id)?.[0]
+      );
+
+      if (user) {
+        user.lastRoom = roomId;
+        socket.join(roomId);
+      }
       // console.log(`User ${email} joined room ${roomId}`);
     });
 
     socket.on("sendMessage", async ({ roomId, email, text }) => {
-      console.log(users);
       if (!roomId || !email || !text) return;
+
+      io.in(roomId)
+        .fetchSockets()
+        .then((sockets) => {
+          console.log(
+            `Users in room ${roomId}:`,
+            sockets.map((s) => s.id)
+          );
+        });
 
       const room = await Chat.findById(roomId).populate(
         "participants",
@@ -58,24 +106,32 @@ const initializeSocket = (server) => {
 
       room.messages.push(message);
 
-      await room.save();
-
       io.to(roomId).emit("newMessage", socketMessage);
 
-      for (const participant of room.participants) {
-        const socketId = [...users.entries()].find(
-          ([_, id]) => id === participant.email
-        )?.[0];
+      await room.save();
 
-        if (socketId) {
-          io.to(socketId).emit("newMessageNotification", message);
+      for (const participant of room.participants) {
+        const user = users.get(participant.email);
+
+        if (user?.socketId) {
+          io.to(user.socketId).emit("newMessageNotification", true);
         }
       }
     });
 
-    socket.on("disconnect", () => {
-      users.delete(socket.id);
-      console.log("User disconnected:", socket.id);
+    socket.on("disconnect", (reason) => {
+      const userEntry = [...users.entries()].find(
+        ([_, u]) => u.socketId === socket.id
+      );
+
+      if (userEntry) {
+        users.set(userEntry[0], {
+          lastRoom: userEntry[1].lastRoom,
+          socketId: null,
+        });
+      }
+
+      console.log(`User ${socket.id} disconnected due to ${reason}`);
     });
   });
 };

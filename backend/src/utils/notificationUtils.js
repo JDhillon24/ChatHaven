@@ -3,11 +3,11 @@ const { getIo, users } = require("../socket");
 const sendNotification = (email, notification) => {
   // console.log(email);
   const io = getIo();
-  const socketId = [...users.entries()].find(([_, id]) => id === email)?.[0];
+  const user = users.get(email);
 
-  if (socketId) {
+  if (user?.socketId) {
     // console.log("id found!");
-    io.to(socketId).emit("notification", notification);
+    io.to(user.socketId).emit("notification", notification);
   }
 };
 

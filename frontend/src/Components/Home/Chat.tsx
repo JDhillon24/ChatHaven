@@ -75,7 +75,7 @@ const Chat: React.FC<ChatProps> = ({
 
   const readAllMessages = async (id: string) => {
     const response = await axiosPrivate.put(`/chat/readall/${id}`);
-    console.log(response.data);
+    // console.log(response.data);
     // setMessageReceived((prev) => !prev);
   };
 
@@ -92,6 +92,7 @@ const Chat: React.FC<ChatProps> = ({
 
   useEffect(() => {
     if (!room || !socket) return;
+    console.log(`socketId: ${socket.id}`);
     socket.emit("joinRoom", { email: auth.user?.email, roomId: room._id });
 
     setMessages(room.messages);
