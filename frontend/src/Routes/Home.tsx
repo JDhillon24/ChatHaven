@@ -234,6 +234,7 @@ const Home = () => {
                   onShowInfo={() => handleSectionChange("info")}
                   isActive={isChatActive}
                   room={rooms}
+                  setRoom={setRooms}
                   setMessageReceived={setMessageReceived}
                 />
               </div>

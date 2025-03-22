@@ -36,6 +36,7 @@ type ChatProps = {
   onShowInfo: () => void;
   isActive: boolean;
   room: RoomType | undefined;
+  setRoom: React.Dispatch<React.SetStateAction<RoomType | undefined>>;
   setMessageReceived: React.Dispatch<SetStateAction<boolean>>;
 };
 
@@ -44,12 +45,12 @@ const Chat: React.FC<ChatProps> = ({
   onShowInfo,
   isActive,
   room,
+  setRoom,
   setMessageReceived,
 }) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [messages, setMessages] = useState(room?.messages);
+  // const [messages, setMessages] = useState(room?.messages);
   const [message, setMessage] = useState("");
-  const [roomId, setRoomId] = useState("");
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
@@ -89,7 +90,7 @@ const Chat: React.FC<ChatProps> = ({
       readAllMessages(room._id);
       setMessageReceived((prev) => !prev);
     }
-  }, [isActive, room, messages]);
+  }, [isActive, room]);
 
   useEffect(() => {
     if (!room || !socket) return;
@@ -101,14 +102,18 @@ const Chat: React.FC<ChatProps> = ({
     //   setMessages(room.messages);
     // }
 
-    setMessages(room.messages);
+    // setMessages(room.messages);
     socket.emit("joinRoom", { email: auth.user?.email, roomId: room._id });
     // setRoomId(room._id);
 
     socket.on("newMessage", (msg) => {
       // console.log("received message");
       readAllMessages(room._id);
-      setMessages((prev) => [...(prev || []), msg]);
+      setRoom((prevRoom) => ({
+        ...prevRoom!,
+        messages: [...(prevRoom?.messages || []), msg],
+      }));
+      // setMessages((prev) => [...(prev || []), msg]);
     });
 
     return () => {
@@ -194,8 +199,8 @@ const Chat: React.FC<ChatProps> = ({
           </div>
         </div>
         <div className="mt-5">
-          {messages &&
-            messages.map((item, index, arr) => {
+          {room?.messages &&
+            room.messages.map((item, index, arr) => {
               if (item.sender_type === "System") {
                 return (
                   <div
