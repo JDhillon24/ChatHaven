@@ -49,6 +49,7 @@ const Chat: React.FC<ChatProps> = ({
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [messages, setMessages] = useState(room?.messages);
   const [message, setMessage] = useState("");
+  const [roomId, setRoomId] = useState("");
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
@@ -93,9 +94,16 @@ const Chat: React.FC<ChatProps> = ({
   useEffect(() => {
     if (!room || !socket) return;
     // console.log(`socketId: ${socket.id}`);
-    socket.emit("joinRoom", { email: auth.user?.email, roomId: room._id });
+    // console.log(`State: ${roomId}, API: ${room._id}`);
+    // if (room._id === roomId) {
 
-    setMessages((prev) => (prev?.length ? prev : room.messages));
+    // } else {
+    //   setMessages(room.messages);
+    // }
+
+    setMessages(room.messages);
+    socket.emit("joinRoom", { email: auth.user?.email, roomId: room._id });
+    // setRoomId(room._id);
 
     socket.on("newMessage", (msg) => {
       // console.log("received message");
@@ -128,6 +136,7 @@ const Chat: React.FC<ChatProps> = ({
           <div
             onClick={() => {
               onBack();
+              // setRoomId("");
               localStorage.setItem("roomId", "");
               navigate("/Home", { replace: true, state: {} });
             }}

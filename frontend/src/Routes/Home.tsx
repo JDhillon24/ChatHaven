@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import useAuth from "../hooks/useAuth";
 import { useLocation } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
 import Sidebar from "../Components/Sidebar";
 import Conversations from "../Components/Home/Conversations";
 import Chat from "../Components/Home/Chat";
@@ -13,6 +12,7 @@ import NoConvoSelected from "../Components/Home/NoConvoSelected";
 import LeaveRoomModal from "../Components/Home/LeaveRoomModal";
 import { useNavigate } from "react-router-dom";
 import EditRoomModal from "../Components/Home/EditRoomModal";
+import { SocketContext } from "../context/SocketProvider";
 
 type Section = "conversations" | "chat" | "info";
 
@@ -52,6 +52,13 @@ const Home = () => {
   const [successText, setSuccessText] = useState("");
   const [rooms, setRooms] = useState<RoomType | undefined>(undefined);
   const [messageReceived, setMessageReceived] = useState(false);
+  const socketContext = useContext(SocketContext);
+
+  if (!socketContext) {
+    throw new Error("SocketContext must be used within a provider!");
+  }
+
+  const { socket } = socketContext;
 
   useEffect(() => {
     document.title = "Home | ChatHaven";
@@ -126,15 +133,17 @@ const Home = () => {
       try {
         const response = await axiosPrivate.get(`/chat/${roomId}`);
         setRooms(response.data);
+        // console.log(response.data.messages);
       } catch (error) {
         console.error(error);
       }
     };
 
     if (roomId) {
+      // console.log("room messages acquired");
       getData();
     }
-  }, [roomId, openSuccess]);
+  }, [roomId, openSuccess, socket]);
 
   useEffect(() => {
     if (privateChat) {

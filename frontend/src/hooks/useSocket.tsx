@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import useAuth from "./useAuth";
+import useRefreshToken from "./useRefreshToken";
 
 const SOCKET_URL = "http://localhost:5000";
 
 let socket: Socket | null = null;
 
 const useSocket = () => {
+  const refresh = useRefreshToken();
   const { auth } = useAuth();
   const [isConnected, setIsConnected] = useState(false);
 
@@ -50,8 +52,17 @@ const useSocket = () => {
         setIsConnected(true);
       });
 
-      socket.on("connect_error", (err) => {
+      socket.on("connect_error", async (err) => {
         console.error(err.message);
+        if (err.message === "Authentication error: invalid or expired token") {
+          try {
+            const newAccessToken = await refresh();
+
+            socket?.emit("reauthenticate", { token: newAccessToken });
+          } catch (error) {
+            console.error("Failed to refresh token:", error);
+          }
+        }
       });
 
       // socket.onAny((event, ...args) => {

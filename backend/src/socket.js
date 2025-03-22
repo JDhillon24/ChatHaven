@@ -56,15 +56,36 @@ const initializeSocket = (server) => {
       // console.log(users);
     });
 
+    socket.on("reauthenticate", async ({ token }) => {
+      try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        socket.user = decoded;
+        console.log(`Reauntheticated user`);
+      } catch (err) {
+        cconsole.error("Reauthentication failed:", err);
+        socket.emit("connect_error", new Error("Invalid or expired token"));
+      }
+    });
+
     socket.on("joinRoom", async ({ email, roomId }) => {
       const user = users.get(
         [...users.entries()].find(([_, u]) => u.socketId === socket.id)?.[0]
       );
 
       if (user) {
+        const rooms = Array.from(socket.rooms);
+
+        rooms.forEach((r) => {
+          if (r !== socket.id) {
+            socket.leave(r);
+          }
+        });
+
         user.lastRoom = roomId;
         socket.join(roomId);
       }
+      // console.log(user);
+      // console.log(socket.rooms);
       // console.log(`User ${email} joined room ${roomId}`);
     });
 
@@ -105,11 +126,10 @@ const initializeSocket = (server) => {
       };
 
       room.messages.push(message);
+      await room.save();
 
       io.to(roomId).emit("newMessage", socketMessage);
       // console.log(`Emitting to room ${roomId}: ${socketMessage}`);
-
-      await room.save();
 
       for (const participant of room.participants) {
         const user = users.get(participant.email);
