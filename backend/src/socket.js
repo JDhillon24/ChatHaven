@@ -47,7 +47,7 @@ const initializeSocket = (server) => {
       }
 
       const lastRoom = users.get(email).lastRoom;
-      console.log(lastRoom);
+      // console.log(lastRoom);
       if (lastRoom) {
         socket.join(lastRoom);
         console.log(`${email} just rejoined ${lastRoom}`);
@@ -107,6 +107,7 @@ const initializeSocket = (server) => {
       room.messages.push(message);
 
       io.to(roomId).emit("newMessage", socketMessage);
+      // console.log(`Emitting to room ${roomId}: ${socketMessage}`);
 
       await room.save();
 

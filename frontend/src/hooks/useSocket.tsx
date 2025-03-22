@@ -17,6 +17,11 @@ const useSocket = () => {
       return;
     }
 
+    if (socket) {
+      socket.disconnect();
+      socket = null;
+    }
+
     if (!socket) {
       socket = io(SOCKET_URL, {
         withCredentials: true,
@@ -29,6 +34,7 @@ const useSocket = () => {
       socket.emit("join", auth.user.email);
 
       socket.on("connect", () => {
+        // console.log(`connection has been made: ${socket?.id}`);
         setIsConnected(true);
       });
       socket.on("disconnect", () => {
@@ -47,6 +53,10 @@ const useSocket = () => {
       socket.on("connect_error", (err) => {
         console.error(err.message);
       });
+
+      // socket.onAny((event, ...args) => {
+      //   console.log(`Received event: ${event}`, args);
+      // });
     }
 
     return () => {

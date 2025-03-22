@@ -92,13 +92,13 @@ const Chat: React.FC<ChatProps> = ({
 
   useEffect(() => {
     if (!room || !socket) return;
-    console.log(`socketId: ${socket.id}`);
+    // console.log(`socketId: ${socket.id}`);
     socket.emit("joinRoom", { email: auth.user?.email, roomId: room._id });
 
-    setMessages(room.messages);
+    setMessages((prev) => (prev?.length ? prev : room.messages));
 
     socket.on("newMessage", (msg) => {
-      console.log(msg);
+      // console.log("received message");
       readAllMessages(room._id);
       setMessages((prev) => [...(prev || []), msg]);
     });
@@ -106,10 +106,12 @@ const Chat: React.FC<ChatProps> = ({
     return () => {
       socket.off("newMessage");
     };
-  }, [room]);
+  }, [room, socket]);
 
   const sendMessage = () => {
+    // console.log(`socketId: ${socket?.id}`);
     if (!message.trim() || !socket || !room) return;
+    // console.log("socket does run");
 
     socket.emit("sendMessage", {
       roomId: room._id,
