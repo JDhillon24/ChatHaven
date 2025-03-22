@@ -129,7 +129,7 @@ const initializeSocket = (server) => {
       await room.save();
 
       io.to(roomId).emit("newMessage", socketMessage);
-      // console.log(`Emitting to room ${roomId}: ${socketMessage}`);
+      console.log(`Emitting to room ${roomId}: ${socketMessage}`);
 
       for (const participant of room.participants) {
         const user = users.get(participant.email);

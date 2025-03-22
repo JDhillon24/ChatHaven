@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import useAuth from "./useAuth";
 import useRefreshToken from "./useRefreshToken";
@@ -8,74 +8,70 @@ const SOCKET_URL = "http://localhost:5000";
 let socket: Socket | null = null;
 
 const useSocket = () => {
+  const socketRef = useRef<Socket | null>(null);
   const refresh = useRefreshToken();
   const { auth } = useAuth();
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     if (auth.isAuthenticated === false) {
-      socket?.disconnect();
-      socket = null;
+      socketRef.current?.disconnect();
+      socketRef.current = null;
       return;
     }
 
-    if (socket) {
-      socket.disconnect();
-      socket = null;
+    if (socketRef.current) {
+      console.log(
+        "Existing socket found. Disconnecting before reconnecting..."
+      );
+      socketRef.current.disconnect();
+      socketRef.current = null;
     }
 
-    if (!socket) {
-      socket = io(SOCKET_URL, {
-        withCredentials: true,
-        auth: { token: auth.user.accessToken },
-        reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 3000,
-      });
+    // console.log("new socket connecting");
+    socketRef.current = io(SOCKET_URL, {
+      withCredentials: true,
+      auth: { token: auth.user.accessToken },
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 3000,
+      transports: ["websocket"],
+    });
 
-      socket.emit("join", auth.user.email);
+    const socket = socketRef.current;
 
-      socket.on("connect", () => {
-        // console.log(`connection has been made: ${socket?.id}`);
-        setIsConnected(true);
-      });
-      socket.on("disconnect", () => {
-        setIsConnected(false);
-      });
+    socket.emit("join", auth.user.email);
 
-      socket.on("reconnect_attempt", (attempt) => {
-        console.log(`Reconnecting... Attempt ${attempt}`);
-      });
+    socket.on("connect", () => {
+      // console.log(`connection has been made: ${socket?.id}`);
+      setIsConnected(true);
+    });
+    socket.on("disconnect", () => {
+      setIsConnected(false);
+    });
 
-      socket.on("reconnect", () => {
-        console.log("socket reconnected");
-        setIsConnected(true);
-      });
+    socket.on("reconnect_attempt", (attempt) => {
+      console.log(`Reconnecting... Attempt ${attempt}`);
+    });
 
-      socket.on("connect_error", async (err) => {
-        console.error(err.message);
-        if (err.message === "Authentication error: invalid or expired token") {
-          try {
-            const newAccessToken = await refresh();
+    socket.on("reconnect", () => {
+      console.log("socket reconnected");
+      setIsConnected(true);
+    });
 
-            socket?.emit("reauthenticate", { token: newAccessToken });
-          } catch (error) {
-            console.error("Failed to refresh token:", error);
-          }
-        }
-      });
-
-      // socket.onAny((event, ...args) => {
-      //   console.log(`Received event: ${event}`, args);
-      // });
-    }
+    socket.on("connect_error", async (err) => {
+      console.log(err);
+    });
 
     return () => {
-      socket?.disconnect();
-      socket = null;
+      if (socketRef.current) {
+        // console.log("cleaning up socket: disconnecting");
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
     };
   }, [auth]);
-  return { socket, isConnected };
+  return { socket: socketRef.current, isConnected };
 };
 
 export default useSocket;
