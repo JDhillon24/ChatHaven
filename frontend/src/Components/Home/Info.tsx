@@ -1,6 +1,10 @@
 import { HiDotsVertical } from "react-icons/hi";
 import { useState, useEffect, useRef } from "react";
 import { FaArrowLeft } from "react-icons/fa";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { IoMdAdd } from "react-icons/io";
+import useAuth from "../../hooks/useAuth";
+import { AxiosError } from "axios";
 
 type UserType = {
   _id: string;
@@ -13,6 +17,9 @@ type InfoProps = {
   participants: UserType[] | undefined;
   onOpenLeave: () => void;
   onOpenEdit: () => void;
+  onOpenError: () => void;
+  onOpenSuccess: () => void;
+  setErrorText: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const Info: React.FC<InfoProps> = ({
@@ -20,9 +27,28 @@ const Info: React.FC<InfoProps> = ({
   participants,
   onOpenLeave,
   onOpenEdit,
+  setErrorText,
+  onOpenError,
+  onOpenSuccess,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const axiosPrivate = useAxiosPrivate();
+  const [friends, setFriends] = useState<UserType[]>([]);
+  const { auth } = useAuth();
+
+  const isFriend = (participant: UserType): boolean => {
+    return friends.some((friend) => friend._id === participant._id);
+  };
+
+  useEffect(() => {
+    const getData = async () => {
+      const response = await axiosPrivate.get("/user/friends");
+      setFriends(response.data);
+    };
+
+    getData();
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -33,6 +59,23 @@ const Info: React.FC<InfoProps> = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleSendRequest = async (friend_id: string) => {
+    try {
+      const response = await axiosPrivate.post(
+        "/notifications/sendfriendrequest",
+        JSON.stringify({
+          receiverId: friend_id,
+        })
+      );
+      onOpenSuccess();
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        setErrorText(error.response?.data.message);
+        onOpenError();
+      }
+    }
+  };
 
   return (
     <div className="relative h-full w-full">
@@ -79,7 +122,7 @@ const Info: React.FC<InfoProps> = ({
             {participants?.map((item) => (
               <div
                 key={item._id}
-                className="flex gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-100"
+                className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-100"
               >
                 <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
                   <img
@@ -89,6 +132,16 @@ const Info: React.FC<InfoProps> = ({
                   />
                 </div>
                 <p className="text-md font-semibold">{item.name}</p>
+                <div
+                  onClick={() => handleSendRequest(item._id)}
+                  className={`h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-ChatBlue cursor-pointer hover:bg-gray-300 ${
+                    isFriend(item) || auth.user?.name == item.name
+                      ? "hidden"
+                      : ""
+                  }`}
+                >
+                  <IoMdAdd size={20} />
+                </div>
               </div>
             ))}
           </div>

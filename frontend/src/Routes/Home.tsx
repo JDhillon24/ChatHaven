@@ -13,6 +13,7 @@ import LeaveRoomModal from "../Components/Home/LeaveRoomModal";
 import { useNavigate } from "react-router-dom";
 import EditRoomModal from "../Components/Home/EditRoomModal";
 import { SocketContext } from "../context/SocketProvider";
+import ErrorModal from "../Components/UI/ErrorModal";
 
 type Section = "conversations" | "chat" | "info";
 
@@ -49,6 +50,8 @@ const Home = () => {
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openLeaveRoom, setOpenLeaveRoom] = useState(false);
   const [openEditRoom, setOpenEditRoom] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const [errorText, setErrorText] = useState("");
   const [successText, setSuccessText] = useState("");
   const [rooms, setRooms] = useState<RoomType | undefined>(undefined);
   const [messageReceived, setMessageReceived] = useState(false);
@@ -174,6 +177,11 @@ const Home = () => {
     setOpenSuccess(true);
   };
 
+  const handleAddFriendSuccess = () => {
+    setSuccessText("You have successfully sent a friend request!");
+    setOpenSuccess(true);
+  };
+
   const handleSuccessClose = () => {
     setOpenSuccess(false);
 
@@ -248,6 +256,9 @@ const Home = () => {
                   onOpenLeave={() => setOpenLeaveRoom(true)}
                   onOpenEdit={() => setOpenEditRoom(true)}
                   participants={rooms?.participants}
+                  onOpenError={() => setOpenError(true)}
+                  setErrorText={setErrorText}
+                  onOpenSuccess={handleAddFriendSuccess}
                 />
               </div>
             </>
@@ -285,6 +296,13 @@ const Home = () => {
           handleInviteMembersSuccess={handleInviteMembersSuccess}
           roomName={rooms?.name}
           participants={rooms?.participants}
+        />
+      </div>
+      <div className="z-20">
+        <ErrorModal
+          open={openError}
+          onClose={() => setOpenError(false)}
+          text={errorText}
         />
       </div>
     </div>
