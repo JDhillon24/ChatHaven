@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import EditRoomModal from "../Components/Home/EditRoomModal";
 import { SocketContext } from "../context/SocketProvider";
 import ErrorModal from "../Components/UI/ErrorModal";
+import { AxiosError } from "axios";
 
 type Section = "conversations" | "chat" | "info";
 
@@ -139,6 +140,14 @@ const Home = () => {
         // console.log(response.data.messages);
       } catch (error) {
         console.error(error);
+
+        if (error instanceof AxiosError) {
+          if (error.response?.status === 404) {
+            handleSectionChange("conversations");
+            localStorage.setItem("roomId", "");
+            navigate("/Home", { replace: true, state: {} });
+          }
+        }
       }
     };
 

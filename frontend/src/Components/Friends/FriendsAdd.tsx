@@ -2,7 +2,6 @@ import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { IoMdAdd } from "react-icons/io";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { RxCross1 } from "react-icons/rx";
-import SuccessModal from "../UI/SuccessModal";
 import { AxiosError } from "axios";
 
 type FriendProps = {

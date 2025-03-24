@@ -168,13 +168,15 @@ exports.getRoom = async (req, res) => {
         .populate("messages.sender", "name profilePicture");
 
       if (
+        !room ||
         !room.participants.some(
           (participant) => participant._id.toString() === user.id
         )
       )
-        return res.status(400).json({
+        return res.status(404).json({
           status: "FAILED",
-          message: "You are not a participant of this room",
+          message:
+            "You are not a participant of this room or this room no longer exists",
         });
 
       res.status(200).json(room);
