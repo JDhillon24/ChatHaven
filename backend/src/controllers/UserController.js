@@ -457,3 +457,18 @@ exports.verifyEmail = async (req, res) => {
       .json({ status: "FAILED", message: "Invalid or expired token" });
   }
 };
+
+exports.forgotPassword = async (req, res) => {
+  //get user based on email in req body
+  let { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user)
+    return res
+      .status(404)
+      .json({ status: "FAILED", message: "User not found" });
+
+  //generate password reset token and save to db
+  const resetToken = user.createResetPasswordToken();
+  await user.save();
+};
