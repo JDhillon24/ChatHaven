@@ -14,7 +14,6 @@ function authenticateToken(req, res, next) {
       // console.log(err);
       return res.sendStatus(403);
     }
-
     req.user = user;
     next();
   });
@@ -24,7 +23,14 @@ function generateAccessToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15s" });
 }
 
+function generateVerificationToken(userId) {
+  return jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "1d",
+  });
+}
+
 module.exports = {
   authenticateToken,
   generateAccessToken,
+  generateVerificationToken,
 };

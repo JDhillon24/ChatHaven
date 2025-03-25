@@ -16,6 +16,7 @@ const {
   removeFriend,
   updatePassword,
   changeUserName,
+  verifyEmail,
 } = require("../controllers/UserController");
 
 //route for creating a new user
@@ -29,9 +30,6 @@ router.post("/token", grantToken);
 
 //route for logging out as a user
 router.post("/logout", logoutUser);
-
-//route for getting a list of logged in user's friends
-// router.get("/friends", authenticateToken, retrieveFriends);
 
 //route for searching list of friends
 router.get("/friends", authenticateToken, searchFriends);
@@ -50,5 +48,8 @@ router.put("/updatepassword", authenticateToken, updatePassword);
 
 //route for changing username
 router.put("/changeusername", authenticateToken, changeUserName);
+
+//route for verifying email
+router.get("/verifyemail", verifyEmail);
 
 module.exports = router;

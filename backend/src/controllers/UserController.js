@@ -105,6 +105,14 @@ exports.loginUser = async (req, res) => {
       });
     }
 
+    //check if user has verified their email
+    if (!user.verified) {
+      return res.status(401).json({
+        status: "FAILED",
+        message: "User has not been verified yet",
+      });
+    }
+
     // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -431,5 +439,21 @@ exports.changeProfilePicture = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
+  }
+};
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    await User.findByIdAndUpdate(decoded.userId, { verified: true });
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "User has been verified successfully!",
+    });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ status: "FAILED", message: "Invalid or expired token" });
   }
 };
