@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const { generateAccessToken } = require("../utils/auth");
 
 const User = require("./../models/User");
+const sendEmail = require("../email/emailService");
 
 exports.registerAccount = async (req, res) => {
   try {
@@ -141,6 +142,16 @@ exports.loginUser = async (req, res) => {
       secure: process.env.NODE_ENV === "production", // Secure in production
       sameSite: "strict",
     });
+
+    sendEmail(
+      "test-f9a1lo7w0@srv1.mail-tester.com",
+      "test email",
+      "verifyEmail",
+      {
+        name: "Jagdeep Dhillon",
+        verificationLink: "https://www.youtube.com",
+      }
+    );
 
     // Send response
     res.status(200).json({
