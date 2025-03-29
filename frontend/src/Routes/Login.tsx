@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../Components/UI/Logo";
 import { Link } from "react-router-dom";
 import LoginForm from "../Components/Login/LoginForm";
@@ -9,6 +9,7 @@ const Login = () => {
   const location = useLocation();
   const [openSuccess, setOpenSuccess] = useState(false);
   const [successText, setSuccessText] = useState("");
+  const navigate = useNavigate();
 
   const { verifySent, verifySuccess, verifyFailed, email } =
     location.state || {};
@@ -27,6 +28,11 @@ const Login = () => {
     } else if (verifyFailed) {
     }
   });
+
+  const handleSuccessClose = () => {
+    setOpenSuccess(false);
+    navigate(location.pathname, { replace: true, state: {} });
+  };
 
   useEffect(() => {
     document.title = "Login | ChatHaven";
@@ -58,7 +64,7 @@ const Login = () => {
       </div>
       <SuccessModal
         open={openSuccess}
-        onClose={() => setOpenSuccess(false)}
+        onClose={handleSuccessClose}
         text={successText}
       />
     </div>

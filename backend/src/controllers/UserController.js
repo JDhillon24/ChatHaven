@@ -143,15 +143,15 @@ exports.loginUser = async (req, res) => {
       sameSite: "strict",
     });
 
-    sendEmail(
-      "test-f9a1lo7w0@srv1.mail-tester.com",
-      "test email",
-      "verifyEmail",
-      {
-        name: "Jagdeep Dhillon",
-        verificationLink: "https://www.youtube.com",
-      }
-    );
+    // sendEmail(
+    //   "test-f9a1lo7w0@srv1.mail-tester.com",
+    //   "test email",
+    //   "verifyEmail",
+    //   {
+    //     name: "Jagdeep Dhillon",
+    //     verificationLink: "https://www.youtube.com",
+    //   }
+    // );
 
     // Send response
     res.status(200).json({

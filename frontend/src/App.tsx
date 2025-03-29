@@ -11,6 +11,7 @@ import Notifications from "./Routes/Notifications";
 import SocketWrapper from "./Components/SocketWrapper";
 import { NavigationTracker } from "./hooks/useNavigationTracker";
 import EditProfile from "./Routes/EditProfile";
+import Verify from "./Routes/Verify";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           </Route>
           <Route path="/Login" element={<Login />} />
           <Route path="/Register" element={<Register />} />
+          <Route path="/Verify/:token" element={<Verify />} />
         </Routes>
       </NavigationTracker>
     </Router>
