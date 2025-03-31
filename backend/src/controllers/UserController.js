@@ -1,7 +1,10 @@
 require("dotenv");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { generateAccessToken } = require("../utils/auth");
+const {
+  generateAccessToken,
+  generateVerificationToken,
+} = require("../utils/auth");
 
 const User = require("./../models/User");
 const sendEmail = require("../email/emailService");
@@ -69,6 +72,15 @@ exports.registerAccount = async (req, res) => {
     });
 
     const savedUser = await newUser.save();
+
+    const verificationToken = generateVerificationToken(savedUser.id);
+
+    sendEmail(email, "Verify Your Account | ChatHaven", "verifyEmail", {
+      name,
+      verificationLink: `https://www.chathaven.com/Verify?token=${verificationToken}&email=${encodeURIComponent(
+        email
+      )}`,
+    });
 
     res.status(201).json({
       status: "SUCCESS",
@@ -466,6 +478,35 @@ exports.verifyEmail = async (req, res) => {
     res
       .status(400)
       .json({ status: "FAILED", message: "Invalid or expired token" });
+  }
+};
+
+exports.resendVerificationLink = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: "FAILED", message: "User not found" });
+
+    if (user.verified)
+      return res
+        .status(400)
+        .json({ status: "FAILED", message: "User is already verified" });
+
+    const verificationToken = generateVerificationToken(user.id);
+
+    sendEmail(email, "Verify Your Account | ChatHaven", "verifyEmail", {
+      name: user.name,
+      verificationLink: `https://www.chathaven.com/Verify?token=${verificationToken}&email=${encodeURIComponent(
+        email
+      )}`,
+    });
+  } catch (error) {
+    res.sendStatus(500);
   }
 };
 

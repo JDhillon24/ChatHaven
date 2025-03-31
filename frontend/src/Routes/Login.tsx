@@ -4,12 +4,16 @@ import Logo from "../Components/UI/Logo";
 import { Link } from "react-router-dom";
 import LoginForm from "../Components/Login/LoginForm";
 import SuccessModal from "../Components/UI/SuccessModal";
+import axios from "../api/axios";
+import VerifyFailedModal from "../Components/Login/VerifyFailedModal";
 
 const Login = () => {
   const location = useLocation();
   const [openSuccess, setOpenSuccess] = useState(false);
   const [successText, setSuccessText] = useState("");
   const navigate = useNavigate();
+  const [openResend, setOpenResend] = useState(false);
+  const [resendText, setResendText] = useState("");
 
   const { verifySent, verifySuccess, verifyFailed, email } =
     location.state || {};
@@ -25,13 +29,36 @@ const Login = () => {
         "Your account has been successfully verified! Go ahead and log in to get started!"
       );
       setOpenSuccess(true);
-    } else if (verifyFailed) {
+    } else if (verifyFailed && email) {
+      setResendText(
+        `The verification link is invalid or expired. Would you like to have a new link sent to ${email}?`
+      );
+      setOpenResend(true);
     }
   });
 
   const handleSuccessClose = () => {
     setOpenSuccess(false);
     navigate(location.pathname, { replace: true, state: {} });
+  };
+
+  const handleResendClose = () => {
+    setOpenResend(false);
+    navigate(location.pathname, { replace: true, state: {} });
+  };
+
+  const handleResend = async (email: string) => {
+    try {
+      const response = axios.post(
+        "/user/resendverificationlink",
+        JSON.stringify({ email })
+      );
+      setOpenResend(false);
+      setSuccessText("The new verification link has successfully been sent!");
+      setOpenSuccess(true);
+    } catch (error) {
+      console.error;
+    }
   };
 
   useEffect(() => {
@@ -66,6 +93,12 @@ const Login = () => {
         open={openSuccess}
         onClose={handleSuccessClose}
         text={successText}
+      />
+      <VerifyFailedModal
+        open={openResend}
+        onClose={handleResendClose}
+        handleResend={() => handleResend(email)}
+        text={resendText}
       />
     </div>
   );

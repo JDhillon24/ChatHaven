@@ -17,6 +17,7 @@ const {
   updatePassword,
   changeUserName,
   verifyEmail,
+  resendVerificationLink,
 } = require("../controllers/UserController");
 
 //route for creating a new user
@@ -51,5 +52,8 @@ router.put("/changeusername", authenticateToken, changeUserName);
 
 //route for verifying email
 router.get("/verifyemail", verifyEmail);
+
+//route for resending verification link
+router.post("/resendverificationlink", resendVerificationLink);
 
 module.exports = router;

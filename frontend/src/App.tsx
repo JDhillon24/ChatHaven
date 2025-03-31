@@ -31,7 +31,7 @@ function App() {
           </Route>
           <Route path="/Login" element={<Login />} />
           <Route path="/Register" element={<Register />} />
-          <Route path="/Verify/:token" element={<Verify />} />
+          <Route path="/Verify" element={<Verify />} />
         </Routes>
       </NavigationTracker>
     </Router>
