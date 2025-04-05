@@ -14,6 +14,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [openResend, setOpenResend] = useState(false);
   const [resendText, setResendText] = useState("");
+  const [stateEmail, setStateEmail] = useState("");
 
   const { verifySent, verifySuccess, verifyFailed, email } =
     location.state || {};
@@ -35,7 +36,7 @@ const Login = () => {
       );
       setOpenResend(true);
     }
-  });
+  }, [location]);
 
   const handleSuccessClose = () => {
     setOpenSuccess(false);
@@ -75,7 +76,11 @@ const Login = () => {
               Please enter your details
             </p>
           </div>
-          <LoginForm />
+          <LoginForm
+            setEmail={setStateEmail}
+            openResend={() => setOpenResend(true)}
+            setResendText={setResendText}
+          />
           <div className="flex flex-col justify-end pb-10">
             <p className="text-sm font-normal">
               Don't have an account?{" "}
@@ -97,7 +102,7 @@ const Login = () => {
       <VerifyFailedModal
         open={openResend}
         onClose={handleResendClose}
-        handleResend={() => handleResend(email)}
+        handleResend={() => handleResend(email || stateEmail)}
         text={resendText}
       />
     </div>

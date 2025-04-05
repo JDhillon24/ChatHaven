@@ -31,7 +31,9 @@ const RegisterForm = () => {
         );
 
         resetForm();
-        navigate("/Login");
+        navigate("/Login", {
+          state: { verifySent: true, email: values.email },
+        });
       } catch (error) {
         console.log(error);
         if (error instanceof AxiosError) {

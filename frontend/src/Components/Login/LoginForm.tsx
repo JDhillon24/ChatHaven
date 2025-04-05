@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useAuth from "../../hooks/useAuth";
@@ -7,7 +7,17 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "../../api/axios";
 import { AxiosError } from "axios";
 
-const LoginForm = () => {
+type LoginProps = {
+  setEmail: Dispatch<SetStateAction<string>>;
+  openResend: () => void;
+  setResendText: Dispatch<SetStateAction<string>>;
+};
+
+const LoginForm: React.FC<LoginProps> = ({
+  setEmail,
+  setResendText,
+  openResend,
+}) => {
   const { auth, setAuth, persist, setPersist } = useAuth();
   const navigate = useNavigate();
 
@@ -41,9 +51,19 @@ const LoginForm = () => {
         resetForm();
         navigate("/Home");
       } catch (error) {
+        setEmail(values.email);
+
         if (error instanceof AxiosError) {
-          if (error.response?.status === 401) {
+          if (
+            error.response?.status === 401 &&
+            error.response?.data.message === "Invalid email and/or password!"
+          ) {
             formik.setFieldError("password", "Incorrect password");
+          } else {
+            setResendText(
+              `Looks like you haven't verified your account yet. Would you like to have a new link sent to ${values.email}`
+            );
+            openResend();
           }
         } else {
           console.log(error);
