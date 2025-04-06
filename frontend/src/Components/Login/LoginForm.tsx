@@ -2,7 +2,7 @@ import { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useAuth from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "../../api/axios";
 import { AxiosError } from "axios";
@@ -187,9 +187,11 @@ const LoginForm: React.FC<LoginProps> = ({
               </div>
             </div>
             <div className="w-full cursor-pointer flex justify-end">
-              <p className="text-xs text-gray-600 hover:underline">
-                Forgot password?
-              </p>
+              <Link to="/ForgotPassword">
+                <p className="text-xs text-gray-600 hover:underline">
+                  Forgot password?
+                </p>
+              </Link>
             </div>
           </div>
         </div>

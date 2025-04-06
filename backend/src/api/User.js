@@ -18,6 +18,7 @@ const {
   changeUserName,
   verifyEmail,
   resendVerificationLink,
+  forgotPassword,
 } = require("../controllers/UserController");
 
 //route for creating a new user
@@ -55,5 +56,11 @@ router.get("/verifyemail", verifyEmail);
 
 //route for resending verification link
 router.post("/resendverificationlink", resendVerificationLink);
+
+//route for sending forgot password link
+router.post("/forgotpassword", forgotPassword);
+
+//route for resetting password via forgot password link
+router.patch("/resetpassword/:token");
 
 module.exports = router;

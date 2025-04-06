@@ -12,6 +12,7 @@ import SocketWrapper from "./Components/SocketWrapper";
 import { NavigationTracker } from "./hooks/useNavigationTracker";
 import EditProfile from "./Routes/EditProfile";
 import Verify from "./Routes/Verify";
+import ForgotPassword from "./Routes/ForgotPassword";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             </Route>
           </Route>
           <Route path="/Login" element={<Login />} />
+          <Route path="/ForgotPassword" element={<ForgotPassword />} />
           <Route path="/Register" element={<Register />} />
           <Route path="/Verify" element={<Verify />} />
         </Routes>

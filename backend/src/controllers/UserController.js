@@ -462,6 +462,7 @@ exports.changeProfilePicture = async (req, res) => {
 
 exports.verifyEmail = async (req, res) => {
   try {
+    //verify jwt token if it matches with user then update user
     const { token } = req.query;
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     await User.findByIdAndUpdate(decoded.userId, { verified: true });
@@ -480,6 +481,7 @@ exports.resendVerificationLink = async (req, res) => {
   try {
     const { email } = req.body;
 
+    //get user via email and validate them
     const user = await User.findOne({ email });
 
     if (!user)
@@ -492,6 +494,7 @@ exports.resendVerificationLink = async (req, res) => {
         .status(400)
         .json({ status: "FAILED", message: "User is already verified" });
 
+    //create a new token and send email with said token
     const verificationToken = generateVerificationToken(user.id);
 
     sendEmail(email, "Verify Your Account | ChatHaven", "verifyEmail", {
@@ -518,4 +521,26 @@ exports.forgotPassword = async (req, res) => {
   //generate password reset token and save to db
   const resetToken = user.createResetPasswordToken();
   await user.save();
+
+  //send email with token to user
+  try {
+    sendEmail(email, "Reset Password | ChatHaven", "forgotPassword", {
+      forgotPasswordLink: `https://www.chathaven.com/ResetPassword?token=${resetToken}`,
+    });
+
+    res
+      .status(200)
+      .json({
+        status: "SUCCESS",
+        message: "A password reset link has been successfully sent!",
+      });
+  } catch (error) {
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpires;
+    await user.save();
+
+    return res
+      .status(500)
+      .json({ status: "FAILED", message: "Email failed to send" });
+  }
 };
