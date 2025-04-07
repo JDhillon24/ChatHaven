@@ -1,4 +1,4 @@
-require("dotenv");
+require("dotenv").config();
 
 const { sendNotification } = require("../utils/notificationUtils");
 

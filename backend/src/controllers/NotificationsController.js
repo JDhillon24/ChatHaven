@@ -1,4 +1,4 @@
-require("dotenv");
+require("dotenv").config();
 
 const { generateAccessToken } = require("../utils/auth");
 const { sendNotification } = require("../utils/notificationUtils");

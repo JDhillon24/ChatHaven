@@ -1,4 +1,4 @@
-require("dotenv");
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const { Server } = require("socket.io");
 const Chat = require("./models/Chat");
