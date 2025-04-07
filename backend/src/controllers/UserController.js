@@ -153,7 +153,7 @@ exports.loginUser = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Secure in production
-      sameSite: "strict",
+      sameSite: "lax",
     });
 
     // sendEmail("dhillonjagdeep13@gmail.com", "test email", "verifyEmail", {

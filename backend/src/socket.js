@@ -10,7 +10,7 @@ const users = new Map();
 const initializeSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: ["http://localhost:5173", "https://chathaven.vercel.app"],
       methods: ["GET", "POST", "PUT", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
@@ -60,7 +60,7 @@ const initializeSocket = (server) => {
       try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         socket.user = decoded;
-        console.log(`Reauntheticated user`);
+        console.log(`Reauthenticated user`);
       } catch (err) {
         cconsole.error("Reauthentication failed:", err);
         socket.emit("connect_error", new Error("Invalid or expired token"));
