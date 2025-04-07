@@ -1,11 +1,15 @@
 require("./config/db");
 const http = require("http");
-const { Server } = require("socket.io");
-const app = require("express")();
+
+const express = require("express");
+const app = express();
 const cors = require("cors");
 const { initializeSocket } = require("./socket");
+const path = require("path");
 
 const server = http.createServer(app);
+
+app.use("/public", express.static(path.join(__dirname, "../public")));
 
 app.use(
   cors({
