@@ -48,7 +48,7 @@ const CreateRoomModal: React.FC<ModalProps> = ({
     onSubmit: async (values) => {
       try {
         console.log(values);
-        const response = await axiosPrivate.post(
+        await axiosPrivate.post(
           "/chat/createroom",
           JSON.stringify({
             name: values.name,

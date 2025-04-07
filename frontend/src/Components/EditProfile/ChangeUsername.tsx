@@ -22,7 +22,7 @@ const ChangeUsername: React.FC<ModalProps> = ({ open, onClose }) => {
     },
     onSubmit: async (values) => {
       try {
-        const response = await axiosPrivate.put(
+        await axiosPrivate.put(
           "/user/changeusername",
           JSON.stringify({
             newName: values.name,

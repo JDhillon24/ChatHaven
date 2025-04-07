@@ -39,7 +39,7 @@ const ProfilePictureModal: React.FC<ModalProps> = ({ open, onClose }) => {
 
   const handleProfileChange = async () => {
     try {
-      const response = await axiosPrivate.put(
+      await axiosPrivate.put(
         "/user/profilepicture",
         JSON.stringify({
           profilePicture: selectedProfile,

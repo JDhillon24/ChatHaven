@@ -1,5 +1,4 @@
 import { useState, useEffect, useContext } from "react";
-import useAuth from "../hooks/useAuth";
 import { useLocation } from "react-router-dom";
 import Sidebar from "../Components/Sidebar";
 import Conversations from "../Components/Home/Conversations";
@@ -41,7 +40,6 @@ type RoomType = {
 };
 
 const Home = () => {
-  const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
 
@@ -87,47 +85,6 @@ const Home = () => {
       setIsChatActive(false);
     }
   };
-
-  useEffect(() => {
-    const getData = async () => {
-      const response = await axiosPrivate.get("/user/search", {
-        params: {
-          name: "J",
-        },
-      });
-      console.log(response.data);
-    };
-    console.log(auth);
-
-    // getData();
-  }, []);
-
-  // useEffect(() => {
-  //   const newSocket = io("http://localhost:5000", {
-  //     withCredentials: true,
-  //     transports: ["websocket"],
-  //   });
-
-  //   setSocket(newSocket);
-
-  //   newSocket.on("connect", () => {
-  //     console.log("Connected to server:", newSocket.id);
-  //   });
-
-  //   newSocket.on("connect_error", (err) => {
-  //     console.error("Connection failed:", err);
-  //   });
-
-  //   newSocket.on("disconnect", (reason) => {
-  //     console.log("Disconnected:", reason); // Connection lost details
-  //   });
-
-  //   // Cleanup function to prevent duplicate connections
-  //   return () => {
-  //     newSocket.disconnect();
-  //     console.log("socket disconnected on unmount");
-  //   };
-  // }, []);
 
   const { roomId = localStorage.getItem("roomId"), privateChat } =
     location.state || {};

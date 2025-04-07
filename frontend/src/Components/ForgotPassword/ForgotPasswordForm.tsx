@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "../../api/axios";
-import { AxiosError } from "axios";
 
 type FormProps = {
   onOpenSuccess: () => void;
@@ -15,7 +13,7 @@ const ForgotPasswordForm: React.FC<FormProps> = ({ onOpenSuccess }) => {
     },
     onSubmit: async (values, { resetForm }) => {
       try {
-        const response = axios.post(
+        axios.post(
           "/user/forgotpassword",
           JSON.stringify({
             email: values.email,

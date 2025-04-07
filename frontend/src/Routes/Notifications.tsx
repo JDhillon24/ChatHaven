@@ -16,9 +16,7 @@ const Notifications = () => {
 
   const handleClearNotifications = async () => {
     try {
-      const response = await axiosPrivate.delete(
-        "/notifications/clearnotifications"
-      );
+      await axiosPrivate.delete("/notifications/clearnotifications");
       setOpenConfirmation(false);
     } catch (error) {
       console.error(error);

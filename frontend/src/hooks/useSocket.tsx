@@ -1,15 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import useAuth from "./useAuth";
-import useRefreshToken from "./useRefreshToken";
 
 const SOCKET_URL = "http://localhost:5000";
 
-let socket: Socket | null = null;
-
 const useSocket = () => {
   const socketRef = useRef<Socket | null>(null);
-  const refresh = useRefreshToken();
   const { auth } = useAuth();
   const [isConnected, setIsConnected] = useState(false);
 

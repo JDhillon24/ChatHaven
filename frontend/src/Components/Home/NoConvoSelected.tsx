@@ -1,5 +1,3 @@
-import React from "react";
-
 const NoConvoSelected = () => {
   return (
     <div className="w-full h-full flex justify-center items-center col-span-3">

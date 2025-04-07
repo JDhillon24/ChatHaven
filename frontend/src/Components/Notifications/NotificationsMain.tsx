@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useEffect, useContext } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { RxCross1 } from "react-icons/rx";
 import { FaCheck } from "react-icons/fa";
@@ -54,7 +54,7 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
 
   const handleDeclineRequest = async (friend_id: string): Promise<void> => {
     try {
-      const response = await axiosPrivate.post(
+      await axiosPrivate.post(
         "/notifications/declinefriendrequest",
         JSON.stringify({
           senderId: friend_id,
@@ -74,7 +74,7 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
 
   const handleAcceptRequest = async (friend_id: string): Promise<void> => {
     try {
-      const response = await axiosPrivate.post(
+      await axiosPrivate.post(
         "/notifications/acceptfriendrequest",
         JSON.stringify({
           senderId: friend_id,

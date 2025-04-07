@@ -29,7 +29,7 @@ const ResetPassword: React.FC<ModalProps> = ({ open, onClose }) => {
     },
     onSubmit: async (values, { resetForm }) => {
       try {
-        const response = await axiosPrivate.put(
+        await axiosPrivate.put(
           "/user/updatepassword",
           JSON.stringify({
             currentPassword: values.currentPassword,

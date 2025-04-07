@@ -62,7 +62,7 @@ const Info: React.FC<InfoProps> = ({
 
   const handleSendRequest = async (friend_id: string) => {
     try {
-      const response = await axiosPrivate.post(
+      await axiosPrivate.post(
         "/notifications/sendfriendrequest",
         JSON.stringify({
           receiverId: friend_id,

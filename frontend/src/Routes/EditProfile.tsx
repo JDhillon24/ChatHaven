@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useNavigationTracker } from "../hooks/useNavigationTracker";
 import LeftSection from "../Components/EditProfile/LeftSection";
 import ProfilePictureModal from "../Components/EditProfile/ProfilePictureModal";
-import useAuth from "../hooks/useAuth";
 import SuccessModal from "../Components/UI/SuccessModal";
 import RightSection from "../Components/EditProfile/RightSection";
 import ChangeUsername from "../Components/EditProfile/ChangeUsername";
 import ResetPassword from "../Components/EditProfile/ResetPassword";
 const EditProfile = () => {
-  const { historyStack } = useNavigationTracker();
   const location = useLocation();
   const navigate = useNavigate();
-  const { auth } = useAuth();
 
   useEffect(() => {
     document.title = "Edit Profile | ChatHaven";

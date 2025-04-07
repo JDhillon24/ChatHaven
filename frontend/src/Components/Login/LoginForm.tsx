@@ -18,7 +18,7 @@ const LoginForm: React.FC<LoginProps> = ({
   setResendText,
   openResend,
 }) => {
-  const { auth, setAuth, persist, setPersist } = useAuth();
+  const { setAuth, persist, setPersist } = useAuth();
   const navigate = useNavigate();
 
   const [passView, setPassView] = useState(false);

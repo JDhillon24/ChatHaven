@@ -9,7 +9,6 @@ import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
 import { useNavigate } from "react-router-dom";
 import { FaCircle } from "react-icons/fa";
-import useSocket from "../hooks/useSocket";
 
 interface SidebarProps {
   index: number;
@@ -17,7 +16,7 @@ interface SidebarProps {
 
 const Sidebar: FC<SidebarProps> = ({ index }) => {
   const logout = useLogout();
-  const [activeNavIndex, setActiveNavIndex] = useState(index);
+  const [activeNavIndex] = useState(index);
 
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);

@@ -1,5 +1,5 @@
 import React from "react";
-import { IoMdClose } from "react-icons/io";
+
 import { FaExclamationCircle } from "react-icons/fa";
 import ModalBoilerplate from "../UI/ModalBoilerplate";
 

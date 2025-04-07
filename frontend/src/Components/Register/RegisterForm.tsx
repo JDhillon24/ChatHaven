@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +21,7 @@ const RegisterForm = () => {
     },
     onSubmit: async (values, { resetForm }) => {
       try {
-        const response = await axios.post(
+        await axios.post(
           "/user/register",
           JSON.stringify({
             name: values.name,

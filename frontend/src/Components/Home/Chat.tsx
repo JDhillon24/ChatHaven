@@ -1,4 +1,3 @@
-import { FaCircle } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import { useEffect, useRef, useContext, SetStateAction } from "react";
 import { FaArrowLeft } from "react-icons/fa";
@@ -76,7 +75,7 @@ const Chat: React.FC<ChatProps> = ({
   };
 
   const readAllMessages = async (id: string) => {
-    const response = await axiosPrivate.put(`/chat/readall/${id}`);
+    await axiosPrivate.put(`/chat/readall/${id}`);
     // console.log(response.data);
     // setMessageReceived((prev) => !prev);
   };

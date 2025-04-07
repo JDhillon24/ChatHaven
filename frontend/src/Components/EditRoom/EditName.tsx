@@ -24,7 +24,7 @@ const EditName: React.FC<Props> = ({ onClose, handleSuccess, roomName }) => {
     onSubmit: async (values, { resetForm }) => {
       try {
         if (roomId) {
-          const response = await axiosPrivate.put(
+          await axiosPrivate.put(
             `/chat/changename/${roomId}`,
             JSON.stringify({
               newName: values.name,

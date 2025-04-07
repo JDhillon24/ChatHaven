@@ -1,5 +1,4 @@
 import React from "react";
-import { IoMdClose } from "react-icons/io";
 import { FaCheckCircle } from "react-icons/fa";
 import ModalBoilerplate from "./ModalBoilerplate";
 

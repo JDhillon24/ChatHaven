@@ -21,7 +21,7 @@ const LeaveRoomModal: React.FC<ModalProps> = ({
   const handleConfirm = async () => {
     try {
       if (roomId) {
-        const response = await axiosPrivate.delete(`/chat/leaveroom/${roomId}`);
+        await axiosPrivate.delete(`/chat/leaveroom/${roomId}`);
         localStorage.setItem("roomId", "");
         onClose();
         onOpenSuccess();

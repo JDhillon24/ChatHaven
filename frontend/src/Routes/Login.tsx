@@ -55,10 +55,7 @@ const Login = () => {
 
   const handleResend = async (email: string) => {
     try {
-      const response = axios.post(
-        "/user/resendverificationlink",
-        JSON.stringify({ email })
-      );
+      axios.post("/user/resendverificationlink", JSON.stringify({ email }));
       setOpenResend(false);
       setSuccessText("The new verification link has successfully been sent!");
       setOpenSuccess(true);

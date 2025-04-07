@@ -24,7 +24,7 @@ const ResetPasswordForm: React.FC<FormProps> = ({ onOpenError }) => {
     },
     onSubmit: async (values, { resetForm }) => {
       try {
-        const response = await axios.patch(
+        await axios.patch(
           `/user/resetpassword/${resetToken}`,
           JSON.stringify({
             newPassword: values.password,

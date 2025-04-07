@@ -57,7 +57,7 @@ const InviteMembers: React.FC<Props> = ({
     onSubmit: async (values, { resetForm }) => {
       try {
         if (roomId) {
-          const response = await axiosPrivate.post(
+          await axiosPrivate.post(
             `/chat/newinvites/${roomId}`,
             JSON.stringify({
               participants: values.participants,

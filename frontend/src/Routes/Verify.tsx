@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import axios from "../api/axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AxiosError } from "axios";
 
 const Verify = () => {
   const navigate = useNavigate();
@@ -14,9 +13,7 @@ const Verify = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        const response = await axios.get(
-          `/user/verifyemail?token=${token}&email=${email}`
-        );
+        await axios.get(`/user/verifyemail?token=${token}&email=${email}`);
         navigate("/Login", { state: { verifySuccess: true } });
       } catch (error) {
         navigate("/Login", { state: { verifyFailed: true, email } });
