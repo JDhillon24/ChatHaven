@@ -8,6 +8,7 @@ const {
 
 const User = require("./../models/User");
 const sendEmail = require("../email/emailService");
+const crypto = require("crypto");
 
 exports.registerAccount = async (req, res) => {
   try {
@@ -528,12 +529,10 @@ exports.forgotPassword = async (req, res) => {
       forgotPasswordLink: `https://www.chathaven.com/ResetPassword?token=${resetToken}`,
     });
 
-    res
-      .status(200)
-      .json({
-        status: "SUCCESS",
-        message: "A password reset link has been successfully sent!",
-      });
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "A password reset link has been successfully sent!",
+    });
   } catch (error) {
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpires;
@@ -543,4 +542,66 @@ exports.forgotPassword = async (req, res) => {
       .status(500)
       .json({ status: "FAILED", message: "Email failed to send" });
   }
+};
+
+exports.resetPassword = async (req, res) => {
+  //find user based on given token, check if token is expired
+  let { token } = req.params;
+  const passwordResetToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    passwordResetToken,
+    passwordResetTokenExpires: { $gt: Date.now() },
+  });
+
+  if (!user)
+    return res.status(404).json({
+      status: "FAILED",
+      message: "User not found or token is expired",
+    });
+  else
+    return res
+      .status(404)
+      .json({ status: "TEST", message: "DATE causing problems" });
+
+  let { newPassword, confirmPassword } = req.body;
+
+  //check if new password is "strong"
+  if (
+    !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+      newPassword
+    )
+  ) {
+    return res.status(400).json({
+      status: "FAILED",
+      message:
+        "Invalid password! Must include uppercase, lowercase, number, and symbol.",
+    });
+  }
+
+  //check if new password and confirmation match
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({
+      status: "FAILED",
+      message: "Password do not match",
+    });
+  }
+
+  //hash new password and save to db
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+  user.password = hashedPassword;
+  user.passwordResetToken = undefined;
+  user.passwordResetTokenExpires = undefined;
+
+  await user.save();
+
+  res.status(200).json({
+    status: "SUCCESS",
+    message: "Password has been successfully reset!",
+  });
 };

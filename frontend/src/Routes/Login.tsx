@@ -16,7 +16,7 @@ const Login = () => {
   const [resendText, setResendText] = useState("");
   const [stateEmail, setStateEmail] = useState("");
 
-  const { verifySent, verifySuccess, verifyFailed, email } =
+  const { verifySent, verifySuccess, verifyFailed, email, passwordReset } =
     location.state || {};
 
   useEffect(() => {
@@ -35,6 +35,11 @@ const Login = () => {
         `The verification link is invalid or expired. Would you like to have a new link sent to ${email}?`
       );
       setOpenResend(true);
+    } else if (passwordReset) {
+      setSuccessText(
+        "Your password has been successfully reset! Feel free to log in!"
+      );
+      setOpenSuccess(true);
     }
   }, [location]);
 
