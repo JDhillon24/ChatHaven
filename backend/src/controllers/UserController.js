@@ -554,6 +554,8 @@ exports.resetPassword = async (req, res) => {
     .update(token)
     .digest("hex");
 
+  console.log(passwordResetToken);
+
   const user = await User.findOne({
     passwordResetToken,
     passwordResetTokenExpires: { $gt: Date.now() },
