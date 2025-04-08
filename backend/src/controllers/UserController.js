@@ -480,7 +480,8 @@ exports.verifyEmail = async (req, res) => {
 
 exports.resendVerificationLink = async (req, res) => {
   try {
-    const { email } = req.body;
+    let { email } = req.body;
+    email = email.trim().toLowerCase();
 
     //get user via email and validate them
     const user = await User.findOne({ email });
@@ -512,6 +513,7 @@ exports.resendVerificationLink = async (req, res) => {
 exports.forgotPassword = async (req, res) => {
   //get user based on email in req body
   let { email } = req.body;
+  email = email.trim().toLowerCase();
   const user = await User.findOne({ email });
 
   if (!user)
