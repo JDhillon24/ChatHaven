@@ -14,7 +14,7 @@ exports.registerAccount = async (req, res) => {
   try {
     let { name, email, password } = req.body;
     name = name.trim();
-    email = email.trim();
+    email = email.trim().toLowerCase();
     password = password.trim();
 
     // Validation Checks
@@ -100,7 +100,7 @@ exports.registerAccount = async (req, res) => {
 exports.loginUser = async (req, res) => {
   try {
     let { email, password } = req.body;
-    email = email.trim();
+    email = email.trim().toLowerCase();
     password = password.trim();
 
     // Validation
@@ -152,8 +152,8 @@ exports.loginUser = async (req, res) => {
     // Set refresh token in HTTP-only cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Secure in production
-      sameSite: "lax",
+      secure: true, // Secure in production
+      sameSite: "none",
     });
 
     // sendEmail("dhillonjagdeep13@gmail.com", "test email", "verifyEmail", {
