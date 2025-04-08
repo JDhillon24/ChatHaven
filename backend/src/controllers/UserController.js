@@ -501,7 +501,7 @@ exports.resendVerificationLink = async (req, res) => {
 
     sendEmail(email, "Verify Your Account | ChatHaven", "verifyEmail", {
       name: user.name,
-      verificationLink: `https://www.chathaven.com/Verify?token=${verificationToken}&email=${encodeURIComponent(
+      verificationLink: `https://chathaven.vercel.app/Verify?token=${verificationToken}&email=${encodeURIComponent(
         email
       )}`,
     });
@@ -528,7 +528,7 @@ exports.forgotPassword = async (req, res) => {
   //send email with token to user
   try {
     sendEmail(email, "Reset Password | ChatHaven", "forgotPassword", {
-      forgotPasswordLink: `https://www.chathaven.vercel.app/ResetPassword?token=${resetToken}`,
+      forgotPasswordLink: `https://chathaven.vercel.app/ResetPassword?token=${resetToken}`,
     });
 
     res.status(200).json({
@@ -566,10 +566,6 @@ exports.resetPassword = async (req, res) => {
       status: "FAILED",
       message: "User not found or token is expired",
     });
-  else
-    return res
-      .status(404)
-      .json({ status: "TEST", message: "DATE causing problems" });
 
   let { newPassword, confirmPassword } = req.body;
 
