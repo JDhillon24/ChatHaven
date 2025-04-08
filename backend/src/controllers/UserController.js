@@ -78,7 +78,7 @@ exports.registerAccount = async (req, res) => {
 
     sendEmail(email, "Verify Your Account | ChatHaven", "verifyEmail", {
       name,
-      verificationLink: `https://www.chathaven.com/Verify?token=${verificationToken}&email=${encodeURIComponent(
+      verificationLink: `https://www.chathaven.vercel.app/Verify?token=${verificationToken}&email=${encodeURIComponent(
         email
       )}`,
     });
@@ -526,7 +526,7 @@ exports.forgotPassword = async (req, res) => {
   //send email with token to user
   try {
     sendEmail(email, "Reset Password | ChatHaven", "forgotPassword", {
-      forgotPasswordLink: `https://www.chathaven.com/ResetPassword?token=${resetToken}`,
+      forgotPasswordLink: `https://www.chathaven.vercel.app/ResetPassword?token=${resetToken}`,
     });
 
     res.status(200).json({
