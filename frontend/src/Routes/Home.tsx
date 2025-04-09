@@ -166,7 +166,7 @@ const Home = () => {
   };
 
   return (
-    <div className="w-full flex h-screen overflow-hidden">
+    <div className="w-full flex h-screen [@supports(height:100dvh)]:h-[100dvh] overflow-hidden">
       <div
         className={`${
           activeSection === "conversations" ? "" : "hidden"
@@ -185,7 +185,7 @@ const Home = () => {
           } w-full`}
         >
           <div
-            className={`flex flex-col h-screen ${
+            className={`flex flex-col h-screen [@supports(height:100dvh)]:h-[100dvh] ${
               activeSection === "conversations" ? "" : "hidden"
             } lg:flex`}
           >
@@ -199,7 +199,7 @@ const Home = () => {
           {roomId || localStorage.getItem("roomId") ? (
             <>
               <div
-                className={`flex flex-col col-span-2 h-screen ${
+                className={`flex flex-col col-span-2 h-screen [@supports(height:100dvh)]:h-[100dvh] ${
                   activeSection === "chat" ? "" : "hidden"
                 } lg:flex`}
               >
@@ -213,7 +213,7 @@ const Home = () => {
                 />
               </div>
               <div
-                className={`flex flex-col h-screen ${
+                className={`flex flex-col h-screen [@supports(height:100dvh)]:h-[100dvh] ${
                   activeSection === "info" ? "" : "hidden"
                 } lg:flex`}
               >
