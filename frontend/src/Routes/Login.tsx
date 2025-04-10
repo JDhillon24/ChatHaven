@@ -6,6 +6,7 @@ import LoginForm from "../Components/Login/LoginForm";
 import SuccessModal from "../Components/UI/SuccessModal";
 import axios from "../api/axios";
 import VerifyFailedModal from "../Components/Login/VerifyFailedModal";
+import useAuth from "../hooks/useAuth";
 
 const Login = () => {
   const location = useLocation();
@@ -15,6 +16,7 @@ const Login = () => {
   const [openResend, setOpenResend] = useState(false);
   const [resendText, setResendText] = useState("");
   const [stateEmail, setStateEmail] = useState("");
+  const { auth } = useAuth();
 
   const { verifySent, verifySuccess, verifyFailed, email, passwordReset } =
     location.state || {};

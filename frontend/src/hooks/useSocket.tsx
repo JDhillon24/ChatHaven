@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import useAuth from "./useAuth";
 
-const SOCKET_URL = "https://chathaven.up.railway.app";
+const SOCKET_URL = import.meta.env.VITE_API_URL;
 
 const useSocket = () => {
   const socketRef = useRef<Socket | null>(null);

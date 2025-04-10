@@ -14,6 +14,7 @@ import EditProfile from "./Routes/EditProfile";
 import Verify from "./Routes/Verify";
 import ForgotPassword from "./Routes/ForgotPassword";
 import ResetPassword from "./Routes/ResetPassword";
+import LandingPage from "./Routes/LandingPage";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="/ResetPassword" element={<ResetPassword />} />
           <Route path="/Register" element={<Register />} />
           <Route path="/Verify" element={<Verify />} />
+          <Route path="/" element={<LandingPage />} />
         </Routes>
       </NavigationTracker>
     </Router>
