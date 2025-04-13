@@ -1,5 +1,13 @@
+import Header from "../Components/LandingPage/Header";
+import Hero from "../Components/LandingPage/Hero";
+
 const LandingPage = () => {
-  return <div>LandingPage</div>;
+  return (
+    <>
+      <Header />
+      <Hero />
+    </>
+  );
 };
 
 export default LandingPage;
