@@ -2,7 +2,7 @@ import { FaArrowRight } from "react-icons/fa6";
 
 const Hero = () => {
   return (
-    <section className="pt-8 pb-20 md:pt-5 md:pb-10 bg-[radial-gradient(ellipse_200%_100%_at_bottom_left,#2bb3c0,white_66%)]">
+    <section className="pt-8 pb-20 md:pt-5 md:pb-10 bg-[radial-gradient(ellipse_200%_100%_at_bottom_left,#2bb3c0,#f0fcfd_66%)]">
       <div className="px-5 mx-auto container">
         <div className="md:flex items-center">
           <div className="md:w-96 lg:w-full">

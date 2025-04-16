@@ -1,12 +1,16 @@
+import Features from "../Components/LandingPage/Features";
 import Header from "../Components/LandingPage/Header";
 import Hero from "../Components/LandingPage/Hero";
 import ProductShowcase from "../Components/LandingPage/ProductShowcase";
 const LandingPage = () => {
   return (
     <>
-      <Header />
-      <Hero />
-      <ProductShowcase />
+      <div className="bg-[#f0fcfd]">
+        <Header />
+        <Hero />
+        <ProductShowcase />
+        <Features />
+      </div>
     </>
   );
 };
