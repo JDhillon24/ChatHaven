@@ -19,7 +19,7 @@ const featureCards: FeatureTypes[] = [
     popular: false,
     inverse: false,
     description:
-      "Experience smooth, real-time messaging powered by socket.io. No refreshes, no delays. Our responsive chat interface keeps conversations flowing without distractions, no matter your device.",
+      "Experience smooth, real-time messaging powered by WebSockets. No refreshes, no delays. Our responsive chat interface keeps conversations flowing without distractions, no matter your device.",
     Icon: FaPaperPlane,
   },
   {
@@ -42,7 +42,7 @@ const featureCards: FeatureTypes[] = [
 
 const Features = () => {
   return (
-    <section className="py-24 ">
+    <section className="py-24 bg-white">
       <div className="px-5 mx-auto container">
         <div className="section-heading">
           <h2 className="section-title">Features</h2>
@@ -56,7 +56,7 @@ const Features = () => {
             ({ title, popular, inverse, description, Icon }) => (
               <div
                 className={twMerge(
-                  "p-10 rounded-3xl border border-[#F1F1F1] shadow-[0_7px_14px_#d0dfe0] max-w-xs w-full",
+                  "card",
                   inverse === true && "border-black bg-black text-white/60"
                 )}
               >

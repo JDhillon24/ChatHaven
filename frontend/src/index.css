@@ -65,4 +65,12 @@ body {
   .section-heading {
     @apply max-w-[540px] mx-auto;
   }
+
+  .logo-ticker-image {
+    @apply h-8 w-auto;
+  }
+
+  .card {
+    @apply p-10 rounded-3xl border border-[#222222]/10 shadow-[0_7px_14px_#EAEAEA] max-w-xs w-full;
+  }
 }
