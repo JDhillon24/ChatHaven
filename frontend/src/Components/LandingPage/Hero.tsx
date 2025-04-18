@@ -1,4 +1,5 @@
 import { FaArrowRight } from "react-icons/fa6";
+import { motion } from "framer-motion";
 
 const Hero = () => {
   return (
@@ -25,7 +26,7 @@ const Hero = () => {
             </div>
           </div>
           <div className="mt-20 md:mt-0 h-[648px] md:flex-1 flex items-center">
-            <img
+            <motion.img
               className="md:h-full md:w-auto md:max-w-none"
               src="/images/mobile_demo-left.png"
               alt="mobile demo"

@@ -15,15 +15,31 @@ const Footer = () => {
           <a href="#">Testimonials</a>
         </nav>
         <div className="flex justify-center gap-6 mt-6">
-          <img src="/images/socials/github.png" alt="GitHub" className="w-10" />
-          <img
-            src="/images/socials/linkedin.png"
-            alt="Linkedin"
-            className="w-10"
-          />
+          <a
+            href="https://github.com/JDhillon24"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="/images/socials/github.png"
+              alt="GitHub"
+              className="w-10 cursor-pointer hover:scale-110 transition-all"
+            />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/jdhillon24/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="/images/socials/linkedin.png"
+              alt="Linkedin"
+              className="w-10 cursor-pointer hover:scale-110 transition-all"
+            />
+          </a>
         </div>
       </div>
-      <p className="mt-6">&copy; 2024 ChatHaven, Inc. All rights reserved.</p>
+      <p className="mt-6">&copy; 2025 ChatHaven, Inc. All rights reserved.</p>
     </footer>
   );
 };
