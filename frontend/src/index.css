@@ -67,7 +67,7 @@ body {
   }
 
   .logo-ticker-image {
-    @apply h-8 w-auto;
+    @apply h-12 w-auto;
   }
 
   .card {

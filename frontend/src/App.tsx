@@ -15,6 +15,7 @@ import Verify from "./Routes/Verify";
 import ForgotPassword from "./Routes/ForgotPassword";
 import ResetPassword from "./Routes/ResetPassword";
 import LandingPage from "./Routes/LandingPage";
+import SmoothScrollWrapper from "./Components/SmoothScrollWrapper";
 
 function App() {
   return (
@@ -22,22 +23,24 @@ function App() {
       <ScrollToTop />
       <NavigationTracker>
         <Routes>
-          <Route element={<PersistLogin />}>
-            <Route element={<RequireAuth />}>
-              <Route element={<SocketWrapper />}>
-                <Route path="/Home" element={<Home />} />
-                <Route path="/Friends" element={<Friends />} />
-                <Route path="/Notifications" element={<Notifications />} />
-                <Route path="/EditProfile" element={<EditProfile />} />
+          <Route element={<SmoothScrollWrapper />}>
+            <Route element={<PersistLogin />}>
+              <Route element={<RequireAuth />}>
+                <Route element={<SocketWrapper />}>
+                  <Route path="/Home" element={<Home />} />
+                  <Route path="/Friends" element={<Friends />} />
+                  <Route path="/Notifications" element={<Notifications />} />
+                  <Route path="/EditProfile" element={<EditProfile />} />
+                </Route>
               </Route>
             </Route>
+            <Route path="/Login" element={<Login />} />
+            <Route path="/ForgotPassword" element={<ForgotPassword />} />
+            <Route path="/ResetPassword" element={<ResetPassword />} />
+            <Route path="/Register" element={<Register />} />
+            <Route path="/Verify" element={<Verify />} />
+            <Route path="/" element={<LandingPage />} />
           </Route>
-          <Route path="/Login" element={<Login />} />
-          <Route path="/ForgotPassword" element={<ForgotPassword />} />
-          <Route path="/ResetPassword" element={<ResetPassword />} />
-          <Route path="/Register" element={<Register />} />
-          <Route path="/Verify" element={<Verify />} />
-          <Route path="/" element={<LandingPage />} />
         </Routes>
       </NavigationTracker>
     </Router>

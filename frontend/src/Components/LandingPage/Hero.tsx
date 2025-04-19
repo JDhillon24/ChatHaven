@@ -3,7 +3,10 @@ import { motion } from "framer-motion";
 
 const Hero = () => {
   return (
-    <section className="pt-8 pb-20 md:pt-5 md:pb-10 bg-[radial-gradient(ellipse_200%_100%_at_bottom_left,#2bb3c0,#f0fcfd_66%)]">
+    <section
+      id="home"
+      className="pt-8 pb-20 md:pt-5 md:pb-10 bg-[radial-gradient(ellipse_200%_100%_at_bottom_left,#2bb3c0,#f0fcfd_66%)] scroll-mt-[124px]"
+    >
       <div className="px-5 mx-auto container">
         <div className="md:flex items-center">
           <div className="md:w-96 lg:w-full">
@@ -19,10 +22,12 @@ const Hero = () => {
             </p>
             <div className="flex gap-1 items-center mt-[30px]">
               <button className="btn btn-primary">Get Started</button>
-              <button className="btn btn-text gap-1">
-                <span>Learn more</span>
-                <FaArrowRight className="h-5 w-5" />
-              </button>
+              <a href="#features">
+                <button className="btn btn-text gap-1">
+                  <span>Learn more</span>
+                  <FaArrowRight className="h-5 w-5" />
+                </button>
+              </a>
             </div>
           </div>
           <div className="mt-20 md:mt-0 h-[648px] md:flex-1 flex items-center">
@@ -30,6 +35,15 @@ const Hero = () => {
               className="md:h-full md:w-auto md:max-w-none"
               src="/images/mobile_demo-left.png"
               alt="mobile demo"
+              animate={{
+                translateY: [-30, 30],
+              }}
+              transition={{
+                repeat: Infinity,
+                repeatType: "mirror",
+                duration: 3,
+                ease: "easeInOut",
+              }}
             />
           </div>
         </div>

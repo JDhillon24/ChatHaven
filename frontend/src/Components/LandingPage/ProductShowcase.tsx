@@ -1,5 +1,3 @@
-import React from "react";
-
 const ProductShowcase = () => {
   return (
     <section className="bg-gradient-to-b from-[#f0fcfd] to-[#2bb3c0] py-24">

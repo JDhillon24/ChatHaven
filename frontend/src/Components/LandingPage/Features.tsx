@@ -1,9 +1,9 @@
-import React from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { FaUserFriends } from "react-icons/fa";
 import { IoShieldCheckmark } from "react-icons/io5";
 import { IconType } from "react-icons";
 import { twMerge } from "tailwind-merge";
+import { motion } from "framer-motion";
 
 type FeatureTypes = {
   title: string;
@@ -42,7 +42,7 @@ const featureCards: FeatureTypes[] = [
 
 const Features = () => {
   return (
-    <section className="py-24 bg-white">
+    <section id="features" className="py-24 bg-white scroll-mt-[124px]">
       <div className="px-5 mx-auto container">
         <div className="section-heading">
           <h2 className="section-title">Features</h2>
@@ -76,9 +76,20 @@ const Features = () => {
                   </h3>
                   {popular && (
                     <div className="inline-flex items-center text-sm px-4 py-1.5 rounded-xl border border-white/20">
-                      <span className="bg-[linear-gradient(to_right,#DD7DDF,#E1CD86,#BBCB92,#71C2EF,#3BFFFF,#DD7DDF)] text-transparent bg-clip-text font-medium">
+                      <motion.span
+                        animate={{
+                          backgroundPositionX: "-100%",
+                        }}
+                        transition={{
+                          duration: 1,
+                          repeat: Infinity,
+                          ease: "linear",
+                          repeatType: "loop",
+                        }}
+                        className="bg-[linear-gradient(to_right,#DD7DDF,#E1CD86,#BBCB92,#71C2EF,#3BFFFF,#E1CD86,#BBCB92,#71C2EF,#3BFFFF,#DD7DDF)] [background-size:200%] text-transparent bg-clip-text font-medium"
+                      >
                         Social
-                      </span>
+                      </motion.span>
                     </div>
                   )}
                 </div>

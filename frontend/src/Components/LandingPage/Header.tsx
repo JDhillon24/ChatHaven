@@ -26,9 +26,9 @@ const Header = () => {
               className="h-5 w-5 md:hidden"
             />
             <nav className="hidden md:flex gap-6 text-black/60 items-center">
-              <a href="#">Home</a>
-              <a href="#">Features</a>
-              <a href="#">Testimonials</a>
+              <a href="#home">Home</a>
+              <a href="#features">Features</a>
+              <a href="#testimonials">Testimonials</a>
               <button className="btn btn-primary">Get Started</button>
             </nav>
           </div>
