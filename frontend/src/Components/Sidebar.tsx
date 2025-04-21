@@ -9,6 +9,7 @@ import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
 import { useNavigate } from "react-router-dom";
 import { FaCircle } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SidebarProps {
   index: number;
@@ -110,24 +111,32 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
               <CiSettings size={24} />
             </div>
           </div>
-          {isOpen && (
-            <div className="absolute bottom-15 left-5 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
-              <ul className="py-1 text-sm text-gray-700">
-                <li
-                  onClick={() => navigate("/EditProfile")}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                >
-                  Edit Profile
-                </li>
-                <li
-                  onClick={signOut}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                >
-                  Log Out
-                </li>
-              </ul>
-            </div>
-          )}
+          <AnimatePresence mode="wait">
+            {isOpen && (
+              <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.5, opacity: 0 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+                className="absolute bottom-15 left-5 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg"
+              >
+                <ul className="py-1 text-sm text-gray-700">
+                  <li
+                    onClick={() => navigate("/EditProfile")}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    Edit Profile
+                  </li>
+                  <li
+                    onClick={signOut}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    Log Out
+                  </li>
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
