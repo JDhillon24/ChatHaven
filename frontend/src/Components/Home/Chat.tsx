@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { SocketContext } from "../../context/SocketProvider";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { motion } from "framer-motion";
 
 type UserType = {
   _id: string;
@@ -134,7 +135,16 @@ const Chat: React.FC<ChatProps> = ({
   };
 
   return (
-    <div className="relative h-full w-full border-r-2 border-gray-200">
+    <motion.div
+      animate={{
+        x: ["100%", "0%"],
+      }}
+      transition={{
+        duration: 0.15,
+        ease: "easeInOut",
+      }}
+      className="relative h-full w-full border-r-2 border-gray-200"
+    >
       <div className="h-20 flex border-b-2 border-gray-200">
         <div className="w-full flex justify-between items-center px-4">
           <div
@@ -356,7 +366,7 @@ const Chat: React.FC<ChatProps> = ({
               target.style.height = "auto";
               target.style.height = `${target.scrollHeight}px`;
             }}
-            className="w-full rounded-lg border-gray-200 border-2 placeholder:text-sm pr-10 resize-none md:max-h-40 max-h-32 p-2"
+            className="w-full rounded-lg border-gray-200 border-2 placeholder:text-sm pr-10 resize-none md:max-h-32 max-h-32 p-2"
           />
           <span className="cursor-pointer -translate-x-10 pb-2">
             <div
@@ -371,7 +381,7 @@ const Chat: React.FC<ChatProps> = ({
           </span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

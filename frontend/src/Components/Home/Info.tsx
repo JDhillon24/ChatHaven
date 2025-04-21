@@ -5,6 +5,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { IoMdAdd } from "react-icons/io";
 import useAuth from "../../hooks/useAuth";
 import { AxiosError } from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 
 type UserType = {
   _id: string;
@@ -78,7 +79,16 @@ const Info: React.FC<InfoProps> = ({
   };
 
   return (
-    <div className="relative h-full w-full">
+    <motion.div
+      animate={{
+        x: ["100%", "0%"],
+      }}
+      transition={{
+        duration: 0.15,
+        ease: "easeInOut",
+      }}
+      className="relative h-full w-full"
+    >
       <div className="h-20 flex w-full justify-between items-center border-b-2 border-gray-200 px-4">
         <div onClick={onBack} className="lg:hidden">
           <FaArrowLeft size={24} />
@@ -91,24 +101,32 @@ const Info: React.FC<InfoProps> = ({
         >
           <HiDotsVertical size={20} />
         </div>
-        {isOpen && (
-          <div className="absolute top-14 right-8 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg">
-            <ul className="py-1 text-sm text-gray-700">
-              <li
-                onClick={onOpenEdit}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              >
-                Edit Room
-              </li>
-              <li
-                onClick={onOpenLeave}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              >
-                Leave Room
-              </li>
-            </ul>
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {isOpen && (
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="absolute top-14 right-8 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg"
+            >
+              <ul className="py-1 text-sm text-gray-700">
+                <li
+                  onClick={onOpenEdit}
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                >
+                  Edit Room
+                </li>
+                <li
+                  onClick={onOpenLeave}
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                >
+                  Leave Room
+                </li>
+              </ul>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <div className="mt-3">
         <div className="flex flex-col">
@@ -147,7 +165,7 @@ const Info: React.FC<InfoProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
