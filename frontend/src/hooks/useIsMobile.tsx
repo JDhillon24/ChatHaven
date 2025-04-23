@@ -11,7 +11,8 @@ const useIsMobile = (breakpoint = 768) => {
 
     return () => window.removeEventListener("resize", handleResize);
   }, [breakpoint]);
-  return <div>useIsMobile</div>;
+
+  return isMobile;
 };
 
 export default useIsMobile;
