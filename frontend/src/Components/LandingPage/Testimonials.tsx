@@ -89,24 +89,26 @@ const TestimonialsColumn = (props: {
     <div className="flex flex-col gap-6 pb-6">
       {[...new Array(2)].fill(0).map((_, index) => (
         <React.Fragment key={index}>
-          {props.testimonials.map(({ text, imageSrc, name, username }) => (
-            <div className="card">
-              <div>{text}</div>
-              <div className="flex items-center gap-2 mt-5">
-                <img
-                  src={imageSrc}
-                  alt={name}
-                  className="h-10 w-10 rounded-full"
-                />
-                <div className="flex flex-col">
-                  <div className="font-medium tracking-tight leading-5">
-                    {name}
+          {props.testimonials.map(
+            ({ text, imageSrc, name, username }, index) => (
+              <div key={index} className="card">
+                <div>{text}</div>
+                <div className="flex items-center gap-2 mt-5">
+                  <img
+                    src={imageSrc}
+                    alt={name}
+                    className="h-10 w-10 rounded-full"
+                  />
+                  <div className="flex flex-col">
+                    <div className="font-medium tracking-tight leading-5">
+                      {name}
+                    </div>
+                    <div className="leading-5 tracking-tight">{username}</div>
                   </div>
-                  <div className="leading-5 tracking-tight">{username}</div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
         </React.Fragment>
       ))}
     </div>

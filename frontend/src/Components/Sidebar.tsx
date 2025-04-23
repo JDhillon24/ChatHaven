@@ -118,6 +118,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.5, opacity: 0 }}
                 transition={{ duration: 0.15, ease: "easeOut" }}
+                style={{ originX: 0, originY: 1 }}
                 className="absolute bottom-15 left-5 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg"
               >
                 <ul className="py-1 text-sm text-gray-700">

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import RequireAuth from "./Components/RequireAuth";
 import PersistLogin from "./Components/PersistLogin";
 import "./App.css";
@@ -20,12 +20,14 @@ import { AnimatePresence } from "framer-motion";
 import MotionWrapper from "./Components/MotionWrapper";
 
 function App() {
+  const location = useLocation();
+
   return (
-    <Router>
+    <>
       <ScrollToTop />
       <NavigationTracker>
         <AnimatePresence mode="wait">
-          <Routes>
+          <Routes location={location} key={location.pathname}>
             <Route element={<SmoothScrollWrapper />}>
               <Route element={<PersistLogin />}>
                 <Route element={<RequireAuth />}>
@@ -44,17 +46,31 @@ function App() {
                   </Route>
                 </Route>
               </Route>
-              <Route path="/Login" element={<Login />} />
+              <Route
+                path="/Login"
+                element={
+                  <MotionWrapper>
+                    <Login />
+                  </MotionWrapper>
+                }
+              />
               <Route path="/ForgotPassword" element={<ForgotPassword />} />
               <Route path="/ResetPassword" element={<ResetPassword />} />
-              <Route path="/Register" element={<Register />} />
+              <Route
+                path="/Register"
+                element={
+                  <MotionWrapper>
+                    <Register />
+                  </MotionWrapper>
+                }
+              />
               <Route path="/Verify" element={<Verify />} />
               <Route path="/" element={<LandingPage />} />
             </Route>
           </Routes>
         </AnimatePresence>
       </NavigationTracker>
-    </Router>
+    </>
   );
 }
 

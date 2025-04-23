@@ -1,6 +1,8 @@
 import { FaArrowRight } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 const CallToAction = () => {
+  const navigate = useNavigate();
   return (
     <section
       id="callToAction"
@@ -15,7 +17,12 @@ const CallToAction = () => {
           </p>
         </div>
         <div className="flex gap-2 mt-10 justify-center">
-          <button className="btn btn-primary">Get Started</button>
+          <button
+            onClick={() => navigate("/Login")}
+            className="btn btn-primary"
+          >
+            Get Started
+          </button>
           <a href="#features">
             <button className="btn btn-text gap-1">
               <span>Learn more</span>

@@ -53,8 +53,9 @@ const Features = () => {
         </div>
         <div className="flex flex-col gap-6 items-center mt-10 lg:flex-row lg:items-end lg:justify-center">
           {featureCards.map(
-            ({ title, popular, inverse, description, Icon }) => (
+            ({ title, popular, inverse, description, Icon }, index) => (
               <div
+                key={index}
                 className={twMerge(
                   "card",
                   inverse === true && "border-black bg-black text-white/60"

@@ -1,7 +1,9 @@
 import { FaArrowRight } from "react-icons/fa6";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate();
   return (
     <section
       id="home"
@@ -21,7 +23,12 @@ const Hero = () => {
               can be.
             </p>
             <div className="flex gap-1 items-center mt-[30px]">
-              <button className="btn btn-primary">Get Started</button>
+              <button
+                onClick={() => navigate("/Login")}
+                className="btn btn-primary"
+              >
+                Get Started
+              </button>
               <a href="#features">
                 <button className="btn btn-text gap-1">
                   <span>Learn more</span>

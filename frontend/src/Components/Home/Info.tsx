@@ -108,6 +108,7 @@ const Info: React.FC<InfoProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.5, opacity: 0 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
+              style={{ originX: 1, originY: 0 }}
               className="absolute top-14 right-8 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg"
             >
               <ul className="py-1 text-sm text-gray-700">

@@ -3,9 +3,11 @@ import SmallLogo from "../UI/SmallLogo";
 import { FaArrowRight } from "react-icons/fa6";
 import { PiListDashesBold } from "react-icons/pi";
 import { twMerge } from "tailwind-merge";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
   return (
     <header className="sticky top-0 backdrop-blur-sm z-10">
       <div className="flex justify-center items-center py-3 bg-black text-white text-sm gap-3">
@@ -29,7 +31,12 @@ const Header = () => {
               <a href="#home">Home</a>
               <a href="#features">Features</a>
               <a href="#testimonials">Testimonials</a>
-              <button className="btn btn-primary">Get Started</button>
+              <button
+                onClick={() => navigate("/Login")}
+                className="btn btn-primary"
+              >
+                Get Started
+              </button>
             </nav>
           </div>
           <nav
@@ -41,7 +48,12 @@ const Header = () => {
             <a href="#">Home</a>
             <a href="#">Features</a>
             <a href="#">Testimonials</a>
-            <button className="btn btn-primary">Get Started</button>
+            <button
+              onClick={() => navigate("/Login")}
+              className="btn btn-primary"
+            >
+              Get Started
+            </button>
           </nav>
         </div>
       </div>
