@@ -14,6 +14,8 @@ import EditRoomModal from "../Components/Home/EditRoomModal";
 import { SocketContext } from "../context/SocketProvider";
 import ErrorModal from "../Components/UI/ErrorModal";
 import { AxiosError } from "axios";
+import { AnimatePresence } from "framer-motion";
+import Spinner from "../Components/UI/Spinner";
 
 type Section = "conversations" | "chat" | "info";
 
@@ -54,6 +56,7 @@ const Home = () => {
   const [successText, setSuccessText] = useState("");
   const [rooms, setRooms] = useState<RoomType | undefined>(undefined);
   const [messageReceived, setMessageReceived] = useState(false);
+  const [loading, setLoading] = useState(true);
   const socketContext = useContext(SocketContext);
 
   if (!socketContext) {
@@ -66,7 +69,6 @@ const Home = () => {
     document.title = "Home | ChatHaven";
   }, [location.pathname]);
 
-  // const [socket, setSocket] = useState<Socket | null>(null);
   const storageSection =
     (localStorage.getItem("activeSection") as Section) || "conversations";
   const [activeSection, setActiveSection] = useState<Section>(storageSection);
@@ -84,35 +86,46 @@ const Home = () => {
     } else {
       setIsChatActive(false);
     }
+
+    if (section === "conversations") {
+      setRooms(undefined);
+    }
   };
 
   const { roomId = localStorage.getItem("roomId"), privateChat } =
     location.state || {};
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await axiosPrivate.get(`/chat/${roomId}`);
-        setRooms(response.data);
-        // console.log(response.data.messages);
-      } catch (error) {
-        console.error(error);
+  const getData = async () => {
+    try {
+      const response = await axiosPrivate.get(`/chat/${roomId}`);
+      setRooms(response.data);
+      // console.log(response.data.messages);
+    } catch (error) {
+      console.error(error);
 
-        if (error instanceof AxiosError) {
-          if (error.response?.status === 404) {
-            handleSectionChange("conversations");
-            localStorage.setItem("roomId", "");
-            navigate("/Home", { replace: true, state: {} });
-          }
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 404) {
+          handleSectionChange("conversations");
+          localStorage.setItem("roomId", "");
+          navigate("/Home", { replace: true, state: {} });
         }
       }
-    };
+    }
+  };
 
+  //multiple useEffects to only trigger spinner on room id change
+  useEffect(() => {
     if (roomId) {
-      // console.log("room messages acquired");
+      setLoading(true);
+      getData().finally(() => setLoading(false));
+    }
+  }, [roomId]);
+
+  useEffect(() => {
+    if (roomId) {
       getData();
     }
-  }, [roomId, openSuccess, socket]);
+  }, [openSuccess, socket]);
 
   useEffect(() => {
     if (privateChat) {
@@ -179,59 +192,65 @@ const Home = () => {
           activeSection === "conversations" ? "ml-18" : ""
         } flex-1 flex z-0`}
       >
-        <div
-          className={`grid lg:grid-cols-4 ${
-            activeSection === "chat" ? "grid-cols-2" : "grid-cols-1"
-          } w-full`}
-        >
+        <AnimatePresence mode="wait">
           <div
-            className={`flex flex-col h-screen ${
-              activeSection === "conversations" ? "" : "hidden"
-            } lg:flex`}
+            className={`grid lg:grid-cols-4 ${
+              activeSection === "chat" ? "grid-cols-2" : "grid-cols-1"
+            } w-full`}
           >
-            <Conversations
-              onSelect={() => handleSectionChange("chat")}
-              onOpen={() => setOpenCreateRoom(true)}
-              openSuccess={openSuccess}
-              messageReceived={messageReceived}
-            />
+            <div
+              className={`flex flex-col h-screen ${
+                activeSection === "conversations" ? "" : "hidden"
+              } lg:flex`}
+            >
+              <Conversations
+                onSelect={() => handleSectionChange("chat")}
+                onOpen={() => setOpenCreateRoom(true)}
+                openSuccess={openSuccess}
+                messageReceived={messageReceived}
+              />
+            </div>
+            {(roomId || localStorage.getItem("roomId")) && !loading ? (
+              <>
+                <div
+                  className={`flex flex-col col-span-2 h-screen ${
+                    activeSection === "chat" ? "" : "hidden"
+                  } lg:flex`}
+                >
+                  <Chat
+                    onBack={() => handleSectionChange("conversations")}
+                    onShowInfo={() => handleSectionChange("info")}
+                    isActive={isChatActive}
+                    room={rooms}
+                    setRoom={setRooms}
+                    setMessageReceived={setMessageReceived}
+                  />
+                </div>
+                <div
+                  className={`flex flex-col h-screen ${
+                    activeSection === "info" ? "" : "hidden"
+                  } lg:flex`}
+                >
+                  <Info
+                    onBack={() => handleSectionChange("chat")}
+                    onOpenLeave={() => setOpenLeaveRoom(true)}
+                    onOpenEdit={() => setOpenEditRoom(true)}
+                    participants={rooms?.participants}
+                    onOpenError={() => setOpenError(true)}
+                    setErrorText={setErrorText}
+                    onOpenSuccess={handleAddFriendSuccess}
+                  />
+                </div>
+              </>
+            ) : loading ? (
+              <div className="w-full h-full flex justify-center items-center col-span-3">
+                <Spinner />
+              </div>
+            ) : (
+              <NoConvoSelected />
+            )}
           </div>
-          {roomId || localStorage.getItem("roomId") ? (
-            <>
-              <div
-                className={`flex flex-col col-span-2 h-screen ${
-                  activeSection === "chat" ? "" : "hidden"
-                } lg:flex`}
-              >
-                <Chat
-                  onBack={() => handleSectionChange("conversations")}
-                  onShowInfo={() => handleSectionChange("info")}
-                  isActive={isChatActive}
-                  room={rooms}
-                  setRoom={setRooms}
-                  setMessageReceived={setMessageReceived}
-                />
-              </div>
-              <div
-                className={`flex flex-col h-screen ${
-                  activeSection === "info" ? "" : "hidden"
-                } lg:flex`}
-              >
-                <Info
-                  onBack={() => handleSectionChange("chat")}
-                  onOpenLeave={() => setOpenLeaveRoom(true)}
-                  onOpenEdit={() => setOpenEditRoom(true)}
-                  participants={rooms?.participants}
-                  onOpenError={() => setOpenError(true)}
-                  setErrorText={setErrorText}
-                  onOpenSuccess={handleAddFriendSuccess}
-                />
-              </div>
-            </>
-          ) : (
-            <NoConvoSelected />
-          )}
-        </div>
+        </AnimatePresence>
       </div>
       <div className="z-20">
         <CreateRoomModal

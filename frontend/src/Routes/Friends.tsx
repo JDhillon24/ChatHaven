@@ -7,6 +7,7 @@ import SuccessModal from "../Components/UI/SuccessModal";
 import ErrorModal from "../Components/UI/ErrorModal";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import ConfirmationModal from "../Components/UI/ConfirmationModal";
+import { AnimatePresence } from "framer-motion";
 
 const Friends = () => {
   const [addFriends, setAddFriends] = useState(false);
@@ -48,22 +49,24 @@ const Friends = () => {
         <Sidebar index={1} />
       </div>
       <div className="md:ml-24 ml-18 flex-1 flex z-0">
-        {addFriends ? (
-          <FriendsAdd
-            open={openSuccess}
-            onOpen={() => setOpenSuccess(true)}
-            setAddFriends={() => setAddFriends(false)}
-            onErrorOpen={() => setOpenError(true)}
-            setErrorText={setErrorText}
-            setSuccessText={setSuccessText}
-          />
-        ) : (
-          <FriendsMain
-            open={openSuccess}
-            setAddFriends={() => setAddFriends(true)}
-            handleRemoveClick={handleRemoveClick}
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {addFriends ? (
+            <FriendsAdd
+              open={openSuccess}
+              onOpen={() => setOpenSuccess(true)}
+              setAddFriends={() => setAddFriends(false)}
+              onErrorOpen={() => setOpenError(true)}
+              setErrorText={setErrorText}
+              setSuccessText={setSuccessText}
+            />
+          ) : (
+            <FriendsMain
+              open={openSuccess}
+              setAddFriends={() => setAddFriends(true)}
+              handleRemoveClick={handleRemoveClick}
+            />
+          )}
+        </AnimatePresence>
       </div>
       <div className="z-20">
         <SuccessModal

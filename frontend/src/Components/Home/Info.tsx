@@ -6,6 +6,7 @@ import { IoMdAdd } from "react-icons/io";
 import useAuth from "../../hooks/useAuth";
 import { AxiosError } from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import useIsMobile from "../../hooks/useIsMobile";
 
 type UserType = {
   _id: string;
@@ -80,13 +81,18 @@ const Info: React.FC<InfoProps> = ({
 
   return (
     <motion.div
-      animate={{
-        x: ["100%", "0%"],
-      }}
-      transition={{
-        duration: 0.15,
-        ease: "easeInOut",
-      }}
+      // animate={{
+      //   x: ["100%", "0%"],
+      // }}
+      // transition={{
+      //   duration: 0.15,
+      //   ease: "easeInOut",
+      // }}
+      initial={{ scale: 0.95, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.95, opacity: 0 }}
+      transition={{ duration: 0.15, ease: "easeOut" }}
+      key="info"
       className="relative h-full w-full"
     >
       <div className="h-20 flex w-full justify-between items-center border-b-2 border-gray-200 px-4">

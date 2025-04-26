@@ -8,6 +8,7 @@ import useAuth from "../../hooks/useAuth";
 import { SocketContext } from "../../context/SocketProvider";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { motion } from "framer-motion";
+import useIsMobile from "../../hooks/useIsMobile";
 
 type UserType = {
   _id: string;
@@ -54,6 +55,7 @@ const Chat: React.FC<ChatProps> = ({
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
+  const isMobile = useIsMobile();
   const socketContext = useContext(SocketContext);
 
   if (!socketContext) {
@@ -136,13 +138,18 @@ const Chat: React.FC<ChatProps> = ({
 
   return (
     <motion.div
-      animate={{
-        x: ["100%", "0%"],
-      }}
-      transition={{
-        duration: 0.15,
-        ease: "easeInOut",
-      }}
+      // animate={{
+      //   x: ["100%", "0%"],
+      // }}
+      // transition={{
+      //   duration: 0.15,
+      //   ease: "easeInOut",
+      // }}
+      key="chat"
+      initial={isMobile ? { x: "100%" } : { scale: 0.95, opacity: 0 }}
+      animate={isMobile ? { x: "0%" } : { scale: 1, opacity: 1 }}
+      exit={isMobile ? { x: "100%" } : { scale: 0.95, opacity: 0 }}
+      transition={{ duration: 0.15, ease: isMobile ? "easeInOut" : "easeOut" }}
       className="relative h-full w-full border-r-2 border-gray-200"
     >
       <div className="h-20 flex border-b-2 border-gray-200">
