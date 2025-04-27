@@ -24,7 +24,7 @@ const Notifications = () => {
   };
 
   return (
-    <div className="w-full flex h-screen overflow-hidden">
+    <div className="w-full flex h-screen [@supports(height:100dvh)]:h-[100dvh] overflow-hidden">
       <div className="flex z-10">
         <Sidebar index={2} />
       </div>

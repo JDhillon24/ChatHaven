@@ -12,7 +12,6 @@ const initializeSocket = (server) => {
     cors: {
       origin: ["http://localhost:5173", "https://chathaven.vercel.app"],
       methods: ["GET", "POST", "PUT", "DELETE"],
-      allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
     },
   });

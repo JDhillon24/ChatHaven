@@ -81,7 +81,7 @@ const ProfilePictureModal: React.FC<ModalProps> = ({ open, onClose }) => {
             Change Profile Picture
           </p>
           <div className="flex justify-center items-center">
-            <div className="mt-2 grid lg:grid-cols-4 grid-cols-2 gap-5">
+            <div className="mt-2 grid lg:grid-cols-4 grid-cols-3 gap-5">
               {profilePictures.map((item, index) => (
                 <div
                   onClick={() => setSelectedProfile(item)}

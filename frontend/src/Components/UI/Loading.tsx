@@ -10,7 +10,7 @@ const Loading = () => {
   }, [location.pathname]);
   return (
     <div className="full-page-div">
-      <div className="flex h-screen justify-center items-center">
+      <div className="flex h-screen [@supports(height:100dvh)]:h-[100dvh] justify-center items-center">
         <Spinner />
       </div>
     </div>

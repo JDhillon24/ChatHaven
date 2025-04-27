@@ -45,7 +45,7 @@ const EditProfile = () => {
   }, [profileSuccess, nameSuccess, passSuccess]);
 
   return (
-    <div className="flex flex-col h-screen overflow-x-hidden overflow-y-auto">
+    <div className="flex flex-col h-screen [@supports(height:100dvh)]:h-[100dvh] overflow-x-hidden overflow-y-auto">
       <div className="w-full my-2 ml-2">
         <div>
           <button
