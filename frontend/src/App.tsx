@@ -32,7 +32,14 @@ function App() {
               <Route element={<PersistLogin />}>
                 <Route element={<RequireAuth />}>
                   <Route element={<SocketWrapper />}>
-                    <Route path="/Home" element={<Home />} />
+                    <Route
+                      path="/Home"
+                      element={
+                        <MotionWrapper>
+                          <Home />
+                        </MotionWrapper>
+                      }
+                    />
                     <Route path="/Friends" element={<Friends />} />
                     <Route path="/Notifications" element={<Notifications />} />
                     <Route
@@ -54,8 +61,22 @@ function App() {
                   </MotionWrapper>
                 }
               />
-              <Route path="/ForgotPassword" element={<ForgotPassword />} />
-              <Route path="/ResetPassword" element={<ResetPassword />} />
+              <Route
+                path="/ForgotPassword"
+                element={
+                  <MotionWrapper>
+                    <ForgotPassword />
+                  </MotionWrapper>
+                }
+              />
+              <Route
+                path="/ResetPassword"
+                element={
+                  <MotionWrapper>
+                    <ResetPassword />
+                  </MotionWrapper>
+                }
+              />
               <Route
                 path="/Register"
                 element={

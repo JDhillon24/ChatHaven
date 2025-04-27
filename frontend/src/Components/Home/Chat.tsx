@@ -137,7 +137,7 @@ const Chat: React.FC<ChatProps> = ({
   };
 
   return (
-    <motion.div
+    <div
       // animate={{
       //   x: ["100%", "0%"],
       // }}
@@ -145,11 +145,7 @@ const Chat: React.FC<ChatProps> = ({
       //   duration: 0.15,
       //   ease: "easeInOut",
       // }}
-      key="chat"
-      initial={isMobile ? { x: "100%" } : { scale: 0.95, opacity: 0 }}
-      animate={isMobile ? { x: "0%" } : { scale: 1, opacity: 1 }}
-      exit={isMobile ? { x: "100%" } : { scale: 0.95, opacity: 0 }}
-      transition={{ duration: 0.15, ease: isMobile ? "easeInOut" : "easeOut" }}
+
       className="relative h-full w-full border-r-2 border-gray-200"
     >
       <div className="h-20 flex border-b-2 border-gray-200">
@@ -305,59 +301,6 @@ const Chat: React.FC<ChatProps> = ({
                 }
               }
             })}
-          {/* {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index}>
-              <div className="flex flex-col">
-                <div className="flex">
-                  <p className="text-sm font-light text-gray-400 ml-12">
-                    zoro123
-                  </p>
-                </div>
-                <div className="flex items-end gap-2 mb-4">
-                  <img
-                    className="h-10 w-10 rounded-xl"
-                    src="/images/pfp/cool-anime-pfp-07.jpg"
-                    alt="Profile"
-                  />
-                  <div className="bg-gray-200 p-3 rounded-lg text-sm md:max-w-80 max-w-64 break-words">
-                    Yea brooo i told
-                    usdfsfddsfsdfsdfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfdsasdfdsfasdsadaskjlkjljkljl
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <div className="flex justify-end">
-                  <p className="text-sm font-light text-gray-400 mr-12">
-                    zoro123
-                  </p>
-                </div>
-                <div className="flex items-end gap-2 mb-4 justify-end">
-                  <div className="bg-ChatBlue p-3 rounded-lg text-white text-sm md:max-w-80 max-w-64 break-words">
-                    Yea brooo i told
-                    usdfsfddsfsdfsdfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfdsasdfdsfasdsadaskjlkjljkljl
-                  </div>
-                  <img
-                    className="h-10 w-10 rounded-xl"
-                    src="/images/pfp/cool-anime-pfp-07.jpg"
-                    alt="Profile"
-                  />
-                </div>
-              </div>
-              <div className="flex items-end gap-2 mb-4 justify-end mr-12">
-                <div className="bg-ChatBlue p-3 rounded-lg text-white text-sm md:max-w-80 max-w-64 break-words">
-                  Yea brooo i told
-                  usdfsfddsfsdfsdfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfdsasdfdsfasdsadaskjlkjljkljl
-                </div>
-              </div>
-            </div>
-          ))}
-          <div className="relative flex justify-center items-center mb-4 mx-2">
-            <span className="flex-grow border-t border-gray-200 mr-2"></span>
-            <p className="text-sm font-light text-gray-400">
-              zoro123 has left the room
-            </p>
-            <span className="flex-grow border-t border-gray-200 ml-2"></span>
-          </div> */}
         </div>
         <div ref={messagesEndRef}></div>
       </div>
@@ -388,7 +331,7 @@ const Chat: React.FC<ChatProps> = ({
           </span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
