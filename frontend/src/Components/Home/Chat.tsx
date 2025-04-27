@@ -7,8 +7,6 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { SocketContext } from "../../context/SocketProvider";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import { motion } from "framer-motion";
-import useIsMobile from "../../hooks/useIsMobile";
 
 type UserType = {
   _id: string;
@@ -55,7 +53,6 @@ const Chat: React.FC<ChatProps> = ({
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
-  const isMobile = useIsMobile();
   const socketContext = useContext(SocketContext);
 
   if (!socketContext) {
