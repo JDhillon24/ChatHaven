@@ -32,14 +32,7 @@ function App() {
               <Route element={<PersistLogin />}>
                 <Route element={<RequireAuth />}>
                   <Route element={<SocketWrapper />}>
-                    <Route
-                      path="/Home"
-                      element={
-                        <MotionWrapper>
-                          <Home />
-                        </MotionWrapper>
-                      }
-                    />
+                    <Route path="/Home" element={<Home />} />
                     <Route path="/Friends" element={<Friends />} />
                     <Route path="/Notifications" element={<Notifications />} />
                     <Route
