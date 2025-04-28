@@ -59,7 +59,7 @@ const Home = () => {
   const [successText, setSuccessText] = useState("");
   const [rooms, setRooms] = useState<RoomType | undefined>(undefined);
   const [messageReceived, setMessageReceived] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const socketContext = useContext(SocketContext);
 
   if (!socketContext) {

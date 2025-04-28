@@ -70,10 +70,10 @@ const Login = () => {
     document.title = "Login | ChatHaven";
   }, [location.pathname]);
   return (
-    <div className="w-full min-h-screen [@supports(height:100dvh)]:h-[100dvh] bg-gradient-to-b from-white to-[#2bb3c0] overflow-hidden ">
+    <div className="w-full h-screen [@supports(height:100dvh)]:h-[100dvh] bg-gradient-to-b from-white to-[#2bb3c0] overflow-hidden ">
       <div className="w-full h-full grid grid-cols-1 lg:grid-cols-3">
         <LeftGridForms />
-        <div className="w-full flex flex-col items-center justify-start lg:justify-center overflow-y-auto bg-white p-2 mx-auto xl:rounded-2xl">
+        <div className="w-full flex flex-col items-center justify-center md:justify-start lg:justify-center overflow-y-auto bg-white p-2 mx-auto xl:rounded-2xl">
           <div className="w-full flex flex-col justify-center items-center gap-8">
             <Logo classes="mt-10 w-36 flex lg:hidden" />
             <SmallLogo classes="mt-10 w-14 hidden lg:flex" />

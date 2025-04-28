@@ -14,7 +14,10 @@ const Header = () => {
         <p className="text-white/60 hidden md:block">
           Real-time messaging without the extra noise
         </p>
-        <div className="inline-flex gap-1 items-center">
+        <div
+          onClick={() => navigate("/Login")}
+          className="inline-flex gap-1 items-center cursor-pointer"
+        >
           <p>Get started</p>
           <FaArrowRight className="h-4 w-4 inline-flex justify-center items-center" />
         </div>
