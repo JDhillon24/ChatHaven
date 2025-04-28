@@ -6,6 +6,8 @@ import LoginForm from "../Components/Login/LoginForm";
 import SuccessModal from "../Components/UI/SuccessModal";
 import axios from "../api/axios";
 import VerifyFailedModal from "../Components/Login/VerifyFailedModal";
+import LeftGridForms from "../Components/UI/LeftGridForms";
+import SmallLogo from "../Components/UI/SmallLogo";
 
 const Login = () => {
   const location = useLocation();
@@ -68,31 +70,35 @@ const Login = () => {
     document.title = "Login | ChatHaven";
   }, [location.pathname]);
   return (
-    <div className="w-full h-screen [@supports(height:100dvh)]:h-[100dvh] bg-slate-100">
-      <div className="lg:w-1/3 w-full h-full mx-auto flex flex-col justify-center bg-white m-2 rounded-2xl col-span-2">
-        <div className="flex flex-col justify-center items-center gap-8">
-          <Logo classes="w-36" />
-          <div className="flex flex-col justify-center text-center">
-            <p className="text-3xl font-medium">Welcome!</p>
-            <p className="mt-2 text-sm font-normal">
-              Please enter your details
-            </p>
-          </div>
-          <LoginForm
-            setEmail={setStateEmail}
-            openResend={() => setOpenResend(true)}
-            setResendText={setResendText}
-          />
-          <div className="flex flex-col justify-end pb-10">
-            <p className="text-sm font-normal">
-              Don't have an account?{" "}
-              <Link
-                to="/Register"
-                className="text-sm font-medium hover:underline"
-              >
-                Sign Up
-              </Link>
-            </p>
+    <div className="w-full min-h-screen [@supports(height:100dvh)]:h-[100dvh] bg-gradient-to-b from-white to-[#2bb3c0] overflow-hidden ">
+      <div className="w-full h-full grid grid-cols-1 lg:grid-cols-3">
+        <LeftGridForms />
+        <div className="w-full flex flex-col items-center justify-start lg:justify-center overflow-y-auto bg-white p-2 mx-auto xl:rounded-2xl">
+          <div className="w-full flex flex-col justify-center items-center gap-8">
+            <Logo classes="mt-10 w-36 flex lg:hidden" />
+            <SmallLogo classes="mt-10 w-14 hidden lg:flex" />
+            <div className="flex flex-col justify-center text-center">
+              <p className="text-3xl font-medium">Welcome!</p>
+              <p className="mt-2 text-sm font-normal">
+                Please enter your details
+              </p>
+            </div>
+            <LoginForm
+              setEmail={setStateEmail}
+              openResend={() => setOpenResend(true)}
+              setResendText={setResendText}
+            />
+            <div className="flex flex-col justify-end pb-10">
+              <p className="text-sm font-normal">
+                Don't have an account?{" "}
+                <Link
+                  to="/Register"
+                  className="text-sm font-medium hover:underline"
+                >
+                  Sign Up
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>
