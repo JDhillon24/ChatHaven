@@ -8,6 +8,7 @@ import axios from "../api/axios";
 import VerifyFailedModal from "../Components/Login/VerifyFailedModal";
 import LeftGridForms from "../Components/UI/LeftGridForms";
 import SmallLogo from "../Components/UI/SmallLogo";
+import { motion } from "framer-motion";
 
 const Login = () => {
   const location = useLocation();
@@ -73,10 +74,20 @@ const Login = () => {
     <div className="w-full h-screen [@supports(height:100dvh)]:h-[100dvh] bg-gradient-to-b from-white to-[#2bb3c0] overflow-hidden ">
       <div className="w-full h-full grid grid-cols-1 lg:grid-cols-3">
         <LeftGridForms />
-        <div className="w-full flex flex-col items-center justify-center md:justify-start lg:justify-center overflow-y-auto bg-white p-2 mx-auto xl:rounded-2xl">
-          <div className="w-full flex flex-col justify-center items-center gap-8">
-            <Logo classes="mt-10 w-36 flex lg:hidden" />
-            <SmallLogo classes="mt-10 w-14 hidden lg:flex" />
+        <div className="w-full flex flex-col items-center justify-center overflow-y-auto bg-white p-2 mx-auto xl:rounded-2xl">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15, ease: "easeInOut" }}
+            className="w-full flex flex-col justify-center items-center gap-8"
+          >
+            <div onClick={() => navigate("/")}>
+              <Logo classes="mt-10 w-36 flex lg:hidden cursor-pointer" />
+            </div>
+            <div onClick={() => navigate("/")}>
+              <SmallLogo classes="mt-10 w-14 hidden lg:flex cursor-pointer" />
+            </div>
             <div className="flex flex-col justify-center text-center">
               <p className="text-3xl font-medium">Welcome!</p>
               <p className="mt-2 text-sm font-normal">
@@ -99,7 +110,7 @@ const Login = () => {
                 </Link>
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
       <SuccessModal

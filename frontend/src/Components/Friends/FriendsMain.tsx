@@ -90,7 +90,7 @@ const FriendsMain: React.FC<MainProps> = ({
               className="w-full px-2 h-10 rounded-lg bg-gray-200 border-none placeholder:text-sm placeholder:text-center"
             />
           </div>
-          <div className="mt-3 w-full grid lg:grid-cols-3 grid-cols-1 gap-3 max-h-[calc(100vh-146px)] overflow-auto pb-3">
+          <div className="mt-3 w-full grid md:grid-cols-2 xl:grid-cols-3 grid-cols-1 gap-3 max-h-[calc(100vh-146px)] overflow-auto pb-3">
             {data.length === 0 && !loading ? (
               <div className="w-full lg:col-span-3 flex justify-center items-center">
                 <p className="text-lg text-gray-400 text-center">
@@ -115,9 +115,7 @@ const FriendsMain: React.FC<MainProps> = ({
                         alt="Profile"
                       />
                     </div>
-                    <p className="ml-4 lg:text-lg text-md font-semibold">
-                      {item.name}
-                    </p>
+                    <p className="ml-4 text-sm font-semibold">{item.name}</p>
                   </div>
                   <div className="flex gap-2">
                     <div

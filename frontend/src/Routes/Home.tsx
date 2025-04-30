@@ -48,7 +48,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(1024);
 
   const [openCreateRoom, setOpenCreateRoom] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
@@ -201,74 +201,147 @@ const Home = () => {
               activeSection === "chat" ? "grid-cols-2" : "grid-cols-1"
             } w-full`}
           >
-            <div
-              className={`flex flex-col h-screen [@supports(height:100dvh)]:h-[100dvh] ${
-                activeSection === "conversations" ? "" : "hidden"
-              } lg:flex`}
-            >
-              <Conversations
-                onSelect={() => handleSectionChange("chat")}
-                onOpen={() => setOpenCreateRoom(true)}
-                openSuccess={openSuccess}
-                messageReceived={messageReceived}
-              />
-            </div>
+            {isMobile ? (
+              activeSection === "conversations" && (
+                <div
+                  className={`flex flex-col h-screen [@supports(height:100dvh)]:h-[100dvh]`}
+                >
+                  <Conversations
+                    onSelect={() => handleSectionChange("chat")}
+                    onOpen={() => setOpenCreateRoom(true)}
+                    openSuccess={openSuccess}
+                    messageReceived={messageReceived}
+                  />
+                </div>
+              )
+            ) : (
+              <div
+                className={`flex flex-col h-screen [@supports(height:100dvh)]:h-[100dvh]`}
+              >
+                <Conversations
+                  onSelect={() => handleSectionChange("chat")}
+                  onOpen={() => setOpenCreateRoom(true)}
+                  openSuccess={openSuccess}
+                  messageReceived={messageReceived}
+                />
+              </div>
+            )}
             {(roomId || localStorage.getItem("roomId")) && !loading ? (
               <>
-                <div
-                  className={`flex flex-col col-span-2 h-screen [@supports(height:100dvh)]:h-[100dvh] ${
-                    activeSection === "chat" ? "" : "hidden"
-                  } lg:flex`}
-                >
-                  <motion.div
-                    className="w-full h-full"
-                    key="chat"
-                    initial={
-                      isMobile ? { x: "100%" } : { scale: 0.95, opacity: 0 }
-                    }
-                    animate={isMobile ? { x: "0%" } : { scale: 1, opacity: 1 }}
-                    exit={
-                      isMobile ? { x: "100%" } : { scale: 0.95, opacity: 0 }
-                    }
-                    transition={{
-                      duration: 0.15,
-                      ease: isMobile ? "easeInOut" : "easeOut",
-                    }}
+                {isMobile ? (
+                  activeSection === "chat" && (
+                    <div
+                      className={`flex flex-col col-span-2 h-screen [@supports(height:100dvh)]:h-[100dvh]`}
+                    >
+                      <motion.div
+                        className="w-full h-full"
+                        key="chat"
+                        initial={
+                          isMobile ? { x: "100%" } : { scale: 0.95, opacity: 0 }
+                        }
+                        animate={
+                          isMobile ? { x: "0%" } : { scale: 1, opacity: 1 }
+                        }
+                        exit={
+                          isMobile ? { x: "100%" } : { scale: 0.95, opacity: 0 }
+                        }
+                        transition={{
+                          duration: 0.15,
+                          ease: isMobile ? "easeInOut" : "easeOut",
+                        }}
+                      >
+                        <Chat
+                          onBack={() => handleSectionChange("conversations")}
+                          onShowInfo={() => handleSectionChange("info")}
+                          isActive={isChatActive}
+                          room={rooms}
+                          setRoom={setRooms}
+                          setMessageReceived={setMessageReceived}
+                        />
+                      </motion.div>
+                    </div>
+                  )
+                ) : (
+                  <div
+                    className={`flex flex-col col-span-2 h-screen [@supports(height:100dvh)]:h-[100dvh]`}
                   >
-                    <Chat
-                      onBack={() => handleSectionChange("conversations")}
-                      onShowInfo={() => handleSectionChange("info")}
-                      isActive={isChatActive}
-                      room={rooms}
-                      setRoom={setRooms}
-                      setMessageReceived={setMessageReceived}
-                    />
-                  </motion.div>
-                </div>
-                <div
-                  className={`flex flex-col h-screen [@supports(height:100dvh)]:h-[100dvh] ${
-                    activeSection === "info" ? "" : "hidden"
-                  } lg:flex`}
-                >
-                  <motion.div
-                    className="w-full h-full"
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.95, opacity: 0 }}
-                    transition={{ duration: 0.15, ease: "easeOut" }}
-                    key="info"
+                    <motion.div
+                      className="w-full h-full"
+                      key="chat"
+                      initial={
+                        isMobile ? { x: "100%" } : { scale: 0.95, opacity: 0 }
+                      }
+                      animate={
+                        isMobile ? { x: "0%" } : { scale: 1, opacity: 1 }
+                      }
+                      exit={
+                        isMobile ? { x: "100%" } : { scale: 0.95, opacity: 0 }
+                      }
+                      transition={{
+                        duration: 0.15,
+                        ease: isMobile ? "easeInOut" : "easeOut",
+                      }}
+                    >
+                      <Chat
+                        onBack={() => handleSectionChange("conversations")}
+                        onShowInfo={() => handleSectionChange("info")}
+                        isActive={isChatActive}
+                        room={rooms}
+                        setRoom={setRooms}
+                        setMessageReceived={setMessageReceived}
+                      />
+                    </motion.div>
+                  </div>
+                )}
+                {isMobile ? (
+                  activeSection === "info" && (
+                    <div
+                      className={`flex flex-col h-screen [@supports(height:100dvh)]:h-[100dvh]`}
+                    >
+                      <motion.div
+                        className="w-full h-full"
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        transition={{ duration: 0.15, ease: "easeOut" }}
+                        key="info"
+                      >
+                        <Info
+                          onBack={() => handleSectionChange("chat")}
+                          onOpenLeave={() => setOpenLeaveRoom(true)}
+                          onOpenEdit={() => setOpenEditRoom(true)}
+                          participants={rooms?.participants}
+                          onOpenError={() => setOpenError(true)}
+                          setErrorText={setErrorText}
+                          onOpenSuccess={handleAddFriendSuccess}
+                        />
+                      </motion.div>
+                    </div>
+                  )
+                ) : (
+                  <div
+                    className={`flex flex-col h-screen [@supports(height:100dvh)]:h-[100dvh]`}
                   >
-                    <Info
-                      onBack={() => handleSectionChange("chat")}
-                      onOpenLeave={() => setOpenLeaveRoom(true)}
-                      onOpenEdit={() => setOpenEditRoom(true)}
-                      participants={rooms?.participants}
-                      onOpenError={() => setOpenError(true)}
-                      setErrorText={setErrorText}
-                      onOpenSuccess={handleAddFriendSuccess}
-                    />
-                  </motion.div>
-                </div>
+                    <motion.div
+                      className="w-full h-full"
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.95, opacity: 0 }}
+                      transition={{ duration: 0.15, ease: "easeOut" }}
+                      key="info"
+                    >
+                      <Info
+                        onBack={() => handleSectionChange("chat")}
+                        onOpenLeave={() => setOpenLeaveRoom(true)}
+                        onOpenEdit={() => setOpenEditRoom(true)}
+                        participants={rooms?.participants}
+                        onOpenError={() => setOpenError(true)}
+                        setErrorText={setErrorText}
+                        onOpenSuccess={handleAddFriendSuccess}
+                      />
+                    </motion.div>
+                  </div>
+                )}
               </>
             ) : loading ? (
               <div className="w-full h-full flex justify-center items-center col-span-3">

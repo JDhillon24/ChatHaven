@@ -46,38 +46,10 @@ function App() {
                   </Route>
                 </Route>
               </Route>
-              <Route
-                path="/Login"
-                element={
-                  <MotionWrapper>
-                    <Login />
-                  </MotionWrapper>
-                }
-              />
-              <Route
-                path="/ForgotPassword"
-                element={
-                  <MotionWrapper>
-                    <ForgotPassword />
-                  </MotionWrapper>
-                }
-              />
-              <Route
-                path="/ResetPassword"
-                element={
-                  <MotionWrapper>
-                    <ResetPassword />
-                  </MotionWrapper>
-                }
-              />
-              <Route
-                path="/Register"
-                element={
-                  <MotionWrapper>
-                    <Register />
-                  </MotionWrapper>
-                }
-              />
+              <Route path="/Login" element={<Login />} />
+              <Route path="/ForgotPassword" element={<ForgotPassword />} />
+              <Route path="/ResetPassword" element={<ResetPassword />} />
+              <Route path="/Register" element={<Register />} />
               <Route path="/Verify" element={<Verify />} />
               <Route path="/" element={<LandingPage />} />
             </Route>
