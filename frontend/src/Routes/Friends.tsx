@@ -10,21 +10,26 @@ import ConfirmationModal from "../Components/UI/ConfirmationModal";
 import { AnimatePresence } from "framer-motion";
 
 const Friends = () => {
-  const [addFriends, setAddFriends] = useState(false);
+  //state variables for modals
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openError, setOpenError] = useState(false);
   const [errorText, setErrorText] = useState("");
   const [successText, setSuccessText] = useState("");
-  const axiosPrivate = useAxiosPrivate();
-
   const [openConfirmation, setOpenConfirmation] = useState(false);
   const [toRemove, setToRemove] = useState("");
 
+  const axiosPrivate = useAxiosPrivate();
+
+  //state variable to indicate whether user is on friends list or add friends page
+  const [addFriends, setAddFriends] = useState(false);
+
+  //updates state so modal knows what friend is being removed
   const handleRemoveClick = (friend: string) => {
     setToRemove(friend);
     setOpenConfirmation(true);
   };
 
+  //function to handle removing a friend
   const handleRemove = async (friend: string) => {
     try {
       const response = await axiosPrivate.delete(
@@ -45,11 +50,15 @@ const Friends = () => {
   }, [location.pathname]);
   return (
     <div className="w-full flex h-screen [@supports(height:100dvh)]:h-[100dvh] overflow-hidden">
+      {/* Sidebar placed on top of main content */}
       <div className="flex z-10">
         <Sidebar index={1} />
       </div>
+
+      {/* Main content shifted to the left to account for sidebar width */}
       <div className="md:ml-24 ml-18 flex-1 flex z-0">
         <AnimatePresence mode="wait">
+          {/* Render friends list or add friends page based on state variable */}
           {addFriends ? (
             <FriendsAdd
               open={openSuccess}
@@ -68,6 +77,8 @@ const Friends = () => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Modals placed on top of all components*/}
       <div className="z-20">
         <SuccessModal
           open={openSuccess}

@@ -15,8 +15,10 @@ const EditProfile = () => {
     document.title = "Edit Profile | ChatHaven";
   }, [location.pathname]);
 
+  // location state to indicate successful change
   const { profileSuccess, nameSuccess, passSuccess } = location.state || {};
 
+  //state variables for modals
   const [openProfile, setOpenProfile] = useState(false);
   const [openSuccess, setOpenSuccess] = useState(false);
   const [successText, setSuccessText] = useState("");
@@ -28,12 +30,14 @@ const EditProfile = () => {
     setOpenSuccess(true);
   };
 
+  //clears location state and refreshes page to show profile picture change
   const handleSuccessClose = () => {
     setOpenSuccess(false);
     navigate(location.pathname, { replace: true, state: {} });
     window.location.reload();
   };
 
+  // opens success modal with certain text based on location state
   useEffect(() => {
     if (profileSuccess) {
       openSuccessModal("Your profile picture has been changed successfully!");
@@ -62,9 +66,12 @@ const EditProfile = () => {
           <p className="text-3xl font-semibold">Edit Profile</p>
         </div>
         <div className="mt-3 p-3 grid xl:grid-cols-2 grid-cols-1 bg-gray-200 rounded-xl grow">
+          {/* Left Section containing edit profile picture */}
           <div className="flex flex-col">
             <LeftSection openProfile={() => setOpenProfile(true)} />
           </div>
+
+          {/* Right Section containing edit username and password */}
           <div className="h-full flex flex-col">
             <RightSection
               openUsername={() => setOpenUsername(true)}
@@ -73,6 +80,7 @@ const EditProfile = () => {
           </div>
         </div>
       </div>
+      {/* Modals for profile changes */}
       <ProfilePictureModal
         open={openProfile}
         onClose={() => setOpenProfile(false)}

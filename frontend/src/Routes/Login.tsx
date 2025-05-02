@@ -12,16 +12,20 @@ import { motion } from "framer-motion";
 
 const Login = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  //state variables for modals
   const [openSuccess, setOpenSuccess] = useState(false);
   const [successText, setSuccessText] = useState("");
-  const navigate = useNavigate();
   const [openResend, setOpenResend] = useState(false);
   const [resendText, setResendText] = useState("");
   const [stateEmail, setStateEmail] = useState("");
 
+  //location state for different behaviours
   const { verifySent, verifySuccess, verifyFailed, email, passwordReset } =
     location.state || {};
 
+  //sets modal text and opens modal based on location state
   useEffect(() => {
     if (verifySent && email) {
       setSuccessText(
@@ -46,6 +50,7 @@ const Login = () => {
     }
   }, [location]);
 
+  //functions to clear location state after modal close
   const handleSuccessClose = () => {
     setOpenSuccess(false);
     navigate(location.pathname, { replace: true, state: {} });
@@ -56,6 +61,7 @@ const Login = () => {
     navigate(location.pathname, { replace: true, state: {} });
   };
 
+  //function for resending verification email
   const handleResend = async (email: string) => {
     try {
       axios.post("/user/resendverificationlink", JSON.stringify({ email }));
@@ -63,7 +69,7 @@ const Login = () => {
       setSuccessText("The new verification link has successfully been sent!");
       setOpenSuccess(true);
     } catch (error) {
-      console.error;
+      console.error();
     }
   };
 
@@ -73,7 +79,10 @@ const Login = () => {
   return (
     <div className="w-full h-screen [@supports(height:100dvh)]:h-[100dvh] bg-gradient-to-b from-white to-[#2bb3c0] overflow-hidden ">
       <div className="w-full h-full grid grid-cols-1 lg:grid-cols-3">
+        {/* Left section only shown on lg screens */}
         <LeftGridForms />
+
+        {/* Login Form */}
         <div className="w-full flex flex-col items-center justify-center overflow-y-auto bg-white p-2 mx-auto xl:rounded-2xl">
           <motion.div
             initial={{ opacity: 0 }}
@@ -113,6 +122,8 @@ const Login = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Modals */}
       <SuccessModal
         open={openSuccess}
         onClose={handleSuccessClose}

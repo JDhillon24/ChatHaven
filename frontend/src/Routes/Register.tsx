@@ -17,7 +17,10 @@ const Register = () => {
   return (
     <div className="w-full h-screen [@supports(height:100dvh)]:h-[100dvh] bg-gradient-to-b from-white to-[#2bb3c0] overflow-hidden ">
       <div className="w-full h-full grid grid-cols-1 lg:grid-cols-3">
+        {/* Left section only shown on lg screens */}
         <LeftGridForms />
+
+        {/* Register Form */}
         <div className="w-full flex flex-col justify-center items-center overflow-y-auto bg-white p-2 mx-auto xl:rounded-2xl">
           <motion.div
             initial={{ opacity: 0 }}

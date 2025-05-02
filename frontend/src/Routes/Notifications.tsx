@@ -12,6 +12,7 @@ const Notifications = () => {
     document.title = "Notifications | ChatHaven";
   }, [location.pathname]);
 
+  //state variable for confirmation modal to clear notifications
   const [openConfirmation, setOpenConfirmation] = useState(false);
 
   const handleClearNotifications = async () => {
@@ -25,15 +26,18 @@ const Notifications = () => {
 
   return (
     <div className="w-full flex h-screen [@supports(height:100dvh)]:h-[100dvh] overflow-hidden">
+      {/* Sidebar stays fixed to the left and placed above main content */}
       <div className="flex z-10">
         <Sidebar index={2} />
       </div>
+      {/* Main content adjusted slightly to the right to account for sidebar width */}
       <div className="md:ml-24 ml-18 flex-1 flex z-0">
         <NotificationsMain
           open={openConfirmation}
           onOpen={() => setOpenConfirmation(true)}
         />
       </div>
+      {/* Confirmation modal sits on top of all components*/}
       <div className="z-20">
         <ConfirmationModal
           open={openConfirmation}

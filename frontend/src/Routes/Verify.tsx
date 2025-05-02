@@ -13,9 +13,11 @@ const Verify = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
+        //redirect to login with success modal if verification is successful
         await axios.get(`/user/verifyemail?token=${token}&email=${email}`);
         navigate("/Login", { state: { verifySuccess: true } });
       } catch (error) {
+        //redirect to login with error modal if verification fails or link is invalid
         navigate("/Login", { state: { verifyFailed: true, email } });
       }
     };

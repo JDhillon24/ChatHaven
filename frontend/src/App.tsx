@@ -30,6 +30,7 @@ function App() {
           <Routes location={location} key={location.pathname}>
             <Route element={<SmoothScrollWrapper />}>
               <Route element={<PersistLogin />}>
+                {/* Protected Routes */}
                 <Route element={<RequireAuth />}>
                   <Route element={<SocketWrapper />}>
                     <Route path="/Home" element={<Home />} />
