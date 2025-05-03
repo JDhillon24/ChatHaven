@@ -5,26 +5,26 @@ import useAuth from "./useAuth";
 const SOCKET_URL = import.meta.env.VITE_API_URL;
 
 const useSocket = () => {
+  //ref for current socket instance
   const socketRef = useRef<Socket | null>(null);
   const { auth } = useAuth();
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
+    //disconnect and clean socket if user isn't authenticated
     if (auth.isAuthenticated === false) {
       socketRef.current?.disconnect();
       socketRef.current = null;
       return;
     }
 
+    //cleaning up old socket instances
     if (socketRef.current) {
-      console.log(
-        "Existing socket found. Disconnecting before reconnecting..."
-      );
       socketRef.current.disconnect();
       socketRef.current = null;
     }
 
-    // console.log("new socket connecting");
+    //initialization
     socketRef.current = io(SOCKET_URL, {
       withCredentials: true,
       auth: { token: auth.user.accessToken },
@@ -39,7 +39,6 @@ const useSocket = () => {
     socket.emit("join", auth.user.email);
 
     socket.on("connect", () => {
-      // console.log(`connection has been made: ${socket?.id}`);
       setIsConnected(true);
     });
     socket.on("disconnect", () => {
@@ -47,21 +46,23 @@ const useSocket = () => {
     });
 
     socket.on("reconnect_attempt", (attempt) => {
-      console.log(`Reconnecting... Attempt ${attempt}`);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(`Reconnecting... Attempt ${attempt}`);
+      }
     });
 
     socket.on("reconnect", () => {
-      console.log("socket reconnected");
       setIsConnected(true);
     });
 
     socket.on("connect_error", async (err) => {
-      console.log(err);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(err);
+      }
     });
 
     return () => {
       if (socketRef.current) {
-        // console.log("cleaning up socket: disconnecting");
         socketRef.current.disconnect();
         socketRef.current = null;
       }

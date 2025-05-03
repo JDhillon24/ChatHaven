@@ -19,8 +19,12 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
   const logout = useLogout();
   const [activeNavIndex] = useState(index);
 
+  //state variable for dropdown
   const [isOpen, setIsOpen] = useState(false);
+
+  //ref to keep track of user clicking outside of dropdown
   const menuRef = useRef<HTMLDivElement | null>(null);
+
   const { auth } = useAuth();
   const navigate = useNavigate();
   const socketContext = useContext(SocketContext);
@@ -29,6 +33,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
     throw new Error("SocketContext must be used within a provider!");
   }
 
+  //state for notification alert
   const { hasNewNotification, setHasNewNotification } = socketContext;
 
   const signOut = async (event: React.MouseEvent) => {
@@ -37,6 +42,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
     window.location.reload();
   };
 
+  //closes dropdown when user clicks outside of it
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -47,6 +53,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  //removes alert if user is on notification tab
   useEffect(() => {
     if (activeNavIndex === 2) {
       setHasNewNotification(false);
@@ -57,6 +64,7 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
   return (
     <div className="lg:w-24 w-18 fixed top-0 left-0 h-screen [@supports(height:100dvh)]:h-[100dvh] bg-white shadow-lg flex flex-col">
       <div className="h-screen [@supports(height:100dvh)]:h-[100dvh] flex flex-col items-center mt-2 gap-8 ">
+        {/* Profile Picture at the top of the sidebar */}
         <div className="flex flex-col items-center">
           <div className="relative flex items-center justify-center h-14 w-14 mt-2 mb-2 mx-auto rounded-xl">
             <img
@@ -66,6 +74,8 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
             />
           </div>
         </div>
+
+        {/* Home, Friends, Notifications tabs on sidebar  */}
         <div className="flex flex-col items-center gap-1 flex-1">
           <div
             onClick={() => navigate("/Home")}
@@ -101,6 +111,8 @@ const Sidebar: FC<SidebarProps> = ({ index }) => {
             </div>
           </div>
         </div>
+
+        {/* Settings button on bottom with a dropdown */}
         <div className="relative">
           <div
             ref={menuRef}

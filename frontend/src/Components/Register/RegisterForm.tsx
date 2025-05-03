@@ -9,6 +9,7 @@ import { AxiosError } from "axios";
 const RegisterForm = () => {
   const navigate = useNavigate();
 
+  //state variables for hiding and showing passwords
   const [passView, setPassView] = useState(false);
   const [confirmPassView, setConfirmPassView] = useState(false);
 
@@ -31,11 +32,15 @@ const RegisterForm = () => {
         );
 
         resetForm();
+
+        // navigates to login with a modal pop up stating a verification email has been sent to the given email
         navigate("/Login", {
           state: { verifySent: true, email: values.email },
         });
       } catch (error) {
-        console.log(error);
+        if (process.env.NODE_ENV !== "production") {
+          console.error(error);
+        }
         if (error instanceof AxiosError) {
           if (
             error.response?.status === 409 &&

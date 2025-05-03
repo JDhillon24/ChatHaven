@@ -77,6 +77,7 @@ const Features = () => {
                   </h3>
                   {popular && (
                     <div className="inline-flex items-center text-sm px-4 py-1.5 rounded-xl border border-white/20">
+                      {/* Text with animated rainbow text */}
                       <motion.span
                         animate={{
                           backgroundPositionX: "-100%",

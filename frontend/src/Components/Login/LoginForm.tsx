@@ -2,7 +2,7 @@ import { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useAuth from "../../hooks/useAuth";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "../../api/axios";
 import { AxiosError } from "axios";
@@ -20,6 +20,8 @@ const LoginForm: React.FC<LoginProps> = ({
 }) => {
   const { setAuth, persist, setPersist } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.from?.pathname || "/Home";
 
   const [passView, setPassView] = useState(false);
 
@@ -27,7 +29,7 @@ const LoginForm: React.FC<LoginProps> = ({
     initialValues: {
       email: "",
       password: "",
-      persist: false,
+      persist: true,
     },
     onSubmit: async (values, { resetForm }) => {
       try {
@@ -49,7 +51,7 @@ const LoginForm: React.FC<LoginProps> = ({
           },
         });
         resetForm();
-        navigate("/Home");
+        navigate(from, { replace: true });
       } catch (error) {
         setEmail(values.email);
 

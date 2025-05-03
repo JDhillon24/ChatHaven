@@ -5,6 +5,7 @@ import { FaCheck } from "react-icons/fa";
 import { SocketContext } from "../../context/SocketProvider";
 import MotionWrapper from "../MotionWrapper";
 
+// different notification types
 type ResponseData = {
   type: "friend_request" | "accept_request";
   sender: { _id: string; name: string; profilePicture: string };
@@ -18,6 +19,7 @@ type ResponseDataGroup = {
   createdAt: string;
 };
 
+//checks if the data is a group type or normal type
 function isResponseDataGroup(
   data: ResponseData | ResponseDataGroup
 ): data is ResponseDataGroup {
@@ -43,16 +45,18 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
     try {
       const getData = async () => {
         const response = await axiosPrivate.get("/notifications/getall");
-        console.log(response.data);
         setNotifications(response.data);
       };
 
       getData();
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
     }
   }, [open]);
 
+  //function to decline a friend request
   const handleDeclineRequest = async (friend_id: string): Promise<void> => {
     try {
       await axiosPrivate.post(
@@ -62,6 +66,7 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
         })
       );
 
+      //removes friend request from notifications list
       setNotifications((prev) =>
         prev.filter(
           (noti) =>
@@ -69,10 +74,13 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
         )
       );
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
     }
   };
 
+  //function to accept a friend request
   const handleAcceptRequest = async (friend_id: string): Promise<void> => {
     try {
       await axiosPrivate.post(
@@ -82,6 +90,7 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
         })
       );
 
+      //removes friend request from notifications list
       setNotifications((prev) =>
         prev.filter(
           (noti) =>
@@ -89,7 +98,9 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
         )
       );
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
     }
   };
   return (
@@ -98,6 +109,8 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
         <div className="h-20 flex border-b-2 border-gray-200">
           <div className="lg:w-2/3 w-11/12 mx-auto flex justify-between items-center">
             <p className="text-xl font-semibold">Notifications</p>
+
+            {/* button to clear notifications */}
             <div
               onClick={onOpen}
               className="rounded-full bg-ChatBlue flex justify-center items-center px-4 py-2 text-white cursor-pointer transition-all duration-200 active:scale-90 active:bg-ChatBlueLight"
@@ -109,6 +122,7 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
         <div className="mt-3 px-4 lg:w-2/3 w-full mx-auto">
           <div className="mt-3 w-full max-h-[calc(100vh-146px)] overflow-auto pb-3 ">
             <div className="flex flex-col gap-3">
+              {/* Displays text if there's no notifications, and displays data depending on the type of notification */}
               {notifications.length === 0 ? (
                 <div className="w-full flex justify-center items-center">
                   <p className="text-lg text-gray-400 text-center">

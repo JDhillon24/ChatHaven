@@ -13,12 +13,14 @@ const ModalBoilerplate: React.FC<ModalProps> = ({
   children,
 }) => {
   return (
+    // slightly translucent black background across whole page, clicking anywhere outside modal closes it
     <div
       onClick={onClose}
       className={`fixed inset-0 flex justify-center items-center transition-colors ${
         open ? "visible bg-black/20" : "invisible"
       }`}
     >
+      {/* Basic modal shape with close button, open and close animations */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`bg-white rounded-xl shadow p-6 transition-all ${

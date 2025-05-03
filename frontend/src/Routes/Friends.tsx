@@ -40,7 +40,9 @@ const Friends = () => {
       setSuccessText(response.data.message);
       setOpenSuccess(true);
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error();
+      }
     }
   };
 

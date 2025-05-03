@@ -17,6 +17,7 @@ export const NavigationTracker = ({
   const location = useLocation();
   const historyStack = useRef<string[]>([]);
 
+  //pushes each page visited to ref to tell if user navigated to a page from within the site or from a different site
   useEffect(() => {
     historyStack.current.push(location.pathname);
   }, [location]);

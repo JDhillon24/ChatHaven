@@ -4,6 +4,7 @@ type props = {
   children: React.ReactNode;
 };
 
+//adds basic animation to children element
 const MotionWrapper: React.FC<props> = ({ children }) => {
   return (
     <motion.div

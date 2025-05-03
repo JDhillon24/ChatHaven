@@ -4,6 +4,7 @@ import { useEffect } from "react";
 const SmoothScrollWrapper = () => {
   const location = useLocation();
 
+  //adds smooth scroll to only landing page
   useEffect(() => {
     if (location.pathname === "/") {
       document.documentElement.classList.add("scroll-smooth");

@@ -18,6 +18,8 @@ const LeaveRoomModal: React.FC<ModalProps> = ({
   const location = useLocation();
   const axiosPrivate = useAxiosPrivate();
   const { roomId = localStorage.getItem("roomId") } = location.state || {};
+
+  // Removes user from room and clears selected room in local storage
   const handleConfirm = async () => {
     try {
       if (roomId) {
@@ -27,7 +29,9 @@ const LeaveRoomModal: React.FC<ModalProps> = ({
         onOpenSuccess();
       }
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
     }
   };
   return (

@@ -29,6 +29,8 @@ const EditRoomModal: React.FC<ModalProps> = ({
     <ModalBoilerplate open={open} onClose={onClose}>
       <div className="text-center w-56">
         <p className="text-lg font-black text-gray-800">Edit Room</p>
+
+        {/* Forms for editing the room name and inviting new members */}
         <div className="mt-5 flex flex-col gap-5">
           <EditName
             onClose={onClose}

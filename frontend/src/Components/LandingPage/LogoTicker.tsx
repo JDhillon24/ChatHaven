@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 
+// infinitely scrolls through tech stack logos
 const LogoTicker = () => {
   return (
     <div className="bg-white">

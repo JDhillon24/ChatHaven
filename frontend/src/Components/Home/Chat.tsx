@@ -47,8 +47,8 @@ const Chat: React.FC<ChatProps> = ({
   setRoom,
   setMessageReceived,
 }) => {
+  //ref to track the bottom of the messages so page can auto scroll to bottom on new messages
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  // const [messages, setMessages] = useState(room?.messages);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
@@ -61,6 +61,7 @@ const Chat: React.FC<ChatProps> = ({
 
   const { socket } = socketContext;
 
+  // returns the other participant in a 2 person group chat
   const privateChatName = (participants: UserType[] | undefined): UserType => {
     if (participants) {
       const filteredParticipant = participants.filter(
@@ -76,10 +77,9 @@ const Chat: React.FC<ChatProps> = ({
 
   const readAllMessages = async (id: string) => {
     await axiosPrivate.put(`/chat/readall/${id}`);
-    // console.log(response.data);
-    // setMessageReceived((prev) => !prev);
   };
 
+  //auto scrolls to bottom on every new message
   useEffect(() => {
     if (isActive) {
       messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
@@ -93,26 +93,17 @@ const Chat: React.FC<ChatProps> = ({
 
   useEffect(() => {
     if (!room || !socket) return;
-    // console.log(`socketId: ${socket.id}`);
-    // console.log(`State: ${roomId}, API: ${room._id}`);
-    // if (room._id === roomId) {
 
-    // } else {
-    //   setMessages(room.messages);
-    // }
-
-    // setMessages(room.messages);
+    // adds user to socket room
     socket.emit("joinRoom", { email: auth.user?.email, roomId: room._id });
-    // setRoomId(room._id);
 
+    // reads new message and adds new message to state
     socket.on("newMessage", (msg) => {
-      // console.log("received message");
       readAllMessages(room._id);
       setRoom((prevRoom) => ({
         ...prevRoom!,
         messages: [...(prevRoom?.messages || []), msg],
       }));
-      // setMessages((prev) => [...(prev || []), msg]);
     });
 
     return () => {
@@ -121,9 +112,7 @@ const Chat: React.FC<ChatProps> = ({
   }, [room, socket]);
 
   const sendMessage = () => {
-    // console.log(`socketId: ${socket?.id}`);
     if (!message.trim() || !socket || !room) return;
-    // console.log("socket does run");
 
     socket.emit("sendMessage", {
       roomId: room._id,
@@ -134,23 +123,13 @@ const Chat: React.FC<ChatProps> = ({
   };
 
   return (
-    <div
-      // animate={{
-      //   x: ["100%", "0%"],
-      // }}
-      // transition={{
-      //   duration: 0.15,
-      //   ease: "easeInOut",
-      // }}
-
-      className="relative h-full w-full border-r-2 border-gray-200"
-    >
+    <div className="relative h-full w-full border-r-2 border-gray-200">
       <div className="h-20 flex border-b-2 border-gray-200">
         <div className="w-full flex justify-between items-center px-4">
+          {/* MOBILE ONLY: Takes user back to conversations section and clears room id in local storage and location state */}
           <div
             onClick={() => {
               onBack();
-              // setRoomId("");
               localStorage.setItem("roomId", "");
               navigate("/Home", { replace: true, state: {} });
             }}
@@ -158,6 +137,8 @@ const Chat: React.FC<ChatProps> = ({
           >
             <FaArrowLeft size={24} />
           </div>
+
+          {/* If room is a group, the room name and group icon is displayed. If not, the other participants name and profile picture is displayed. */}
           <div className="flex gap-3 items-center">
             <div className="relative flex items-center justify-center h-12 w-12 rounded-xl ml-6">
               <img
@@ -186,6 +167,7 @@ const Chat: React.FC<ChatProps> = ({
       </div>
       <div className="flex-1 mx-8 mt-5 mb-5 overflow-y-auto max-h-[calc(100vh-260px)] chat-container">
         <div className="w-3/4 mx-auto">
+          {/* Name and Picture to denote start of conversation */}
           <div className="flex flex-col justify-center items-center text-center">
             <img
               className="h-32 w-32 rounded-xl"
@@ -211,6 +193,7 @@ const Chat: React.FC<ChatProps> = ({
           {room?.messages &&
             room.messages.map((item, index, arr) => {
               if (item.sender_type === "System") {
+                // Displays a small message in the middle if the user is added to or leaves the room, or if the room name is changed
                 return (
                   <div
                     key={index}
@@ -229,6 +212,7 @@ const Chat: React.FC<ChatProps> = ({
                 const sameUserMessage =
                   item.sender?.name === prev?.sender?.name;
 
+                // Message formatting depending on if its a user or non-user message, or if they've sent multiple messages in a row
                 if (isUserMessage) {
                   if (sameUserMessage) {
                     return (
@@ -301,6 +285,8 @@ const Chat: React.FC<ChatProps> = ({
         </div>
         <div ref={messagesEndRef}></div>
       </div>
+
+      {/* textarea with send button for typing and sending messages */}
       <div className="absolute bottom-0 w-full mb-5">
         <div className="flex items-end ml-8">
           <textarea

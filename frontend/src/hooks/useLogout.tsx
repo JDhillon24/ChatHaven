@@ -4,6 +4,7 @@ import useAuth from "./useAuth";
 const useLogout = () => {
   const { setAuth } = useAuth();
 
+  //clears auth state and cookie
   const logout = async () => {
     setAuth({ isAuthenticated: false });
     try {

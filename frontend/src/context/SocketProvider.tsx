@@ -33,6 +33,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { socket, isConnected } = useSocket();
+
+  //state for notification alert on sidebar
   const [hasNewNotification, setHasNewNotification] = useState(
     () => localStorage.getItem("newNotification") === "true"
   );
@@ -45,11 +47,13 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!socket || isConnected === false) return;
 
     socket.on("notification", (notification) => {
-      console.log(notification);
+      //add alert to sidebar if user is not on notifications page
       if (location.pathname !== "/Notifications") {
         setHasNewNotification(true);
         localStorage.setItem("newNotification", "true");
       }
+
+      //update notifications list
       setNotifications((prev) => [notification, ...prev]);
     });
 

@@ -29,6 +29,7 @@ const CreateRoomModal: React.FC<ModalProps> = ({
   const [friends, setFriends] = useState<FriendData[]>([]);
   const axiosPrivate = useAxiosPrivate();
 
+  //gets the users friends
   useEffect(() => {
     const getData = async () => {
       const response = await axiosPrivate.get("/user/friends");
@@ -47,7 +48,6 @@ const CreateRoomModal: React.FC<ModalProps> = ({
     },
     onSubmit: async (values) => {
       try {
-        console.log(values);
         await axiosPrivate.post(
           "/chat/createroom",
           JSON.stringify({
@@ -59,7 +59,9 @@ const CreateRoomModal: React.FC<ModalProps> = ({
         onClose();
         onOpenSuccess();
       } catch (error) {
-        console.error(error);
+        if (process.env.NODE_ENV !== "production") {
+          console.error(error);
+        }
       }
     },
     validationSchema: Yup.object().shape({
@@ -137,6 +139,8 @@ const CreateRoomModal: React.FC<ModalProps> = ({
                       formik.touched.participants &&
                       formik.errors.participants}
                   </div>
+
+                  {/* List of user's friends with checkboxes to invite them */}
                   <div className="mt-3">
                     <FieldArray name="participants">
                       {({ remove, push }) => (

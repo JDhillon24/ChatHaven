@@ -69,6 +69,7 @@ const firstColumn: Testimonial[] = testimonials.slice(0, 3);
 const secondColumn: Testimonial[] = testimonials.slice(3, 6);
 const thirdColumn: Testimonial[] = testimonials.slice(6, 9);
 
+//column of testimonials that infinitely scrolls up
 const TestimonialsColumn = (props: {
   className?: string;
   testimonials: Testimonial[];
@@ -128,6 +129,7 @@ const Testimonials = () => {
             A few words from our most enthusiastic (and definitely real) users.
           </p>
         </div>
+        {/* Display certain # of columns with varying scroll speed based on screen size */}
         <div className="flex justify-center gap-6 mt-10 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_25%,transparent)] max-h-[738px] overflow-hidden">
           <TestimonialsColumn testimonials={firstColumn} duration={15} />
           <TestimonialsColumn

@@ -59,6 +59,7 @@ const Conversations: React.FC<ConversationProps> = ({
 
   const { roomId = localStorage.getItem("roomId") } = location.state || {};
 
+  // Returns the name of the other participant in a 2 person chat
   const privateChatName = (participants: UserType[]): UserType => {
     const filteredParticipant = participants.filter(
       (p) => p.name !== auth.user?.name
@@ -67,6 +68,7 @@ const Conversations: React.FC<ConversationProps> = ({
     return filteredParticipant[0];
   };
 
+  //function to return time since a message has been sent in the format "1m", "1h", or "1d" depending on how much time has passed
   const timeSince = (datetimeUTC: string): string => {
     const now = new Date();
     const past = new Date(datetimeUTC);
@@ -86,16 +88,19 @@ const Conversations: React.FC<ConversationProps> = ({
     }
   };
 
+  //retrieves list of rooms with an optional search parameter
   const getData = async () => {
     try {
       const searchParam = search.trim();
       const response = await axiosPrivate.get(
         `/chat/getallrooms?search=${searchParam}`
       );
-      // console.log(response.data);
+
       setData(response.data);
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
     }
   };
 
@@ -103,11 +108,15 @@ const Conversations: React.FC<ConversationProps> = ({
     getData();
   }, [search, openSuccess, messageReceived]);
 
+  //updates list of conversations everytime a message is sent in one of the users participating rooms
   useEffect(() => {
     if (!socket) return;
 
     socket.on("newMessageNotification", (message) => {
-      console.log(message);
+      if (process.env.NODE_ENV !== "production") {
+        console.log(message);
+      }
+
       getData();
     });
 
@@ -116,10 +125,12 @@ const Conversations: React.FC<ConversationProps> = ({
     };
   }, [socket]);
 
+  //function to check if the user is contained within a messages "read" list
   const isMessageRead = (message: MessageType): boolean => {
     return message.read.some((user) => user.name === auth.user?.name);
   };
 
+  //sets new room id in local storage and location state
   const handleConvoSelect = (roomId: string) => {
     localStorage.setItem("roomId", roomId);
     navigate("/Home", { state: { roomId } });
@@ -155,6 +166,7 @@ const Conversations: React.FC<ConversationProps> = ({
                 roomId && roomId === item._id ? "bg-gray-100" : ""
               } p-3 rounded-xl cursor-pointer`}
             >
+              {/* If the room is a group display the room name and default group icon, if not display the other participants name and profile picture */}
               {item.isGroup ? (
                 <div className="w-full flex justify-between">
                   <div className="flex">

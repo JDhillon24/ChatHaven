@@ -23,6 +23,7 @@ const ConfirmationModal: React.FC<ModalProps> = ({
           <h3 className="text-lg font-black text-gray-800">Confirm</h3>
           <p className="text-sm text-gray-500">{text}</p>
         </div>
+        {/* Clicking confirm triggers function in props whether it be deleting a friend,clearing notification, etc. */}
         <div className="flex gap-4">
           <button
             onClick={onChange}

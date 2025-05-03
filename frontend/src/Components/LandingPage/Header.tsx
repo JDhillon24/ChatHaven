@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  // state variable for hamburger menu
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   return (
@@ -30,6 +31,7 @@ const Header = () => {
               onClick={() => setMenuOpen((prev) => !prev)}
               className="h-5 w-5 md:hidden"
             />
+
             <nav className="hidden md:flex gap-6 text-black/60 items-center">
               <a href="#home">Home</a>
               <a href="#features">Features</a>
@@ -42,6 +44,7 @@ const Header = () => {
               </button>
             </nav>
           </div>
+          {/* Hamburger Menu Items */}
           <nav
             className={twMerge(
               "flex md:hidden flex-col gap-6 text-black/60 items-center",

@@ -69,7 +69,9 @@ const Login = () => {
       setSuccessText("The new verification link has successfully been sent!");
       setOpenSuccess(true);
     } catch (error) {
-      console.error();
+      if (process.env.NODE_ENV !== "production") {
+        console.error();
+      }
     }
   };
 

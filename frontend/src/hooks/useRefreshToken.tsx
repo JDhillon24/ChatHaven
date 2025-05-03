@@ -3,13 +3,14 @@ import useAuth from "./useAuth";
 
 const useRefreshToken = () => {
   const { setAuth } = useAuth();
+
+  //grants new access token based on refresh token in cookies
   const refresh = async () => {
     const response = await axios.post("/user/token", {
       withCredentials: true,
     });
 
     setAuth(() => {
-      // console.log(`prev: ${JSON.stringify(prev)}`);
       return {
         isAuthenticated: true,
         user: {

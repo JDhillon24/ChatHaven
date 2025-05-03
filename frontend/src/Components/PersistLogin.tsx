@@ -11,6 +11,7 @@ const PersistLogin = () => {
 
   useEffect(() => {
     let isMounted = true;
+    //grant new access token on page refresh
     const verifyRefreshToken = async () => {
       try {
         await refresh();

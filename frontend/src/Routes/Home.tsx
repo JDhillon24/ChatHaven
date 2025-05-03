@@ -122,9 +122,10 @@ const Home = () => {
     try {
       const response = await axiosPrivate.get(`/chat/${roomId}`);
       setRooms(response.data);
-      // console.log(response.data.messages);
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error();
+      }
 
       if (error instanceof AxiosError) {
         //clears room id and location state on invalid room id

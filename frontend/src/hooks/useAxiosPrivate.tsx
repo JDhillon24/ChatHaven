@@ -10,6 +10,7 @@ const useAxiosPrivate = () => {
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
+        //adds access token to api request if none
         if (!config.headers["Authorization"]) {
           config.headers["Authorization"] = `Bearer ${auth?.user?.accessToken}`;
         }
@@ -23,10 +24,11 @@ const useAxiosPrivate = () => {
       (response) => response,
       async (error) => {
         const prevRequest = error?.config;
+
+        //checks if token was accepted and if not, request a new token and resubmit request
         if (error?.response?.status === 403 && !prevRequest?.sent) {
           prevRequest.sent = true;
           const newAccessToken = await refresh();
-          // console.log(newAccessToken);
           prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
 
           return axiosPrivate(prevRequest);

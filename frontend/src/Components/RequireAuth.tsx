@@ -5,9 +5,7 @@ const RequireAuth = () => {
   const { auth } = useAuth();
   const location = useLocation();
 
-  // useEffect(() => {
-  //   console.log(auth);
-  // }, []);
+  // if user is authenticated navigate to route, else redirect to login
   return auth.user?.accessToken ? (
     <Outlet />
   ) : (

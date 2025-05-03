@@ -32,16 +32,21 @@ const Info: React.FC<InfoProps> = ({
   onOpenError,
   onOpenSuccess,
 }) => {
+  // state variables and ref for dropdown
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+
   const axiosPrivate = useAxiosPrivate();
+
   const [friends, setFriends] = useState<UserType[]>([]);
   const { auth } = useAuth();
 
+  //checks if a participant in the room is a friend of the user
   const isFriend = (participant: UserType): boolean => {
     return friends.some((friend) => friend._id === participant._id);
   };
 
+  //gets list of user's friends
   useEffect(() => {
     const getData = async () => {
       const response = await axiosPrivate.get("/user/friends");
@@ -51,6 +56,7 @@ const Info: React.FC<InfoProps> = ({
     getData();
   }, []);
 
+  //closes dropdown when the user clicks outside of it
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -61,6 +67,7 @@ const Info: React.FC<InfoProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  //function for sending a friend request
   const handleSendRequest = async (friend_id: string) => {
     try {
       await axiosPrivate.post(
@@ -69,8 +76,11 @@ const Info: React.FC<InfoProps> = ({
           receiverId: friend_id,
         })
       );
+
+      //opens a modal with success behaviour
       onOpenSuccess();
     } catch (error) {
+      //opens an error modal
       if (error instanceof AxiosError) {
         setErrorText(error.response?.data.message);
         onOpenError();
@@ -79,17 +89,7 @@ const Info: React.FC<InfoProps> = ({
   };
 
   return (
-    <div
-      // animate={{
-      //   x: ["100%", "0%"],
-      // }}
-      // transition={{
-      //   duration: 0.15,
-      //   ease: "easeInOut",
-      // }}
-
-      className="relative h-full w-full"
-    >
+    <div className="relative h-full w-full">
       <div className="h-20 flex w-full justify-between items-center border-b-2 border-gray-200 px-4">
         <div onClick={onBack} className="lg:hidden">
           <FaArrowLeft size={24} />
@@ -152,6 +152,8 @@ const Info: React.FC<InfoProps> = ({
                   />
                 </div>
                 <p className="text-md font-semibold">{item.name}</p>
+
+                {/* Add button appears if the partipant isn't a friend of the user */}
                 <div
                   onClick={() => handleSendRequest(item._id)}
                   className={`h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-ChatBlue cursor-pointer hover:bg-gray-300 ${

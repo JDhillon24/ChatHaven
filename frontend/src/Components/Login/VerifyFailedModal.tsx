@@ -26,6 +26,7 @@ const VerifyFailedModal: React.FC<ModalProps> = ({
           </p>
           <p className="text-center text-sm text-gray-500">{text}</p>
         </div>
+        {/* Clicking yes resends the verification email with given email */}
         <div className="flex justify-center gap-4">
           <button
             onClick={handleResend}

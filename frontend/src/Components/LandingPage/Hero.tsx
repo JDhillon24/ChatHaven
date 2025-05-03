@@ -37,6 +37,7 @@ const Hero = () => {
               </a>
             </div>
           </div>
+          {/* Mobile demo with hovering animation */}
           <div className="mt-20 md:mt-0 h-[648px] md:flex-1 flex items-center">
             <motion.img
               className="md:h-full md:w-auto md:max-w-none"
