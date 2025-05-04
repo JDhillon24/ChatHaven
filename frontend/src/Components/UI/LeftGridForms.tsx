@@ -1,6 +1,5 @@
 import Logo from "./Logo";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 
 const LeftGridForms = () => {
   const navigate = useNavigate();

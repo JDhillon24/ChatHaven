@@ -1,10 +1,4 @@
-import {
-  useState,
-  useEffect,
-  useContext,
-  useRef,
-  useLayoutEffect,
-} from "react";
+import { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import Sidebar from "../Components/Sidebar";
 import Conversations from "../Components/Home/Conversations";
@@ -89,8 +83,6 @@ const Home = () => {
     (localStorage.getItem("activeSection") as Section) || "conversations";
   const [activeSection, setActiveSection] = useState<Section>(storageSection);
 
-  const prevSectionRef = useRef<string>("conversations");
-
   //state variable used to trigger auto scroll to bottom
   const [isChatActive, setIsChatActive] = useState(
     localStorage.getItem("activeSection") === "chat"
@@ -98,7 +90,6 @@ const Home = () => {
 
   //sets new section in local storage and state
   const handleSectionChange = (section: Section) => {
-    prevSectionRef.current = activeSection;
     localStorage.setItem("activeSection", section);
     const newSection = localStorage.getItem("activeSection") as Section;
     setActiveSection(newSection);
@@ -142,7 +133,7 @@ const Home = () => {
   useEffect(() => {
     if (roomId) {
       setLoading(true);
-      getData().finally(() => setLoading(false));
+      getData().finally(() => setTimeout(() => setLoading(false), 200));
     }
   }, [roomId]);
 
@@ -205,24 +196,6 @@ const Home = () => {
         state: {},
       });
     }
-  };
-
-  const getSlideDirection = () => {
-    const prevSection = prevSectionRef.current;
-
-    if (!prevSection) return "none"; // Handle the first render case
-
-    if (prevSection === "conversations" && activeSection === "chat") {
-      return "100%"; // slide in from the right
-    } else if (prevSection === "chat" && activeSection === "info") {
-      return "100%"; // slide in from the right
-    } else if (prevSection === "chat" && activeSection === "conversations") {
-      return "-100%"; // slide in from the left
-    } else if (prevSection === "info" && activeSection === "chat") {
-      return "-100%"; // slide in from the left
-    }
-
-    return "0%"; // default (no animation, or handle it separately)
   };
 
   return (
@@ -338,19 +311,14 @@ const Home = () => {
                 (roomId || localStorage.getItem("roomId")) && (
                   <motion.div
                     key="chat"
-                    initial={{ x: getSlideDirection() }}
-                    animate={{ x: "0%" }}
-                    exit={{
-                      x:
-                        prevSectionRef.current === "conversations"
-                          ? "100%"
-                          : "-100%",
-                    }}
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.95, opacity: 0 }}
                     transition={{
                       duration: 0.15,
                       ease: "easeInOut",
                     }}
-                    className={`flex flex-col col-span-2 h-screen [@supports(height:100dvh)]:h-[100dvh]`}
+                    className={`flex flex-col col-span-2 h-screen [@supports(height:100dvh)]:h-[100dvh] absolute top-0 left-0 w-full overflow-hidden`}
                   >
                     {!loading ? (
                       <div className="w-full h-full">
@@ -372,20 +340,15 @@ const Home = () => {
                 )}
               {activeSection === "info" && (
                 <motion.div
-                  initial={{ x: getSlideDirection() }}
-                  animate={{ x: "0%" }}
-                  exit={{
-                    x:
-                      prevSectionRef.current === "conversations"
-                        ? "100%"
-                        : "-100%",
-                  }}
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.95, opacity: 0 }}
                   transition={{
                     duration: 0.15,
                     ease: "easeInOut",
                   }}
                   key="info"
-                  className={`flex flex-col h-screen [@supports(height:100dvh)]:h-[100dvh]`}
+                  className={`flex flex-col h-screen [@supports(height:100dvh)]:h-[100dvh] absolute top-0 left-0 w-full overflow-hidden`}
                 >
                   <div className="w-full h-full">
                     <Info
