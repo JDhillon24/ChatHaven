@@ -7,6 +7,7 @@ type FormProps = {
 };
 
 const ForgotPasswordForm: React.FC<FormProps> = ({ onOpenSuccess }) => {
+  // form takes an email and sends a reset password link to the given email
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -19,10 +20,11 @@ const ForgotPasswordForm: React.FC<FormProps> = ({ onOpenSuccess }) => {
             email: values.email,
           })
         );
+
+        // Success modal is vague about whether an account is registered with the given email for security purposes, so success modal is opened regardless of the outcome
         resetForm();
         onOpenSuccess();
       } catch (error) {
-        // console.error(error);
         resetForm();
         onOpenSuccess();
       }
@@ -34,6 +36,7 @@ const ForgotPasswordForm: React.FC<FormProps> = ({ onOpenSuccess }) => {
     }),
   });
 
+  // Single text input and button with basic animations
   return (
     <div className="w-2/3 mx-auto flex flex-col">
       <form onSubmit={formik.handleSubmit} className="space-y-8 pb-10">

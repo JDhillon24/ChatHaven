@@ -33,20 +33,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-//configure handlebars for email templates
-// transporter.use(
-//   "compile",
-//   hbs({
-//     viewEngine: {
-//       extname: ".hbs",
-//       partialsDir: path.resolve("./src/email/emailTemplates"),
-//       defaultLayout: false,
-//     },
-//     viewPath: path.resolve("./src/email/emailTemplates"),
-//     extName: ".hbs",
-//   })
-// );
-
 const sendEmail = async (to, subject, template, context) => {
   try {
     const html = await compileTemplate(template, context);

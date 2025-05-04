@@ -10,6 +10,8 @@ import { motion } from "framer-motion";
 const ResetPassword = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  //state variable for error modal
   const [openError, setOpenError] = useState(false);
 
   useEffect(() => {

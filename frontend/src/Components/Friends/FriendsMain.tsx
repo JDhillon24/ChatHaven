@@ -30,6 +30,7 @@ const FriendsMain: React.FC<MainProps> = ({
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  //retrieves list of user's friends with an optional search parameter
   useEffect(() => {
     const getData = async () => {
       try {
@@ -54,10 +55,11 @@ const FriendsMain: React.FC<MainProps> = ({
     return () => clearTimeout(delay);
   }, [search, open]);
 
+  //redirects to private chat with selected friend
   const handleMessageClick = async (id: string) => {
     try {
+      //gets the room id of private chat and navigates to that room
       const response = await axiosPrivate.get(`/chat/messagefriend/${id}`);
-      // console.log(response.data);
       navigate("/Home", {
         state: { roomId: response.data.id, privateChat: true },
       });
@@ -72,6 +74,8 @@ const FriendsMain: React.FC<MainProps> = ({
         <div className="h-20 flex border-b-2 border-gray-200">
           <div className="lg:w-2/3 w-full mx-auto flex justify-between items-center px-4">
             <p className="text-xl font-semibold">Friends</p>
+
+            {/* Button to render add friends page */}
             <div
               onClick={setAddFriends}
               className="h-8 w-8 rounded-full bg-ChatBlue flex justify-center items-center text-white cursor-pointer hover:bg-ChatBlueLight"
@@ -90,6 +94,7 @@ const FriendsMain: React.FC<MainProps> = ({
               className="w-full px-2 h-10 rounded-lg bg-gray-200 border-none placeholder:text-sm placeholder:text-center"
             />
           </div>
+          {/* List of friends with loading spinner, displays a message if user hasn't added any friends yet */}
           <div className="mt-3 w-full grid md:grid-cols-2 xl:grid-cols-3 grid-cols-1 gap-3 max-h-[calc(100vh-146px)] overflow-auto pb-3">
             {data.length === 0 && !loading ? (
               <div className="w-full lg:col-span-3 flex justify-center items-center">
@@ -117,6 +122,7 @@ const FriendsMain: React.FC<MainProps> = ({
                     </div>
                     <p className="ml-4 text-sm font-semibold">{item.name}</p>
                   </div>
+                  {/* Message and delete buttons */}
                   <div className="flex gap-2">
                     <div
                       onClick={() => handleMessageClick(item._id)}

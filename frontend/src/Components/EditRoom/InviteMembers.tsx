@@ -31,6 +31,7 @@ const InviteMembers: React.FC<Props> = ({
   const { roomId = localStorage.getItem("roomId") } = location.state || {};
   const axiosPrivate = useAxiosPrivate();
 
+  //retrieves list of users friends excluding users that are already participants in the group
   useEffect(() => {
     const getData = async () => {
       try {
@@ -57,6 +58,7 @@ const InviteMembers: React.FC<Props> = ({
     onSubmit: async (values, { resetForm }) => {
       try {
         if (roomId) {
+          //sends room invites to all selected members
           await axiosPrivate.post(
             `/chat/newinvites/${roomId}`,
             JSON.stringify({
@@ -68,7 +70,9 @@ const InviteMembers: React.FC<Props> = ({
           handleSuccess();
         }
       } catch (error) {
-        console.error(error);
+        if (process.env.NODE_ENV !== "production") {
+          console.error(error);
+        }
       }
     },
     validationSchema: Yup.object().shape({
@@ -106,6 +110,7 @@ const InviteMembers: React.FC<Props> = ({
                     formik.touched.participants &&
                     formik.errors.participants}
                 </div>
+                {/* List of friends with checkboxes */}
                 <div className="mt-3">
                   <FieldArray name="participants">
                     {({ remove, push }) => (

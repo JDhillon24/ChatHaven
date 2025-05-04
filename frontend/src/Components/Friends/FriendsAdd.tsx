@@ -31,6 +31,7 @@ const FriendsAdd: React.FC<FriendProps> = ({
   const [data, setData] = useState<ResponseData[]>([]);
   const [search, setSearch] = useState("");
 
+  // retrieves list of users excluding the user itself and their friends
   useEffect(() => {
     const getData = async () => {
       try {
@@ -38,7 +39,6 @@ const FriendsAdd: React.FC<FriendProps> = ({
         const response = await axiosPrivate.get(
           `/user/search?name=${searchParam}`
         );
-        // console.log(response.data);
         setData(response.data);
       } catch (error) {
         console.error(error);
@@ -52,6 +52,7 @@ const FriendsAdd: React.FC<FriendProps> = ({
     return () => clearTimeout(delay);
   }, [search, open]);
 
+  // function to send a friend request
   const handleSendRequest = async (friend_id: string): Promise<void> => {
     try {
       await axiosPrivate.post(
@@ -63,8 +64,11 @@ const FriendsAdd: React.FC<FriendProps> = ({
       setSuccessText("You have successfully sent a friend request!");
       onOpen();
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
 
+      // opens an error modal if a friend request has already been sent to a user
       if (error instanceof AxiosError) {
         setErrorText(error.response?.data.message);
         onErrorOpen();
@@ -77,6 +81,7 @@ const FriendsAdd: React.FC<FriendProps> = ({
         <div className="h-20 flex border-b-2 border-gray-200">
           <div className="lg:w-2/3 w-full mx-auto flex justify-between items-center px-4">
             <p className="text-xl font-semibold">Add Friends</p>
+            {/* Cross button goes back to main friends page */}
             <div
               onClick={setAddFriends}
               className="h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-red-500 cursor-pointer hover:bg-gray-300"

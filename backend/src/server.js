@@ -7,8 +7,10 @@ const cors = require("cors");
 const { initializeSocket } = require("./socket");
 const path = require("path");
 
+// initialize server for socket instance
 const server = http.createServer(app);
 
+// allows photos to be found via url
 app.use("/public", express.static(path.join(__dirname, "../public")));
 
 app.use(
@@ -22,10 +24,12 @@ app.use(
 const cookieParser = require("cookie-parser");
 const bodyParser = require("express").json;
 const urlEncoded = require("express").urlencoded({ extended: false });
+
+// routes
 const UserRouter = require("./api/User");
 const NotificationRouter = require("./api/Notifications");
 const ChatRouter = require("./api/Chat");
-// const routes = require("./routes");
+
 app.use(cookieParser());
 app.use(bodyParser());
 app.use(urlEncoded);
@@ -35,8 +39,6 @@ const io = initializeSocket(server);
 app.use("/user", UserRouter);
 app.use("/notifications", NotificationRouter);
 app.use("/chat", ChatRouter);
-
-// app.use(routes);
 
 const port = process.env.PORT || 5000;
 

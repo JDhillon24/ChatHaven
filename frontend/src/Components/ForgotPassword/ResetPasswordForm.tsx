@@ -11,9 +11,12 @@ type FormProps = {
 
 const ResetPasswordForm: React.FC<FormProps> = ({ onOpenError }) => {
   const navigate = useNavigate();
+
+  // reset token from params in url
   const [searchParams] = useSearchParams();
   const resetToken = searchParams.get("token");
 
+  // state variable for showing and hiding passwords
   const [passView, setPassView] = useState(false);
   const [confirmPassView, setConfirmPassView] = useState(false);
 
@@ -32,10 +35,15 @@ const ResetPasswordForm: React.FC<FormProps> = ({ onOpenError }) => {
           })
         );
 
+        // navigates to login with a success modal pop up
         resetForm();
         navigate("/Login", { state: { passwordReset: true } });
       } catch (error) {
-        console.error(error);
+        if (process.env.NODE_ENV !== "production") {
+          console.error(error);
+        }
+
+        // opens error modal if the token is missing or invalid
         resetForm();
         onOpenError();
       }

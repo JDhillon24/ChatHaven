@@ -11,6 +11,7 @@ const LeftSection: React.FC<SectionProps> = ({ openProfile }) => {
   const { auth } = useAuth();
   return (
     <div>
+      {/* Displays the user's profile picture which they can change by clicking on the picture */}
       <div
         onClick={openProfile}
         className="cursor-pointer relative flex items-center justify-center h-80 w-80 mt-2 mb-2 mx-auto rounded-xl group"
@@ -24,6 +25,7 @@ const LeftSection: React.FC<SectionProps> = ({ openProfile }) => {
           <FaEdit size={28} />
         </div>
       </div>
+      {/* Displays user's email and a verified badge */}
       <div className="flex flex-col justify-center items-center gap-2 mb-2">
         <p className="text-lg font-medium">{auth.user?.email}</p>
         <div className="bg-ChatBlue rounded-full px-8 py-2 cursor-default">

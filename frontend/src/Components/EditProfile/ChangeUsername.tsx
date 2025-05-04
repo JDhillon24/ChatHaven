@@ -16,6 +16,8 @@ const ChangeUsername: React.FC<ModalProps> = ({ open, onClose }) => {
   const { auth } = useAuth();
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
+
+  // form for changing the user's name, initial value is the user's current name
   const formik = useFormik({
     initialValues: {
       name: auth.user?.name,
@@ -29,6 +31,8 @@ const ChangeUsername: React.FC<ModalProps> = ({ open, onClose }) => {
           })
         );
         onClose();
+
+        // opens modal with the appropriate success
         navigate("/EditProfile", { state: { nameSuccess: true } });
       } catch (error) {
         if (error instanceof AxiosError) {

@@ -12,10 +12,13 @@ type ModalProps = {
 const ProfilePictureModal: React.FC<ModalProps> = ({ open, onClose }) => {
   const { auth } = useAuth();
   const navigate = useNavigate();
+
+  // initial value is the users current profile picture
   const [selectedProfile, setSelectedProfile] = useState<string>(
     auth.user?.profilePicture || ""
   );
 
+  // list of available profile pictures
   const profilePictures = [
     "/images/pfp/default.jpg",
     "/images/pfp/cool-anime-pfp-02.jpg",
@@ -37,6 +40,7 @@ const ProfilePictureModal: React.FC<ModalProps> = ({ open, onClose }) => {
 
   const axiosPrivate = useAxiosPrivate();
 
+  // function to change profile picture, opens modal with appropriate text on success
   const handleProfileChange = async () => {
     try {
       await axiosPrivate.put(
@@ -48,9 +52,12 @@ const ProfilePictureModal: React.FC<ModalProps> = ({ open, onClose }) => {
       onClose();
       navigate("/EditProfile", { state: { profileSuccess: true } });
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
     }
   };
+  // sets profile picture state back to initial value if user closes modal without changing the picture
   return (
     <div
       onClick={() => {
@@ -82,6 +89,7 @@ const ProfilePictureModal: React.FC<ModalProps> = ({ open, onClose }) => {
           </p>
           <div className="flex justify-center items-center">
             <div className="mt-2 grid lg:grid-cols-4 grid-cols-3 gap-5">
+              {/* List of profile pictures, blue border around the selected picture */}
               {profilePictures.map((item, index) => (
                 <div
                   onClick={() => setSelectedProfile(item)}

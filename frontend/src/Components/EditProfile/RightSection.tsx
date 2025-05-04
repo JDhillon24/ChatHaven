@@ -10,6 +10,7 @@ const RightSection: React.FC<SectionProps> = ({
   openPassword,
 }) => {
   return (
+    // Buttons for opening form modals to change username or reset password
     <div className="mt-1 flex flex-col justify-center items-center gap-3">
       <div>
         <div className="flex flex-col justify-center items-center gap-5">

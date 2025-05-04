@@ -17,6 +17,7 @@ const EditName: React.FC<Props> = ({ onClose, handleSuccess, roomName }) => {
   const { roomId = localStorage.getItem("roomId") } = location.state || {};
 
   const formik = useFormik({
+    // initial value is the current room name if there is one
     initialValues: {
       name: roomName ?? "",
     },
@@ -35,7 +36,9 @@ const EditName: React.FC<Props> = ({ onClose, handleSuccess, roomName }) => {
           handleSuccess();
         }
       } catch (error) {
-        console.error(error);
+        if (process.env.NODE_ENV !== "production") {
+          console.error(error);
+        }
       }
     },
     validationSchema: Yup.object({
@@ -48,6 +51,7 @@ const EditName: React.FC<Props> = ({ onClose, handleSuccess, roomName }) => {
       <div className="flex justify-center">
         <p className="text-md font-black text-gray-800">Change Room Name</p>
       </div>
+      {/* form with single text input and button with basic animations */}
       <form
         onSubmit={formik.handleSubmit}
         className="mt-5 flex flex-col space-y-8"

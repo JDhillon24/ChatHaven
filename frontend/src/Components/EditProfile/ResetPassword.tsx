@@ -17,6 +17,7 @@ const ResetPassword: React.FC<ModalProps> = ({ open, onClose }) => {
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
 
+  // state variables for hiding and showing passwords
   const [currentPassView, setCurrentPassView] = useState(false);
   const [newPassView, setNewPassView] = useState(false);
   const [confirmPassView, setConfirmPassView] = useState(false);
@@ -39,6 +40,7 @@ const ResetPassword: React.FC<ModalProps> = ({ open, onClose }) => {
         );
         resetForm();
         onClose();
+        // opens up success modal with appropriate text
         navigate("/EditProfile", { state: { passSuccess: true } });
       } catch (error) {
         if (error instanceof AxiosError) {

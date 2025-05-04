@@ -4,9 +4,13 @@ const { Server } = require("socket.io");
 const Chat = require("./models/Chat");
 const User = require("./models/User");
 
+// socket instance
 let io;
+
+// map containing all users connected via socket
 const users = new Map();
 
+// initializes socket requiring user authentication to complete
 const initializeSocket = (server) => {
   io = new Server(server, {
     cors: {
@@ -36,23 +40,21 @@ const initializeSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
-    // console.log("User connected:", socket.id);
-
     socket.on("join", (email) => {
+      // if user is already contained within the map the socket id is updated
       if (users.has(email)) {
         users.get(email).socketId = socket.id;
       } else {
+        // new user is added to the map
         users.set(email, { socketId: socket.id, lastRoom: null });
       }
 
+      // retrieves the user's previously connected room and automatically reconnects if there is a room
       const lastRoom = users.get(email).lastRoom;
-      // console.log(lastRoom);
       if (lastRoom) {
         socket.join(lastRoom);
         console.log(`${email} just rejoined ${lastRoom}`);
       }
-
-      // console.log(users);
     });
 
     socket.on("reauthenticate", async ({ token }) => {
@@ -67,38 +69,30 @@ const initializeSocket = (server) => {
     });
 
     socket.on("joinRoom", async ({ email, roomId }) => {
+      // finds user from map via socket id
       const user = users.get(
         [...users.entries()].find(([_, u]) => u.socketId === socket.id)?.[0]
       );
 
       if (user) {
+        // gets all rooms socket was connected to
         const rooms = Array.from(socket.rooms);
 
+        // leaves all previously connected rooms
         rooms.forEach((r) => {
           if (r !== socket.id) {
             socket.leave(r);
           }
         });
 
+        //updates users last room and connects them to the room
         user.lastRoom = roomId;
         socket.join(roomId);
       }
-      // console.log(user);
-      // console.log(socket.rooms);
-      // console.log(`User ${email} joined room ${roomId}`);
     });
 
     socket.on("sendMessage", async ({ roomId, email, text }) => {
       if (!roomId || !email || !text) return;
-
-      io.in(roomId)
-        .fetchSockets()
-        .then((sockets) => {
-          console.log(
-            `Users in room ${roomId}:`,
-            sockets.map((s) => s.id)
-          );
-        });
 
       const room = await Chat.findById(roomId).populate(
         "participants",
@@ -109,6 +103,7 @@ const initializeSocket = (server) => {
 
       if (!room || !user) return;
 
+      // two objects one for appending to the db and one for sending via socket
       const message = {
         sender: user.id,
         sender_type: "User",
@@ -130,6 +125,7 @@ const initializeSocket = (server) => {
       io.to(roomId).emit("newMessage", socketMessage);
       console.log(`Emitting to room ${roomId}: ${socketMessage}`);
 
+      // emitting a message alert to all participants in the room that are connected via socket
       for (const participant of room.participants) {
         const user = users.get(participant.email);
 
@@ -140,10 +136,12 @@ const initializeSocket = (server) => {
     });
 
     socket.on("disconnect", (reason) => {
+      // finds user in map via socket id
       const userEntry = [...users.entries()].find(
         ([_, u]) => u.socketId === socket.id
       );
 
+      // if user is found, clears socket id
       if (userEntry) {
         users.set(userEntry[0], {
           lastRoom: userEntry[1].lastRoom,

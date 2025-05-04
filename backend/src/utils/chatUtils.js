@@ -1,5 +1,6 @@
 const { getIo, users } = require("../socket");
 
+// function to send a system message (i.e. user added to or leaving the room, or room name is changed ) to the room
 const sendSystemMessage = (roomId, participants, message) => {
   const io = getIo();
 
