@@ -78,7 +78,7 @@ exports.registerAccount = async (req, res) => {
 
     sendEmail(email, "Verify Your Account | ChatHaven", "verifyEmail", {
       name,
-      verificationLink: `https://www.chathaven.vercel.app/Verify?token=${verificationToken}&email=${encodeURIComponent(
+      verificationLink: `https://www.chathaven.app/Verify?token=${verificationToken}&email=${encodeURIComponent(
         email
       )}`,
     });
@@ -155,11 +155,6 @@ exports.loginUser = async (req, res) => {
       secure: true, // Secure in production
       sameSite: "none",
     });
-
-    // sendEmail("dhillonjagdeep13@gmail.com", "test email", "verifyEmail", {
-    //   name: "Jagdeep Dhillon",
-    //   verificationLink: "https://www.youtube.com",
-    // });
 
     // Send response
     res.status(200).json({
@@ -501,7 +496,7 @@ exports.resendVerificationLink = async (req, res) => {
 
     sendEmail(email, "Verify Your Account | ChatHaven", "verifyEmail", {
       name: user.name,
-      verificationLink: `https://chathaven.vercel.app/Verify?token=${verificationToken}&email=${encodeURIComponent(
+      verificationLink: `https://chathaven.app/Verify?token=${verificationToken}&email=${encodeURIComponent(
         email
       )}`,
     });
@@ -528,7 +523,7 @@ exports.forgotPassword = async (req, res) => {
   //send email with token to user
   try {
     sendEmail(email, "Reset Password | ChatHaven", "forgotPassword", {
-      forgotPasswordLink: `https://chathaven.vercel.app/ResetPassword?token=${resetToken}`,
+      forgotPasswordLink: `https://chathaven.app/ResetPassword?token=${resetToken}`,
     });
 
     res.status(200).json({
