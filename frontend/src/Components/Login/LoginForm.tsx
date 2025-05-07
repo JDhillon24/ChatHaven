@@ -54,7 +54,6 @@ const LoginForm: React.FC<LoginProps> = ({
         navigate(from, { replace: true });
       } catch (error) {
         setEmail(values.email);
-        console.error(error);
 
         if (error instanceof AxiosError) {
           if (

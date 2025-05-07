@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import useAuth from "./useAuth";
 
-// const SOCKET_URL = import.meta.env.VITE_API_URL;
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
 const useSocket = () => {
   //ref for current socket instance
@@ -25,7 +25,7 @@ const useSocket = () => {
     }
 
     //initialization
-    socketRef.current = io("https://chathaven.app/api", {
+    socketRef.current = io(SOCKET_URL, {
       withCredentials: true,
       auth: { token: auth.user.accessToken },
       reconnection: true,
