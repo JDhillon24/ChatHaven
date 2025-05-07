@@ -176,7 +176,7 @@ const Conversations: React.FC<ConversationProps> = ({
                 }}
                 className={`flex justify-between hover:bg-gray-100 ${
                   roomId && roomId === item._id ? "bg-gray-100" : ""
-                } p-3 rounded-xl cursor-pointer`}
+                } p-3 rounded-xl cursor-pointer overflow-x-hidden`}
               >
                 {/* If the room is a group display the room name and default group icon, if not display the other participants name and profile picture */}
                 {item.isGroup ? (
@@ -192,7 +192,7 @@ const Conversations: React.FC<ConversationProps> = ({
                       <div className="ml-4 flex flex-col">
                         <p className="text-sm font-semibold">{item.name}</p>
                         <p
-                          className={`text-xs ${
+                          className={`text-xs truncate lg:max-w-64 max-w-32  ${
                             item.messages.length > 0 &&
                             !isMessageRead(item.messages[0])
                               ? "font-semibold text-gray-black"
@@ -257,7 +257,7 @@ const Conversations: React.FC<ConversationProps> = ({
                           {privateChatName(item.participants).name}
                         </p>
                         <p
-                          className={`text-xs ${
+                          className={`text-xs truncate lg:max-w-64 max-w-32 ${
                             item.messages.length > 0 &&
                             !isMessageRead(item.messages[0])
                               ? "font-semibold text-gray-black"
