@@ -1,9 +1,12 @@
 {
-  "routes": [{ "src": "/[^.]+", "dest": "/", "status": 200 }],
   "rewrites": [
     {
       "source": "/api/:path*",
       "destination": "https://api.chathaven.app/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
     }
   ]
 }
