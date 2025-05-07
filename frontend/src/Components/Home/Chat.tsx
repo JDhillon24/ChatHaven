@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { SocketContext } from "../../context/SocketProvider";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import useIsMobile from "../../hooks/useIsMobile";
 
 type UserType = {
   _id: string;
@@ -54,6 +55,9 @@ const Chat: React.FC<ChatProps> = ({
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
   const socketContext = useContext(SocketContext);
+
+  //checks if screen is mobile for textarea height
+  const isMobile = useIsMobile();
 
   if (!socketContext) {
     throw new Error("SocketContext must be used within a provider!");
@@ -165,7 +169,7 @@ const Chat: React.FC<ChatProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex-1 mx-8 mt-5 mb-5 overflow-y-auto max-h-[calc(100vh-260px)] chat-container">
+      <div className="flex-1 mx-8 mt-5 mb-5 overflow-y-auto max-h-[calc(100vh-300px)] chat-container">
         <div className="w-3/4 mx-auto">
           {/* Name and Picture to denote start of conversation */}
           <div className="flex flex-col justify-center items-center text-center">
@@ -295,9 +299,12 @@ const Chat: React.FC<ChatProps> = ({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onInput={(e) => {
-              const target = e.target as HTMLTextAreaElement;
-              target.style.height = "auto";
-              target.style.height = `${target.scrollHeight}px`;
+              // Increase textarea height when text length reaches a certain amount only on desktop screens
+              if (!isMobile) {
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = "auto";
+                target.style.height = `${target.scrollHeight}px`;
+              }
             }}
             className="w-full rounded-lg border-gray-200 border-2 placeholder:text-sm pr-10 resize-none md:max-h-32 max-h-32 p-2"
           />

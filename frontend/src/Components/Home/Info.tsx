@@ -40,6 +40,7 @@ const Info: React.FC<InfoProps> = ({
 
   const [friends, setFriends] = useState<UserType[]>([]);
   const { auth } = useAuth();
+  const [loading, setLoading] = useState(true);
 
   //checks if a participant in the room is a friend of the user
   const isFriend = (participant: UserType): boolean => {
@@ -49,8 +50,17 @@ const Info: React.FC<InfoProps> = ({
   //gets list of user's friends
   useEffect(() => {
     const getData = async () => {
-      const response = await axiosPrivate.get("/user/friends");
-      setFriends(response.data);
+      try {
+        setLoading(true);
+        const response = await axiosPrivate.get("/user/friends");
+        setFriends(response.data);
+      } catch (error) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error(error);
+        }
+      } finally {
+        setLoading(false);
+      }
     };
 
     getData();
@@ -131,43 +141,45 @@ const Info: React.FC<InfoProps> = ({
         </AnimatePresence>
       </div>
       <div className="mt-3">
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2 ml-4">
-            <p className="text-sm font-semibold">Room Members</p>
-            <p className="text-sm font-semibold py-1 px-2 rounded-xl bg-gray-200">
-              {participants && participants.length}
-            </p>
-          </div>
-          <div className="mt-3 ml-5 mr-5 flex flex-col">
-            {participants?.map((item) => (
-              <div
-                key={item._id}
-                className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-100"
-              >
-                <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
-                  <img
-                    className="rounded-xl"
-                    src={item.profilePicture}
-                    alt="Profile"
-                  />
-                </div>
-                <p className="text-md font-semibold">{item.name}</p>
-
-                {/* Add button appears if the partipant isn't a friend of the user */}
+        {loading ? (
+          <div></div>
+        ) : (
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2 ml-4">
+              <p className="text-sm font-semibold">Room Members</p>
+              <p className="text-sm font-semibold py-1 px-2 rounded-xl bg-gray-200">
+                {participants && participants.length}
+              </p>
+            </div>
+            <div className="mt-3 ml-5 mr-5 flex flex-col">
+              {participants?.map((item) => (
                 <div
-                  onClick={() => handleSendRequest(item._id)}
-                  className={`h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-ChatBlue cursor-pointer hover:bg-gray-300 ${
-                    isFriend(item) || auth.user?.name == item.name
-                      ? "hidden"
-                      : ""
-                  }`}
+                  key={item._id}
+                  className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-gray-100"
                 >
-                  <IoMdAdd size={20} />
+                  <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
+                    <img
+                      className="rounded-xl"
+                      src={item.profilePicture}
+                      alt="Profile"
+                    />
+                  </div>
+                  <p className="text-md font-semibold">{item.name}</p>
+
+                  {/* Add button appears if the partipant isn't a friend of the user */}
+                  {!isFriend(item) && auth.user?.name !== item.name && (
+                    <div
+                      onClick={() => handleSendRequest(item._id)}
+                      className={`h-8 w-8 rounded-full bg-gray-200 flex justify-center items-center text-ChatBlue cursor-pointer hover:bg-gray-300`}
+                    >
+                      <IoMdAdd size={20} />
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

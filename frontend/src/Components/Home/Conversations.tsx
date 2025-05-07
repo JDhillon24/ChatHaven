@@ -2,7 +2,7 @@ import { IoMdAdd } from "react-icons/io";
 import { useState, useEffect, useContext } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import useAuth from "../../hooks/useAuth";
-
+import Spinner from "../UI/Spinner";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FaCircle } from "react-icons/fa";
@@ -50,6 +50,8 @@ const Conversations: React.FC<ConversationProps> = ({
   const [search, setSearch] = useState("");
   const { auth } = useAuth();
   const socketContext = useContext(SocketContext);
+
+  const [loading, setLoading] = useState(true);
 
   if (!socketContext) {
     throw new Error("SocketContext must be used within a provider!");
@@ -105,8 +107,13 @@ const Conversations: React.FC<ConversationProps> = ({
   };
 
   useEffect(() => {
+    setLoading(true);
+    getData().finally(() => setLoading(false));
+  }, [search, openSuccess]);
+
+  useEffect(() => {
     getData();
-  }, [search, openSuccess, messageReceived]);
+  }, [messageReceived]);
 
   //updates list of conversations everytime a message is sent in one of the users participating rooms
   useEffect(() => {
@@ -154,145 +161,153 @@ const Conversations: React.FC<ConversationProps> = ({
           placeholder="Search Messages"
           className="w-full px-2 h-10 rounded-lg bg-gray-200 border-none placeholder:text-sm placeholder:text-center"
         />
-        <div className="mt-3 flex-1 max-h-[calc(100vh-160px)] overflow-y-auto">
-          {data.map((item) => (
-            <div
-              key={item._id}
-              onClick={() => {
-                onSelect();
-                handleConvoSelect(item._id);
-              }}
-              className={`flex justify-between hover:bg-gray-100 ${
-                roomId && roomId === item._id ? "bg-gray-100" : ""
-              } p-3 rounded-xl cursor-pointer`}
-            >
-              {/* If the room is a group display the room name and default group icon, if not display the other participants name and profile picture */}
-              {item.isGroup ? (
-                <div className="w-full flex justify-between">
-                  <div className="flex">
-                    <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
-                      <img
-                        className="rounded-xl"
-                        src="/images/pfp/group-icon.jpg"
-                        alt="Profile"
-                      />
-                    </div>
-                    <div className="ml-4 flex flex-col">
-                      <p className="text-sm font-semibold">{item.name}</p>
-                      <p
-                        className={`text-xs ${
-                          item.messages.length > 0 &&
-                          !isMessageRead(item.messages[0])
-                            ? "font-semibold text-gray-black"
-                            : "font-light text-gray-400"
-                        }`}
-                      >
-                        {item.messages.length === 0
-                          ? "Start chatting now!"
-                          : item.messages[0].sender
-                          ? `${item.messages[0].sender?.name}: ${item.messages[0].text}`
-                          : `${item.messages[0].text}`}
-                      </p>
-                    </div>
-                  </div>
-                  <div
-                    className={`flex items-start ${
-                      item.messages.length === 0 ? "hidden" : ""
-                    }`}
-                  >
-                    <div className="flex items-center gap-1">
-                      <div>
+        {loading ? (
+          <div className="mt-3 flex justify-center items-center">
+            <Spinner />
+          </div>
+        ) : (
+          <div className="mt-3 flex-1 max-h-[calc(100vh-160px)] overflow-y-auto">
+            {data.map((item) => (
+              <div
+                key={item._id}
+                onClick={() => {
+                  onSelect();
+                  handleConvoSelect(item._id);
+                }}
+                className={`flex justify-between hover:bg-gray-100 ${
+                  roomId && roomId === item._id ? "bg-gray-100" : ""
+                } p-3 rounded-xl cursor-pointer`}
+              >
+                {/* If the room is a group display the room name and default group icon, if not display the other participants name and profile picture */}
+                {item.isGroup ? (
+                  <div className="w-full flex justify-between">
+                    <div className="flex">
+                      <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
+                        <img
+                          className="rounded-xl"
+                          src="/images/pfp/group-icon.jpg"
+                          alt="Profile"
+                        />
+                      </div>
+                      <div className="ml-4 flex flex-col">
+                        <p className="text-sm font-semibold">{item.name}</p>
                         <p
-                          className={`text-sm ${
+                          className={`text-xs ${
                             item.messages.length > 0 &&
                             !isMessageRead(item.messages[0])
                               ? "font-semibold text-gray-black"
                               : "font-light text-gray-400"
                           }`}
                         >
-                          {item.messages.length !== 0
-                            ? timeSince(item.messages[0].timestamp)
-                            : ""}
+                          {item.messages.length === 0
+                            ? "Start chatting now!"
+                            : item.messages[0].sender
+                            ? `${item.messages[0].sender?.name}: ${item.messages[0].text}`
+                            : `${item.messages[0].text}`}
                         </p>
                       </div>
-                      <div
-                        className={`text-red-500 ${
-                          item.messages.length > 0 &&
-                          isMessageRead(item.messages[0])
-                            ? "hidden"
-                            : ""
-                        }`}
-                      >
-                        <FaCircle />
+                    </div>
+                    <div
+                      className={`flex items-start ${
+                        item.messages.length === 0 ? "hidden" : ""
+                      }`}
+                    >
+                      <div className="flex items-center gap-1">
+                        <div>
+                          <p
+                            className={`text-sm ${
+                              item.messages.length > 0 &&
+                              !isMessageRead(item.messages[0])
+                                ? "font-semibold text-gray-black"
+                                : "font-light text-gray-400"
+                            }`}
+                          >
+                            {item.messages.length !== 0
+                              ? timeSince(item.messages[0].timestamp)
+                              : ""}
+                          </p>
+                        </div>
+                        <div
+                          className={`text-red-500 ${
+                            item.messages.length > 0 &&
+                            isMessageRead(item.messages[0])
+                              ? "hidden"
+                              : ""
+                          }`}
+                        >
+                          <FaCircle />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <div className="w-full flex justify-between">
-                  <div className="flex">
-                    <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
-                      <img
-                        className="rounded-xl"
-                        src={privateChatName(item.participants).profilePicture}
-                        alt="Profile"
-                      />
-                    </div>
-                    <div className="ml-4 flex flex-col">
-                      <p className="text-sm font-semibold">
-                        {privateChatName(item.participants).name}
-                      </p>
-                      <p
-                        className={`text-xs ${
-                          item.messages.length > 0 &&
-                          !isMessageRead(item.messages[0])
-                            ? "font-semibold text-gray-black"
-                            : "font-light text-gray-400"
-                        }`}
-                      >
-                        {item.messages.length === 0
-                          ? "Start chatting now!"
-                          : item.messages[0].text}
-                      </p>
-                    </div>
-                  </div>
-                  <div
-                    className={`flex items-start ${
-                      item.messages.length === 0 ? "hidden" : ""
-                    }`}
-                  >
-                    <div className="flex items-center gap-1">
-                      <div>
+                ) : (
+                  <div className="w-full flex justify-between">
+                    <div className="flex">
+                      <div className="relative flex items-center justify-center h-12 w-12 rounded-xl">
+                        <img
+                          className="rounded-xl"
+                          src={
+                            privateChatName(item.participants).profilePicture
+                          }
+                          alt="Profile"
+                        />
+                      </div>
+                      <div className="ml-4 flex flex-col">
+                        <p className="text-sm font-semibold">
+                          {privateChatName(item.participants).name}
+                        </p>
                         <p
-                          className={`text-sm ${
+                          className={`text-xs ${
                             item.messages.length > 0 &&
                             !isMessageRead(item.messages[0])
                               ? "font-semibold text-gray-black"
                               : "font-light text-gray-400"
                           }`}
                         >
-                          {item.messages.length !== 0
-                            ? timeSince(item.messages[0].timestamp)
-                            : ""}
+                          {item.messages.length === 0
+                            ? "Start chatting now!"
+                            : item.messages[0].text}
                         </p>
                       </div>
-                      <div
-                        className={`text-red-500 ${
-                          item.messages.length > 0 &&
-                          isMessageRead(item.messages[0])
-                            ? "hidden"
-                            : ""
-                        }`}
-                      >
-                        <FaCircle />
+                    </div>
+                    <div
+                      className={`flex items-start ${
+                        item.messages.length === 0 ? "hidden" : ""
+                      }`}
+                    >
+                      <div className="flex items-center gap-1">
+                        <div>
+                          <p
+                            className={`text-sm ${
+                              item.messages.length > 0 &&
+                              !isMessageRead(item.messages[0])
+                                ? "font-semibold text-gray-black"
+                                : "font-light text-gray-400"
+                            }`}
+                          >
+                            {item.messages.length !== 0
+                              ? timeSince(item.messages[0].timestamp)
+                              : ""}
+                          </p>
+                        </div>
+                        <div
+                          className={`text-red-500 ${
+                            item.messages.length > 0 &&
+                            isMessageRead(item.messages[0])
+                              ? "hidden"
+                              : ""
+                          }`}
+                        >
+                          <FaCircle />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

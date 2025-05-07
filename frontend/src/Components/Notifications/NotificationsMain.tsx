@@ -1,9 +1,10 @@
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { RxCross1 } from "react-icons/rx";
 import { FaCheck } from "react-icons/fa";
 import { SocketContext } from "../../context/SocketProvider";
 import MotionWrapper from "../MotionWrapper";
+import Spinner from "../UI/Spinner";
 
 // different notification types
 type ResponseData = {
@@ -40,9 +41,11 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
   }
 
   const { notifications, setNotifications } = socketContext;
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     try {
+      setLoading(true);
       const getData = async () => {
         const response = await axiosPrivate.get("/notifications/getall");
         setNotifications(response.data);
@@ -53,6 +56,8 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
       if (process.env.NODE_ENV !== "production") {
         console.error(error);
       }
+    } finally {
+      setLoading(false);
     }
   }, [open]);
 
@@ -123,7 +128,11 @@ const NotificationsMain: React.FC<NotificationProps> = ({ open, onOpen }) => {
           <div className="mt-3 w-full max-h-[calc(100vh-146px)] overflow-auto pb-3 ">
             <div className="flex flex-col gap-3">
               {/* Displays text if there's no notifications, and displays data depending on the type of notification */}
-              {notifications.length === 0 ? (
+              {loading ? (
+                <div className="w-full flex justify-center items-center">
+                  <Spinner />
+                </div>
+              ) : notifications.length === 0 ? (
                 <div className="w-full flex justify-center items-center">
                   <p className="text-lg text-gray-400 text-center">
                     No Notifications

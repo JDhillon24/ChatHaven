@@ -39,10 +39,11 @@ const FriendsMain: React.FC<MainProps> = ({
         const response = await axiosPrivate.get(
           `/user/friends?name=${searchParam}`
         );
-        console.log(response.data);
         setData(response.data);
       } catch (error) {
-        console.error(error);
+        if (process.env.NODE_ENV !== "production") {
+          console.error(error);
+        }
       } finally {
         setLoading(false);
       }
