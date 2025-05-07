@@ -15,7 +15,11 @@ app.use("/public", express.static(path.join(__dirname, "../public")));
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://chathaven.vercel.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://chathaven.app",
+      "https://www.chathaven.app",
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
