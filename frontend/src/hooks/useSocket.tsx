@@ -25,7 +25,7 @@ const useSocket = () => {
     }
 
     //initialization
-    socketRef.current = io(SOCKET_URL, {
+    socketRef.current = io("https://chathaven.app/api", {
       withCredentials: true,
       auth: { token: auth.user.accessToken },
       reconnection: true,
