@@ -153,7 +153,7 @@ exports.loginUser = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true, // Secure in production
-      sameSite: "none",
+      sameSite: "lax",
     });
 
     // Send response
@@ -307,25 +307,6 @@ exports.logoutUser = (req, res) => {
   });
   res.sendStatus(204);
 };
-
-// exports.retrieveFriends = async (req, res) => {
-//   try {
-//     //check if user exists based on access token info, return error if not found
-//     const user = await User.findOne({ email: req.user.email }).populate(
-//       "friends"
-//     );
-
-//     if (!user)
-//       return res
-//         .status(404)
-//         .json({ status: "FAILED", message: "User not found" });
-
-//     //send list of friends as response
-//     res.status(200).json(user.friends);
-//   } catch (error) {
-//     res.sendStatus(500);
-//   }
-// };
 
 exports.searchFriends = async (req, res) => {
   try {
