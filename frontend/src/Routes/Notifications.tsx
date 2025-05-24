@@ -20,7 +20,10 @@ const Notifications = () => {
       await axiosPrivate.delete("/notifications/clearnotifications");
       setOpenConfirmation(false);
     } catch (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
+      
     }
   };
 
